@@ -1,0 +1,76 @@
+{
+  "abi_version": 1,
+  "name": "4dgs_head_linear_128_fp16_fp32",
+  "cuda_arch": "sm_86",
+  "capability_query": "tacker_capabilities",
+  "operation": "output = input @ weight.T + bias",
+  "tensors": {
+    "input": {"dtype": "float16", "layout": "row_major", "shape": ["N", 128]},
+    "weight": {"dtype": "float16", "layout": "row_major_out_in", "shape": [128, 128]},
+    "bias": {"dtype": "float32", "layout": "contiguous", "shape": [128]},
+    "output": {"dtype": "float32", "layout": "row_major", "shape": ["N", 128]}
+  },
+  "logical_launch": {
+    "grid": ["ceil_div(N,16)", 2, 1],
+    "block_threads": 128,
+    "output_tile": [16, 64]
+  },
+  "global_kernel_symbols": {
+    "declarations": "include/head_linear_kernels.cuh",
+    "solo": {
+      "symbol": "tacker_head_linear_solo_v1",
+      "argument_order": ["input", "weight", "bias", "output", "rows", "logical_grid_x"]
+    },
+    "gptb": {
+      "symbol": "tacker_head_linear_gptb_v1",
+      "argument_order": [
+        "input",
+        "weight",
+        "bias",
+        "output",
+        "rows",
+        "logical_grid_x",
+        "logical_grid_y",
+        "ptb_start_block_pos",
+        "ptb_iter_block_step",
+        "ptb_end_block_pos"
+      ]
+    }
+  },
+  "public_api": {
+    "python_allocating": {
+      "head_linear_solo": ["input", "weight", "bias"],
+      "head_linear_gptb": ["input", "weight", "bias", "persistent_blocks"]
+    },
+    "python_out": {
+      "head_linear_solo_out": ["input", "weight", "bias", "output"],
+      "head_linear_gptb_out": ["input", "weight", "bias", "output", "persistent_blocks"]
+    },
+    "cpp_out": {
+      "head_linear_solo_out_cuda": ["input", "weight", "bias", "output"],
+      "head_linear_gptb_out_cuda": ["input", "weight", "bias", "output", "persistent_blocks"]
+    }
+  },
+  "gptb_device_adapter": {
+    "header": "include/head_linear_device.cuh",
+    "symbol": "tacker_4dgs::head_linear_gptb_device",
+    "argument_order": [
+      "input",
+      "weight",
+      "bias",
+      "output",
+      "rows",
+      "logical_grid_x",
+      "logical_grid_y",
+      "ptb_start_block_pos",
+      "ptb_iter_block_step",
+      "ptb_end_block_pos",
+      "thread_base"
+    ],
+    "subgroup_threads": 128,
+    "thread_base_alignment": 32,
+    "recommended_mixed_thread_base": 256,
+    "named_barrier_ids": [],
+    "dynamic_shared_memory_bytes": 0
+  }
+}

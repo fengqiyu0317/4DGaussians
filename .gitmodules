@@ -4,7 +4,7 @@
 
 [submodule "submodules/depth-diff-gaussian-rasterization"]
 	path = submodules/depth-diff-gaussian-rasterization
-	url = https://github.com/ingra14m/depth-diff-gaussian-rasterization
+	url = https://github.com/fengqiyu0317/depth-diff-gaussian-rasterization.git
 [submodule "SIBR_viewers"]
 	path = SIBR_viewers
 	url = https://gitlab.inria.fr/sibr/sibr_core

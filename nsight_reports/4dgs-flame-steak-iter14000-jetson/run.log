@@ -1,0 +1,113 @@
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9b63390] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d1d490] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d3ffb0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d43b00] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaaca399b50] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaaca3993c0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d5bc00] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d51ec0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d74360] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d873e0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d99850] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d8cf60] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9d92a60] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9db78a0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9dce4b0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9db2050] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9dfc090] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9df06c0] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9e1ac80] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9dde410] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaaac9e0b990] moov atom not found
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module typefind reported: Stream contains no data.
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1053) open OpenCV | GStreamer warning: unable to start pipeline
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (616) isPipelinePlaying OpenCV | GStreamer warning: GStreamer: pipeline have not been created
+Looking for config file in /data/qyfeng/4DGaussians-flame-steak/outputs/n3dv_flame_steak/cfg_args
+Config file found: /data/qyfeng/4DGaussians-flame-steak/outputs/n3dv_flame_steak/cfg_args
+feature_dim: 32 [28/08 23:42:52]
+Loading trained model at iteration 14000 [28/08 23:42:52]
+meta data loaded, total image:6000 [28/08 23:42:55]
+meta data loaded, total image:300 [28/08 23:42:55]
+  0%|          | 0/6000 [00:00<?, ?it/s]100%|██████████| 6000/6000 [00:00<00:00, 218146.56it/s]
+0it [00:00, ?it/s]300it [00:00, 53005.23it/s]
+Capture range started in the application.
+Capture range ended in the application.
+Generating '/data/codex/tmp/nsys-report-1620.qdstrm'
+[1/1] [0%                          ] 4dgs_render.nsys-repProcessing events...
+[1/1] [0%                          ] 4dgs_render.nsys-rep[1/1] [5%                          ] 4dgs_render.nsys-rep[1/1] [==============61%           ] 4dgs_render.nsys-rep[1/1] [=================73%        ] 4dgs_render.nsys-rep[1/1] [=================74%        ] 4dgs_render.nsys-rep[1/1] [========================100%] 4dgs_render.nsys-rep[1/1] [========================100%] 4dgs_render.nsys-rep
+origin points, 39082 [28/08 23:42:56]
+after points, 39082 [28/08 23:42:56]
+Loading Training Cameras [28/08 23:42:56]
+Loading Test Cameras [28/08 23:42:56]
+Loading Video Cameras [28/08 23:42:56]
+Deformation Net Set aabb [21.75732231 22.128479   41.26021957] [-26.54232979 -17.71076202   5.50146389] [28/08 23:42:56]
+Voxel Plane: set aabb= Parameter containing:
+tensor([[ 21.7573,  22.1285,  41.2602],
+        [-26.5423, -17.7108,   5.5015]]) [28/08 23:42:56]
+loading model from exists/data/qyfeng/4DGaussians-flame-steak/outputs/n3dv_flame_steak/point_cloud/iteration_14000 [28/08 23:42:56]
+Profiled 50 test frames at iteration 14000 with 111525 Gaussians (1352x1014) [28/08 23:43:09]
+Generated:
+    /data/qyfeng/nsight_reports/4dgs-flame-steak-iter14000-jetson/4dgs_render.nsys-rep
+Nsight report: /data/qyfeng/nsight_reports/4dgs-flame-steak-iter14000-jetson/4dgs_render.nsys-rep
+CSV statistics: /data/qyfeng/nsight_reports/4dgs-flame-steak-iter14000-jetson/4dgs_render_stats.csv
+Structured summary: /data/qyfeng/nsight_reports/4dgs-flame-steak-iter14000-jetson/summary.json

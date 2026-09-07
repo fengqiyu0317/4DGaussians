@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "manifest": {
+    "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+    "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
+    "cuda_arch": "sm_86",
+    "compute_capability": [8, 6],
+    "gpu_name": "NVIDIA RTX A6000",
+    "workload": "flame_steak",
+    "iteration": 14000,
+    "gaussian_count": 111525,
+    "resolution": [1352, 1014],
+    "physical_cta_threads": 384,
+    "raster_thread_range_inclusive": [0, 255],
+    "head_thread_range_inclusive": [256, 383],
+    "raster_named_barrier_id": 1,
+    "head_named_barrier_ids": [],
+    "head_input_dtype": "float16",
+    "head_weight_dtype": "float16",
+    "head_bias_dtype": "float32",
+    "head_accumulation_dtype": "float32",
+    "head_output_dtype": "float32",
+    "persistent_blocks": 7000
+  },
+  "manifest_sha256": "06bb93db67a72af5b22aa6e82f3049ef00cef6e700c08eeb5b58f644c795ee21",
+  "thresholds": {
+    "raster_slowdown_pct_max": 5.0,
+    "mixed_p50_strictly_less_than_solo_sum": true,
+    "end_to_end_ratio_max": 1.0,
+    "psnr_drop_db_max": 0.05,
+    "ssim_drop_max": 0.0001,
+    "lpips_increase_max": 0.0001
+  },
+  "admission": {
+    "enabled": false,
+    "valid": false
+  },
+  "measurements": null,
+  "note": "Fail-closed qualification template; successful measurements write a separate admitted profile and never enable this file in place."
+}

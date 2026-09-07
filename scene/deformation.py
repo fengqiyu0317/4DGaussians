@@ -2,7 +2,6 @@ import functools
 import math
 import os
 import time
-from tkinter import W
 
 import numpy as np
 import torch
@@ -10,6 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
 from utils.graphics_utils import apply_rotation, batch_quaternion_multiply
+from utils.profiling_utils import nvtx_range
 from scene.hexplane import HexPlaneField
 from scene.grid import DenseGrid
 # from scene.grid import HashHexPlane
@@ -69,15 +69,15 @@ class Deformation(nn.Module):
         if self.no_grid:
             h = torch.cat([rays_pts_emb[:,:3],time_emb[:,:1]],-1)
         else:
-
-            grid_feature = self.grid(rays_pts_emb[:,:3], time_emb[:,:1])
+            with nvtx_range("deformation/hexplane_feature_sampling"):
+                grid_feature = self.grid(rays_pts_emb[:,:3], time_emb[:,:1])
             # breakpoint()
             if self.grid_pe > 1:
                 grid_feature = poc_fre(grid_feature,self.grid_pe)
             hidden = torch.cat([grid_feature],-1) 
         
-        
-        hidden = self.feature_out(hidden)   
+        with nvtx_range("deformation/backbone_mlp"):
+            hidden = self.feature_out(hidden)
  
 
         return hidden
@@ -96,54 +96,51 @@ class Deformation(nn.Module):
         return rays_pts_emb[:, :3] + dx
     def forward_dynamic(self,rays_pts_emb, scales_emb, rotations_emb, opacity_emb, shs_emb, time_feature, time_emb):
         hidden = self.query_time(rays_pts_emb, scales_emb, rotations_emb, time_feature, time_emb)
-        if self.args.static_mlp:
-            mask = self.static_mlp(hidden)
-        elif self.args.empty_voxel:
-            mask = self.empty_voxel(rays_pts_emb[:,:3])
-        else:
-            mask = torch.ones_like(opacity_emb[:,0]).unsqueeze(-1)
-        # breakpoint()
-        if self.args.no_dx:
-            pts = rays_pts_emb[:,:3]
-        else:
-            dx = self.pos_deform(hidden)
-            pts = torch.zeros_like(rays_pts_emb[:,:3])
-            pts = rays_pts_emb[:,:3]*mask + dx
-        if self.args.no_ds :
-            
-            scales = scales_emb[:,:3]
-        else:
-            ds = self.scales_deform(hidden)
-
-            scales = torch.zeros_like(scales_emb[:,:3])
-            scales = scales_emb[:,:3]*mask + ds
-            
-        if self.args.no_dr :
-            rotations = rotations_emb[:,:4]
-        else:
-            dr = self.rotations_deform(hidden)
-
-            rotations = torch.zeros_like(rotations_emb[:,:4])
-            if self.args.apply_rotation:
-                rotations = batch_quaternion_multiply(rotations_emb, dr)
+        with nvtx_range("deformation/heads_and_residuals"):
+            if self.args.static_mlp:
+                mask = self.static_mlp(hidden)
+            elif self.args.empty_voxel:
+                mask = self.empty_voxel(rays_pts_emb[:,:3])
             else:
-                rotations = rotations_emb[:,:4] + dr
+                mask = torch.ones_like(opacity_emb[:,0]).unsqueeze(-1)
 
-        if self.args.no_do :
-            opacity = opacity_emb[:,:1] 
-        else:
-            do = self.opacity_deform(hidden) 
-          
-            opacity = torch.zeros_like(opacity_emb[:,:1])
-            opacity = opacity_emb[:,:1]*mask + do
-        if self.args.no_dshs:
-            shs = shs_emb
-        else:
-            dshs = self.shs_deform(hidden).reshape([shs_emb.shape[0],16,3])
+            if self.args.no_dx:
+                pts = rays_pts_emb[:,:3]
+            else:
+                dx = self.pos_deform(hidden)
+                pts = torch.zeros_like(rays_pts_emb[:,:3])
+                pts = rays_pts_emb[:,:3]*mask + dx
 
-            shs = torch.zeros_like(shs_emb)
-            # breakpoint()
-            shs = shs_emb*mask.unsqueeze(-1) + dshs
+            if self.args.no_ds:
+                scales = scales_emb[:,:3]
+            else:
+                ds = self.scales_deform(hidden)
+                scales = torch.zeros_like(scales_emb[:,:3])
+                scales = scales_emb[:,:3]*mask + ds
+
+            if self.args.no_dr:
+                rotations = rotations_emb[:,:4]
+            else:
+                dr = self.rotations_deform(hidden)
+                rotations = torch.zeros_like(rotations_emb[:,:4])
+                if self.args.apply_rotation:
+                    rotations = batch_quaternion_multiply(rotations_emb, dr)
+                else:
+                    rotations = rotations_emb[:,:4] + dr
+
+            if self.args.no_do:
+                opacity = opacity_emb[:,:1]
+            else:
+                do = self.opacity_deform(hidden)
+                opacity = torch.zeros_like(opacity_emb[:,:1])
+                opacity = opacity_emb[:,:1]*mask + do
+
+            if self.args.no_dshs:
+                shs = shs_emb
+            else:
+                dshs = self.shs_deform(hidden).reshape([shs_emb.shape[0],16,3])
+                shs = torch.zeros_like(shs_emb)
+                shs = shs_emb*mask.unsqueeze(-1) + dshs
 
         return pts, scales, rotations, opacity, shs
     def get_mlp_parameters(self):
@@ -196,10 +193,10 @@ class deform_network(nn.Module):
         points = self.deformation_net(points)
         return points
     def forward_dynamic(self, point, scales=None, rotations=None, opacity=None, shs=None, times_sel=None):
-        # times_emb = poc_fre(times_sel, self.time_poc)
-        point_emb = poc_fre(point,self.pos_poc)
-        scales_emb = poc_fre(scales,self.rotation_scaling_poc)
-        rotations_emb = poc_fre(rotations,self.rotation_scaling_poc)
+        with nvtx_range("deformation/positional_encoding"):
+            point_emb = poc_fre(point,self.pos_poc)
+            scales_emb = poc_fre(scales,self.rotation_scaling_poc)
+            rotations_emb = poc_fre(rotations,self.rotation_scaling_poc)
         # time_emb = poc_fre(times_sel, self.time_poc)
         # times_feature = self.timenet(time_emb)
         means3D, scales, rotations, opacity, shs = self.deformation_net( point_emb,

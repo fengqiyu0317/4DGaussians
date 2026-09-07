@@ -1,0 +1,25 @@
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab132bcd90] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13487880] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab1347a110] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134952f0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13ae26d0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13af7be0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134ba7e0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13af15a0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134dd950] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134d8bc0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134f6150] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134d5950] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab134e6e00] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13527fe0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab1353be40] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab135085d0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab13518330] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab135502e0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab1351f850] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab135745d0] moov atom not found
+[mov,mp4,m4a,3gp,3g2,mj2 @ 0xaaab1358aa50] moov atom not found
+Looking for config file in /data/qyfeng/4DGaussians-flame-steak/outputs/n3dv_flame_steak/cfg_args
+Config file found: /data/qyfeng/4DGaussians-flame-steak/outputs/n3dv_flame_steak/cfg_args
+  0%|          | 0/6000 [00:00<?, ?it/s]100%|██████████| 6000/6000 [00:00<00:00, 218989.40it/s]
+0it [00:00, ?it/s]300it [00:00, 54722.59it/s]

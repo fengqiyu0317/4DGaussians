@@ -167,6 +167,10 @@ def get_combined_args(parser : ArgumentParser):
 
     merged_dict = vars(args_cfgfile).copy()
     for k,v in vars(args_cmdline).items():
-        if v != None:
+        # ``fill_none`` deliberately uses None to let cfg_args win, but a
+        # parser option that is absent from an older cfg_args file must still
+        # exist on the returned Namespace.  This matters for newly added
+        # optional flags such as --tacker-profile.
+        if v is not None or k not in merged_dict:
             merged_dict[k] = v
     return Namespace(**merged_dict)

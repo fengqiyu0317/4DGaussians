@@ -414,9 +414,8 @@ if __name__ == "__main__":
     args = parser.parse_args(sys.argv[1:])
     args.save_iterations.append(args.iterations)
     if args.configs:
-        import mmcv
-        from utils.params_utils import merge_hparams
-        config = mmcv.Config.fromfile(args.configs)
+        from utils.params_utils import load_config, merge_hparams
+        config = load_config(args.configs)
         args = merge_hparams(args, config)
     print("Optimizing " + args.model_path)
 
