@@ -260,19 +260,304 @@ def _load_module(available=False, grad_enabled=False, capability=(8, 6)):
 def _valid_profile(module):
     with module.DEFAULT_PROFILE_PATH.open("r", encoding="utf-8") as handle:
         profile = json.load(handle)
-    profile["admission"] = {"enabled": True, "valid": True}
-    profile["measurements"] = {
-        "raster_slowdown_pct": 4.0,
-        "mixed_p50_ms": 4.9,
-        "solo_raster_p50_ms": 4.0,
-        "solo_head_p50_ms": 1.0,
-        "tacker_end_to_end_p50_ms": 10.0,
-        "two_stream_end_to_end_p50_ms": 10.0,
-        "psnr_drop_db": 0.05,
-        "ssim_drop": 0.0001,
-        "lpips_increase": 0.0001,
+    trials = {
+        "serial": [80.0] * 10,
+        "two_stream": [90.0] * 10,
+        "legacy_pos_l1": [100.0] * 10,
     }
+    for candidate in profile["candidates"]:
+        variant_id = candidate["variant_id"]
+        candidate["benchmark_candidate_name"] = (
+            "current_tacker" if variant_id == "legacy_pos_l1" else variant_id
+        )
+        candidate["correctness"] = {
+            "valid": True,
+            "actual_execution_mode": candidate["execution_mode"],
+            "fallback_reason": None,
+        }
+        if candidate["execution_mode"] == "tacker":
+            candidate["correctness"].update(
+                {
+                    "psnr_drop_db": 0.05,
+                    "ssim_drop": 0.0001,
+                    "lpips_increase": 0.0001,
+                }
+            )
+            # Explicitly diagnostic: neither value may veto this fastest,
+            # correctness-valid candidate.
+            candidate["diagnostics"] = {
+                "raster_slowdown_pct": 25.0,
+                "mixed_p50_ms": 6.0,
+                "solo_raster_p50_ms": 4.0,
+                "solo_head_p50_ms": 1.0,
+            }
+        candidate["performance"] = {
+            "trial_count": len(trials[variant_id]),
+            "round_indices": list(range(len(trials[variant_id]))),
+            "throughput_fps_trials": trials[variant_id],
+            "median_throughput_fps": trials[variant_id][0],
+        }
+    profile["selection"] = {
+        "eligible_variant_ids": ["legacy_pos_l1", "two_stream", "serial"],
+        "ineligible_variant_ids": [],
+        "global_median_fps_ranking": [
+            "legacy_pos_l1",
+            "two_stream",
+            "serial",
+        ],
+        "experimental_winner_variant_id": "legacy_pos_l1",
+        "deployment_winner_variant_id": "legacy_pos_l1",
+        "incumbent_variant_id": "legacy_pos_l1",
+        "equivalence": {
+            "fraction": 0.005,
+            "candidate_variant_ids_in_preference_order": ["legacy_pos_l1"],
+            "preferred_variant_id": "legacy_pos_l1",
+        },
+        "promotion": {
+            "challenger_variant_id": "legacy_pos_l1",
+            "incumbent_variant_id": "legacy_pos_l1",
+            "minimum_median_fps_ratio": 1.01,
+            "minimum_bootstrap_lower_exclusive": 1.0,
+            "required": False,
+            "passed": True,
+            "decision": "incumbent_is_global_winner",
+            "candidate_evaluations": [],
+        },
+    }
+    profile["deployment"] = {"enabled": True, "valid": True}
+    profile["provenance"] = {
+        "template": False,
+        "input_sha256": {"synthetic": "0" * 64},
+    }
+    profile["profile_sha256"] = module.profile_sha256(profile)
     return profile
+
+
+def _paired_comparison(
+    module,
+    challenger,
+    incumbent,
+    resamples=10000,
+    seed=0,
+):
+    challenger_performance = challenger["performance"]
+    incumbent_performance = incumbent["performance"]
+    challenger_trials = challenger_performance["throughput_fps_trials"]
+    incumbent_trials = incumbent_performance["throughput_fps_trials"]
+    label = "{}-vs-{}".format(
+        challenger["benchmark_candidate_name"],
+        incumbent["benchmark_candidate_name"],
+    )
+    lower, upper = module._paired_bootstrap_interval(
+        challenger_trials,
+        incumbent_trials,
+        resamples,
+        seed,
+        label,
+    )
+    ratios = [
+        challenger_fps / incumbent_fps
+        for challenger_fps, incumbent_fps in zip(
+            challenger_trials, incumbent_trials
+        )
+    ]
+    return {
+        "candidate": challenger["benchmark_candidate_name"],
+        "reference": incumbent["benchmark_candidate_name"],
+        "round_indices": list(challenger_performance["round_indices"]),
+        "paired_fps_ratios": ratios,
+        "median_paired_fps_ratio": module.statistics.median(ratios),
+        "median_fps_ratio": (
+            challenger_performance["median_throughput_fps"]
+            / incumbent_performance["median_throughput_fps"]
+        ),
+        "paired_bootstrap_95_ci": {
+            "lower": lower,
+            "upper": upper,
+            "confidence": 0.95,
+            "resamples": resamples,
+            "seed": seed,
+            "statistic": "median(candidate_fps)/median(reference_fps)",
+            "resampling_unit": "paired_round",
+            "percentile_method": "linear_type_7",
+        },
+    }
+
+
+def _promotion_evaluation(module, challenger, incumbent, two_stream):
+    comparison = _paired_comparison(module, challenger, incumbent)
+    ratio = comparison["median_fps_ratio"]
+    lower = comparison["paired_bootstrap_95_ci"]["lower"]
+    challenger_fps = challenger["performance"]["median_throughput_fps"]
+    floor_ratios = {
+        "two_stream": (
+            challenger_fps
+            / two_stream["performance"]["median_throughput_fps"]
+        ),
+        incumbent["variant_id"]: (
+            challenger_fps
+            / incumbent["performance"]["median_throughput_fps"]
+        ),
+    }
+    ratio_passed = ratio >= 1.01
+    ci_passed = lower > 1.0
+    floor_passed = all(value >= 1.0 for value in floor_ratios.values())
+    return {
+        "candidate_variant_id": challenger["variant_id"],
+        "passed": ratio_passed and ci_passed and floor_passed,
+        "paired_comparison": comparison,
+        "criteria": {
+            "median_fps_ratio": {
+                "observed": ratio,
+                "required_min": 1.01,
+                "passed": ratio_passed,
+            },
+            "paired_bootstrap_95_ci_lower": {
+                "observed": lower,
+                "required_strictly_greater_than": 1.0,
+                "passed": ci_passed,
+            },
+            "baseline_fps_ratios": {
+                "observed": floor_ratios,
+                "required_min": 1.0,
+                "passed": floor_passed,
+            },
+        },
+    }
+
+
+def _profile_with_challenger(module, challenger_trials):
+    """Build admission-shaped evidence for one current-ABI challenger."""
+
+    profile = _valid_profile(module)
+    incumbent = profile["candidates"][2]
+    two_stream = profile["candidates"][1]
+    challenger = deepcopy(incumbent)
+    challenger["variant_id"] = "future"
+    challenger["benchmark_candidate_name"] = "future"
+    challenger["persistent_blocks"] = 80
+    challenger["performance"] = {
+        "trial_count": len(challenger_trials),
+        "round_indices": list(range(len(challenger_trials))),
+        "throughput_fps_trials": list(challenger_trials),
+        "median_throughput_fps": module.statistics.median(challenger_trials),
+    }
+    profile["candidates"].append(challenger)
+    ranking = sorted(
+        profile["candidates"],
+        key=lambda candidate: (
+            -candidate["performance"]["median_throughput_fps"],
+            candidate["benchmark_candidate_name"],
+        ),
+    )
+    top_fps = ranking[0]["performance"]["median_throughput_fps"]
+    equivalent = [
+        candidate
+        for candidate in ranking
+        if (
+            top_fps - candidate["performance"]["median_throughput_fps"]
+        )
+        / top_fps
+        <= 0.005
+    ]
+    equivalent.sort(key=lambda candidate: candidate["benchmark_candidate_name"])
+    equivalent_ids = [candidate["variant_id"] for candidate in equivalent]
+    evaluation = _promotion_evaluation(
+        module, challenger, incumbent, two_stream
+    )
+    selected = challenger if evaluation["passed"] else incumbent
+    profile["selected_variant_id"] = selected["variant_id"]
+    profile["manifest"]["persistent_blocks"] = selected["persistent_blocks"]
+    profile["manifest_sha256"] = module.manifest_sha256(profile["manifest"])
+    promotion = {
+        "challenger_variant_id": challenger["variant_id"],
+        "incumbent_variant_id": incumbent["variant_id"],
+        "minimum_median_fps_ratio": 1.01,
+        "minimum_bootstrap_lower_exclusive": 1.0,
+        "required": True,
+        "passed": evaluation["passed"],
+        "decision": (
+            "promoted_equivalent_challenger"
+            if evaluation["passed"]
+            else "retained_incumbent"
+        ),
+        "candidate_evaluations": [evaluation],
+        "paired_comparison": evaluation["paired_comparison"],
+        "median_fps_ratio": evaluation["criteria"]["median_fps_ratio"][
+            "observed"
+        ],
+        "paired_bootstrap_95_ci_lower": evaluation["criteria"]
+        ["paired_bootstrap_95_ci_lower"]["observed"],
+        "criteria": evaluation["criteria"],
+    }
+    profile["selection"] = {
+        "eligible_variant_ids": [candidate["variant_id"] for candidate in ranking],
+        "ineligible_variant_ids": [],
+        "global_median_fps_ranking": [
+            candidate["variant_id"] for candidate in ranking
+        ],
+        "experimental_winner_variant_id": ranking[0]["variant_id"],
+        "deployment_winner_variant_id": selected["variant_id"],
+        "incumbent_variant_id": incumbent["variant_id"],
+        "equivalence": {
+            "fraction": 0.005,
+            "candidate_variant_ids_in_preference_order": equivalent_ids,
+            "preferred_variant_id": equivalent_ids[0],
+        },
+        "promotion": promotion,
+    }
+    profile["profile_sha256"] = module.profile_sha256(profile)
+    return profile
+
+
+def _valid_legacy_profile(module):
+    manifest = {
+        "rasterizer_commit": module.RASTERIZER_COMMIT,
+        "pair_key": module.PAIR_KEY,
+        "cuda_arch": "sm_86",
+        "compute_capability": [8, 6],
+        "gpu_name": "NVIDIA RTX A6000",
+        "workload": "flame_steak",
+        "iteration": 14000,
+        "gaussian_count": 111525,
+        "resolution": [1352, 1014],
+        "physical_cta_threads": 384,
+        "raster_thread_range_inclusive": [0, 255],
+        "head_thread_range_inclusive": [256, 383],
+        "raster_named_barrier_id": 1,
+        "head_named_barrier_ids": [],
+        "head_input_dtype": "float16",
+        "head_weight_dtype": "float16",
+        "head_bias_dtype": "float32",
+        "head_accumulation_dtype": "float32",
+        "head_output_dtype": "float32",
+        "persistent_blocks": 7000,
+    }
+    return {
+        "schema_version": 1,
+        "manifest": manifest,
+        "manifest_sha256": module.manifest_sha256(manifest),
+        "thresholds": {
+            "raster_slowdown_pct_max": 5.0,
+            "mixed_p50_strictly_less_than_solo_sum": True,
+            "end_to_end_ratio_max": 1.0,
+            "psnr_drop_db_max": 0.05,
+            "ssim_drop_max": 0.0001,
+            "lpips_increase_max": 0.0001,
+        },
+        "admission": {"enabled": True, "valid": True},
+        "measurements": {
+            "raster_slowdown_pct": 50.0,
+            "mixed_p50_ms": 7.0,
+            "solo_raster_p50_ms": 4.0,
+            "solo_head_p50_ms": 1.0,
+            "tacker_end_to_end_p50_ms": 12.0,
+            "two_stream_end_to_end_p50_ms": 10.0,
+            "psnr_drop_db": 0.05,
+            "ssim_drop": 0.0001,
+            "lpips_increase": 0.0001,
+        },
+    }
 
 
 class ReLU:
@@ -379,39 +664,599 @@ class ProfileContractTest(unittest.TestCase):
         )
         self.assertEqual(
             self.module.tacker_profile_admission_reason(profile),
-            "Tacker profile is disabled",
+            "Tacker profile deployment is disabled",
         )
 
-    def test_hash_mismatch_and_weakened_gate_are_rejected(self):
+    def test_hash_mismatch_and_weakened_correctness_gate_are_rejected(self):
         profile = _valid_profile(self.module)
         profile["manifest"]["persistent_blocks"] = 3
         with self.assertRaisesRegex(self.module.TackerProfileError, "SHA-256"):
             self.module.validate_tacker_profile(profile)
 
         profile = _valid_profile(self.module)
-        profile["thresholds"]["raster_slowdown_pct_max"] = 5.01
+        profile["correctness_thresholds"]["psnr_drop_db_max"] = 0.051
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
         with self.assertRaisesRegex(self.module.TackerProfileError, "weakens"):
             self.module.validate_tacker_profile(profile)
 
-    def test_every_performance_and_quality_threshold_is_enforced(self):
+    def test_v2_requires_tile_resource_and_equivalence_contracts(self):
+        for field, message in (
+            ("tile_shape", "tile_shape"),
+            ("resources", "resources"),
+        ):
+            profile = _valid_profile(self.module)
+            del profile["candidates"][2][field]
+            profile["profile_sha256"] = self.module.profile_sha256(profile)
+            with self.assertRaisesRegex(self.module.TackerProfileError, message):
+                self.module.validate_tacker_profile(profile)
+
+        profile = _valid_profile(self.module)
+        del profile["selection"]["equivalence"]
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "selection.equivalence"
+        ):
+            self.module.validate_tacker_profile(profile)
+
+        profile = _valid_profile(self.module)
+        profile["note"] = float("nan")
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "non-canonical data"
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_oversized_json_integer_fails_closed_without_overflowing(self):
+        profile = _valid_profile(self.module)
+        profile["candidates"][2]["performance"]["throughput_fps_trials"][
+            0
+        ] = 10**309
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        reason = self.module.tacker_profile_admission_reason(profile)
+
+        self.assertIsInstance(reason, str)
+        self.assertIn("finite", reason)
+
+    def test_qos_diagnostics_are_not_runtime_gates_but_quality_is(self):
         profile = _valid_profile(self.module)
         self.assertIsNone(self.module.tacker_profile_admission_reason(profile))
 
-        cases = (
-            ("raster_slowdown_pct", 5.001, "Raster QoS"),
-            ("mixed_p50_ms", 5.0, "strictly faster"),
-            ("tacker_end_to_end_p50_ms", 10.001, "two_stream"),
-            ("psnr_drop_db", 0.051, "PSNR"),
-            ("ssim_drop", 0.00011, "SSIM"),
-            ("lpips_increase", 0.00011, "LPIPS"),
+        selected = next(
+            item
+            for item in profile["candidates"]
+            if item["variant_id"] == "legacy_pos_l1"
         )
-        for key, value, reason in cases:
+        selected["diagnostics"].update(
+            {
+                "raster_slowdown_pct": 500.0,
+                "mixed_p50_ms": 50.0,
+                "solo_raster_p50_ms": 1.0,
+                "solo_head_p50_ms": 1.0,
+            }
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+        self.assertIsNone(self.module.tacker_profile_admission_reason(profile))
+
+        for key, value in (
+            ("psnr_drop_db", 0.051),
+            ("ssim_drop", 0.00011),
+            ("lpips_increase", 0.00011),
+        ):
             failing = deepcopy(profile)
-            failing["measurements"][key] = value
-            self.assertIn(
-                reason,
-                self.module.tacker_profile_admission_reason(failing),
+            failing_selected = next(
+                item
+                for item in failing["candidates"]
+                if item["variant_id"] == "legacy_pos_l1"
             )
+            failing_selected["correctness"][key] = value
+            failing["profile_sha256"] = self.module.profile_sha256(failing)
+            self.assertIn("correctness threshold", self.module.tacker_profile_admission_reason(failing))
+
+    def test_schema_v1_is_read_only_compatible_without_old_performance_vetoes(self):
+        profile = _valid_legacy_profile(self.module)
+
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
+        self.assertIsNone(self.module.tacker_profile_admission_reason(profile))
+        self.assertEqual(
+            self.module.selected_tacker_candidate(profile)["variant_id"],
+            "legacy_pos_l1",
+        )
+
+    def test_selection_and_measurement_tampering_breaks_profile_hash(self):
+        profile = _valid_profile(self.module)
+        profile["provenance"]["input_sha256"]["synthetic"] = "1" * 64
+        with self.assertRaisesRegex(self.module.TackerProfileError, "selection SHA-256"):
+            self.module.validate_tacker_profile(profile)
+
+        profile = _valid_profile(self.module)
+        profile["selected_variant_id"] = "two_stream"
+        profile["selection"]["deployment_winner_variant_id"] = "two_stream"
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError,
+            "cannot select a baseline|experimental FPS argmax",
+        ):
+            self.module.validate_tacker_profile(profile)
+
+        profile = _valid_profile(self.module)
+        profile["candidates"][2]["performance"]["throughput_fps_trials"][0] = 999.0
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError,
+            "median_throughput_fps|selection SHA-256",
+        ):
+            self.module.validate_tacker_profile(profile)
+
+        profile = _valid_profile(self.module)
+        profile["candidates"][2]["performance"] = {
+            "trial_count": 10,
+            "round_indices": list(range(10)),
+            "throughput_fps_trials": [85.0] * 10,
+            "median_throughput_fps": 85.0,
+        }
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError,
+            "ranking disagrees",
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_v2_selects_one_of_multiple_current_abi_candidates(self):
+        profile = _valid_profile(self.module)
+        alternative = deepcopy(profile["candidates"][2])
+        alternative["variant_id"] = "pos_l1_pb80"
+        alternative["benchmark_candidate_name"] = "future"
+        alternative["persistent_blocks"] = 80
+        alternative["performance"] = {
+            "trial_count": 10,
+            "round_indices": list(range(10)),
+            "throughput_fps_trials": [101.0] * 10,
+            "median_throughput_fps": 101.0,
+        }
+        profile["candidates"].append(alternative)
+        profile["selected_variant_id"] = alternative["variant_id"]
+        profile["manifest"]["persistent_blocks"] = 80
+        profile["manifest_sha256"] = self.module.manifest_sha256(
+            profile["manifest"]
+        )
+        profile["selection"]["experimental_winner_variant_id"] = alternative[
+            "variant_id"
+        ]
+        profile["selection"]["eligible_variant_ids"] = [
+            "pos_l1_pb80",
+            "legacy_pos_l1",
+            "two_stream",
+            "serial",
+        ]
+        profile["selection"]["global_median_fps_ranking"] = list(
+            profile["selection"]["eligible_variant_ids"]
+        )
+        profile["selection"]["deployment_winner_variant_id"] = alternative[
+            "variant_id"
+        ]
+        profile["selection"]["equivalence"] = {
+            "fraction": 0.005,
+            "candidate_variant_ids_in_preference_order": [
+                alternative["variant_id"]
+            ],
+            "preferred_variant_id": alternative["variant_id"],
+        }
+        incumbent = profile["candidates"][2]
+        two_stream = profile["candidates"][1]
+        evaluation = _promotion_evaluation(
+            self.module, alternative, incumbent, two_stream
+        )
+        profile["selection"]["promotion"] = {
+            "challenger_variant_id": alternative["variant_id"],
+            "incumbent_variant_id": incumbent["variant_id"],
+            "minimum_median_fps_ratio": 1.01,
+            "minimum_bootstrap_lower_exclusive": 1.0,
+            "required": True,
+            "passed": True,
+            "decision": "promoted_equivalent_challenger",
+            "candidate_evaluations": [evaluation],
+            "paired_comparison": evaluation["paired_comparison"],
+            "median_fps_ratio": evaluation["criteria"]["median_fps_ratio"][
+                "observed"
+            ],
+            "paired_bootstrap_95_ci_lower": evaluation["criteria"]
+            ["paired_bootstrap_95_ci_lower"]["observed"],
+            "criteria": evaluation["criteria"],
+        }
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
+        self.assertEqual(
+            self.module.selected_tacker_candidate(profile)["persistent_blocks"],
+            80,
+        )
+
+    def test_runtime_uses_benchmark_name_for_exact_and_equivalence_ties(self):
+        profile = _valid_profile(self.module)
+        incumbent = profile["candidates"][2]
+        two_stream = profile["candidates"][1]
+        challengers = []
+        for benchmark_name, variant_id, persistent_blocks in (
+            ("alpha", "zz_variant", 80),
+            ("zeta", "aa_variant", 96),
+        ):
+            challenger = deepcopy(incumbent)
+            challenger["benchmark_candidate_name"] = benchmark_name
+            challenger["variant_id"] = variant_id
+            challenger["persistent_blocks"] = persistent_blocks
+            challenger["performance"] = {
+                "trial_count": 10,
+                "round_indices": list(range(10)),
+                "throughput_fps_trials": [102.0] * 10,
+                "median_throughput_fps": 102.0,
+            }
+            profile["candidates"].append(challenger)
+            challengers.append(challenger)
+
+        preferred = challengers[0]
+        evaluations = [
+            _promotion_evaluation(
+                self.module, challenger, incumbent, two_stream
+            )
+            for challenger in challengers
+        ]
+        selected_evaluation = evaluations[0]
+        profile["selected_variant_id"] = preferred["variant_id"]
+        profile["manifest"]["persistent_blocks"] = preferred[
+            "persistent_blocks"
+        ]
+        profile["manifest_sha256"] = self.module.manifest_sha256(
+            profile["manifest"]
+        )
+        profile["selection"] = {
+            "eligible_variant_ids": [
+                "zz_variant",
+                "aa_variant",
+                "legacy_pos_l1",
+                "two_stream",
+                "serial",
+            ],
+            "ineligible_variant_ids": [],
+            "global_median_fps_ranking": [
+                "zz_variant",
+                "aa_variant",
+                "legacy_pos_l1",
+                "two_stream",
+                "serial",
+            ],
+            "experimental_winner_variant_id": "zz_variant",
+            "deployment_winner_variant_id": "zz_variant",
+            "incumbent_variant_id": "legacy_pos_l1",
+            "equivalence": {
+                "fraction": 0.005,
+                "candidate_variant_ids_in_preference_order": [
+                    "zz_variant",
+                    "aa_variant",
+                ],
+                "preferred_variant_id": "zz_variant",
+            },
+            "promotion": {
+                "challenger_variant_id": "zz_variant",
+                "incumbent_variant_id": "legacy_pos_l1",
+                "minimum_median_fps_ratio": 1.01,
+                "minimum_bootstrap_lower_exclusive": 1.0,
+                "required": True,
+                "passed": True,
+                "decision": "promoted_equivalent_challenger",
+                "candidate_evaluations": evaluations,
+                "paired_comparison": selected_evaluation[
+                    "paired_comparison"
+                ],
+                "median_fps_ratio": selected_evaluation["criteria"][
+                    "median_fps_ratio"
+                ]["observed"],
+                "paired_bootstrap_95_ci_lower": selected_evaluation[
+                    "criteria"
+                ]["paired_bootstrap_95_ci_lower"]["observed"],
+                "criteria": selected_evaluation["criteria"],
+            },
+        }
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
+        self.assertEqual(
+            self.module.selected_tacker_candidate(profile)[
+                "benchmark_candidate_name"
+            ],
+            "alpha",
+        )
+
+    def test_runtime_recomputes_promotion_and_rejects_forged_incumbent_retention(self):
+        profile = _profile_with_challenger(self.module, [102.0] * 10)
+        incumbent = profile["candidates"][2]
+        evaluation = profile["selection"]["promotion"][
+            "candidate_evaluations"
+        ][0]
+        self.assertTrue(evaluation["passed"])
+
+        # Forge a self-consistent-looking retained-incumbent decision while
+        # leaving the raw trials and paired evidence untouched.  Runtime must
+        # derive the actual passing challenger instead of trusting `passed`.
+        profile["selected_variant_id"] = incumbent["variant_id"]
+        profile["selection"]["deployment_winner_variant_id"] = incumbent[
+            "variant_id"
+        ]
+        profile["selection"]["promotion"]["passed"] = False
+        profile["selection"]["promotion"]["decision"] = "retained_incumbent"
+        profile["manifest"]["persistent_blocks"] = incumbent[
+            "persistent_blocks"
+        ]
+        profile["manifest_sha256"] = self.module.manifest_sha256(
+            profile["manifest"]
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError,
+            "deployment winner disagrees with recomputed incumbent promotion",
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_runtime_recomputes_bootstrap_and_rejects_forged_ci(self):
+        trials = [80.0] * 4 + [102.0] * 6
+        one_sample_lower, _ = self.module._paired_bootstrap_interval(
+            trials,
+            [100.0] * 10,
+            1,
+            3,
+            "future-vs-current_tacker",
+        )
+        self.assertGreater(one_sample_lower, 1.0)
+        profile = _profile_with_challenger(self.module, trials)
+        promotion = profile["selection"]["promotion"]
+        evaluation = promotion["candidate_evaluations"][0]
+        self.assertGreaterEqual(
+            evaluation["criteria"]["median_fps_ratio"]["observed"], 1.01
+        )
+        self.assertLessEqual(
+            evaluation["criteria"]["paired_bootstrap_95_ci_lower"]["observed"],
+            1.0,
+        )
+
+        # Forge every recorded CI-derived decision field, including the top
+        # summary.  The original trials still determine a failing lower bound.
+        fake_lower = 1.001
+        comparison = evaluation["paired_comparison"]
+        comparison["paired_bootstrap_95_ci"]["lower"] = fake_lower
+        evaluation["criteria"]["paired_bootstrap_95_ci_lower"].update(
+            {"observed": fake_lower, "passed": True}
+        )
+        evaluation["passed"] = True
+        challenger = profile["candidates"][-1]
+        profile["selected_variant_id"] = challenger["variant_id"]
+        profile["selection"]["deployment_winner_variant_id"] = challenger[
+            "variant_id"
+        ]
+        promotion.update(
+            {
+                "passed": True,
+                "decision": "promoted_equivalent_challenger",
+                "paired_bootstrap_95_ci_lower": fake_lower,
+            }
+        )
+        profile["manifest"]["persistent_blocks"] = challenger[
+            "persistent_blocks"
+        ]
+        profile["manifest_sha256"] = self.module.manifest_sha256(
+            profile["manifest"]
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError,
+            "paired bootstrap lower.*whole-run trials",
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_runtime_rejects_nonformal_bootstrap_configuration(self):
+        profile = _profile_with_challenger(self.module, [102.0] * 10)
+        interval = profile["selection"]["promotion"][
+            "candidate_evaluations"
+        ][0]["paired_comparison"]["paired_bootstrap_95_ci"]
+        interval["resamples"] = 1
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "10000 resamples and seed 0"
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_valid_incumbent_retention_cannot_waive_two_stream_floor(self):
+        profile = _valid_profile(self.module)
+        incumbent = profile["candidates"][2]
+        two_stream = profile["candidates"][1]
+        two_stream["performance"] = {
+            "trial_count": 10,
+            "round_indices": list(range(10)),
+            "throughput_fps_trials": [100.5] * 10,
+            "median_throughput_fps": 100.5,
+        }
+        evaluation = _promotion_evaluation(
+            self.module, two_stream, incumbent, two_stream
+        )
+        self.assertFalse(evaluation["passed"])
+        profile["selection"].update(
+            {
+                "eligible_variant_ids": [
+                    "two_stream",
+                    "legacy_pos_l1",
+                    "serial",
+                ],
+                "global_median_fps_ranking": [
+                    "two_stream",
+                    "legacy_pos_l1",
+                    "serial",
+                ],
+                "experimental_winner_variant_id": "two_stream",
+                "deployment_winner_variant_id": "legacy_pos_l1",
+                "equivalence": {
+                    "fraction": 0.005,
+                    "candidate_variant_ids_in_preference_order": [
+                        "legacy_pos_l1",
+                        "two_stream",
+                    ],
+                    "preferred_variant_id": "legacy_pos_l1",
+                },
+                "promotion": {
+                    "challenger_variant_id": "two_stream",
+                    "incumbent_variant_id": "legacy_pos_l1",
+                    "minimum_median_fps_ratio": 1.01,
+                    "minimum_bootstrap_lower_exclusive": 1.0,
+                    "required": False,
+                    "passed": False,
+                    "decision": "retained_incumbent",
+                    "candidate_evaluations": [evaluation],
+                    "paired_comparison": evaluation["paired_comparison"],
+                    "median_fps_ratio": evaluation["criteria"]
+                    ["median_fps_ratio"]["observed"],
+                    "paired_bootstrap_95_ci_lower": evaluation["criteria"]
+                    ["paired_bootstrap_95_ci_lower"]["observed"],
+                    "criteria": evaluation["criteria"],
+                },
+            }
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "slower than two_stream"
+        ):
+            self.module.validate_tacker_profile(profile)
+
+    def test_v2_incumbent_variant_is_not_hard_coded_to_legacy_id(self):
+        profile = _valid_profile(self.module)
+        incumbent = profile["candidates"][2]
+        incumbent["variant_id"] = "pos_l1_pb7000_v2"
+        profile["selected_variant_id"] = incumbent["variant_id"]
+        profile["selection"].update(
+            {
+                "eligible_variant_ids": [
+                    incumbent["variant_id"],
+                    "two_stream",
+                    "serial",
+                ],
+                "global_median_fps_ranking": [
+                    incumbent["variant_id"],
+                    "two_stream",
+                    "serial",
+                ],
+                "experimental_winner_variant_id": incumbent["variant_id"],
+                "deployment_winner_variant_id": incumbent["variant_id"],
+                "incumbent_variant_id": incumbent["variant_id"],
+                "equivalence": {
+                    "fraction": 0.005,
+                    "candidate_variant_ids_in_preference_order": [
+                        incumbent["variant_id"]
+                    ],
+                    "preferred_variant_id": incumbent["variant_id"],
+                },
+                "promotion": {
+                    "challenger_variant_id": incumbent["variant_id"],
+                    "incumbent_variant_id": incumbent["variant_id"],
+                    "minimum_median_fps_ratio": 1.01,
+                    "minimum_bootstrap_lower_exclusive": 1.0,
+                    "required": False,
+                    "passed": True,
+                    "decision": "incumbent_is_global_winner",
+                    "candidate_evaluations": [],
+                },
+            }
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
+
+    def test_invalid_incumbent_does_not_waive_two_stream_fps_floor(self):
+        profile = _valid_profile(self.module)
+        incumbent = profile["candidates"][2]
+        incumbent["correctness"] = {"valid": False}
+        incumbent["performance"] = None
+
+        challenger = deepcopy(incumbent)
+        challenger["variant_id"] = "replacement"
+        challenger["benchmark_candidate_name"] = "replacement"
+        challenger["correctness"] = {
+            "valid": True,
+            "actual_execution_mode": "tacker",
+            "fallback_reason": None,
+            "psnr_drop_db": 0.0,
+            "ssim_drop": 0.0,
+            "lpips_increase": 0.0,
+        }
+        challenger["performance"] = {
+            "trial_count": 10,
+            "round_indices": list(range(10)),
+            "throughput_fps_trials": [89.6] * 10,
+            "median_throughput_fps": 89.6,
+        }
+        challenger["selection_metadata"] = {"abi_complexity": 0.0}
+        profile["candidates"][1]["selection_metadata"] = {
+            "abi_complexity": 1.0
+        }
+        profile["candidates"].append(challenger)
+        profile["selected_variant_id"] = "replacement"
+        profile["selection"] = {
+            "eligible_variant_ids": ["two_stream", "replacement", "serial"],
+            "ineligible_variant_ids": ["legacy_pos_l1"],
+            "global_median_fps_ranking": [
+                "two_stream",
+                "replacement",
+                "serial",
+            ],
+            "experimental_winner_variant_id": "two_stream",
+            "deployment_winner_variant_id": "replacement",
+            "incumbent_variant_id": "legacy_pos_l1",
+            "equivalence": {
+                "fraction": 0.005,
+                "candidate_variant_ids_in_preference_order": [
+                    "replacement",
+                    "two_stream",
+                ],
+                "preferred_variant_id": "replacement",
+            },
+            "promotion": {
+                "challenger_variant_id": "replacement",
+                "incumbent_variant_id": "legacy_pos_l1",
+                "minimum_median_fps_ratio": 1.01,
+                "minimum_bootstrap_lower_exclusive": 1.0,
+                "required": True,
+                "passed": True,
+                "decision": "selected_best_valid_candidate_incumbent_invalid",
+                "candidate_evaluations": [],
+            },
+        }
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "slower than two_stream"
+        ):
+            self.module.validate_tacker_profile(profile)
+
+        # The invalid-incumbent path deliberately waives the 1%/bootstrap
+        # stability gates, but accepts the same preferred replacement once it
+        # clears the physical two-stream fallback's measured throughput.
+        challenger["performance"].update(
+            {
+                "throughput_fps_trials": [90.1] * 10,
+                "median_throughput_fps": 90.1,
+            }
+        )
+        profile["selection"].update(
+            {
+                "eligible_variant_ids": ["replacement", "two_stream", "serial"],
+                "global_median_fps_ranking": [
+                    "replacement",
+                    "two_stream",
+                    "serial",
+                ],
+                "experimental_winner_variant_id": "replacement",
+            }
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
 
 
 class SupportGateContractTest(unittest.TestCase):
@@ -518,7 +1363,7 @@ class SupportGateContractTest(unittest.TestCase):
 
         self.assertEqual(
             module.tacker_support_reason(pc, pipe, candidate, **common),
-            "Tacker profile is disabled",
+            "Tacker profile deployment is disabled",
         )
         self.assertIsNone(
             module.tacker_support_reason(

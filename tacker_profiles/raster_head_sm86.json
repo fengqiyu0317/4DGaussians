@@ -1,8 +1,11 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "workload_key": "flame_steak:14000:111525:1352x1014:sm_86",
+  "selection_objective": "median_throughput_fps",
+  "selected_variant_id": "legacy_pos_l1",
   "manifest": {
+    "workload_key": "flame_steak:14000:111525:1352x1014:sm_86",
     "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
-    "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
     "cuda_arch": "sm_86",
     "compute_capability": [8, 6],
     "gpu_name": "NVIDIA RTX A6000",
@@ -10,31 +13,99 @@
     "iteration": 14000,
     "gaussian_count": 111525,
     "resolution": [1352, 1014],
-    "physical_cta_threads": 384,
-    "raster_thread_range_inclusive": [0, 255],
-    "head_thread_range_inclusive": [256, 383],
-    "raster_named_barrier_id": 1,
-    "head_named_barrier_ids": [],
-    "head_input_dtype": "float16",
-    "head_weight_dtype": "float16",
-    "head_bias_dtype": "float32",
-    "head_accumulation_dtype": "float32",
-    "head_output_dtype": "float32",
     "persistent_blocks": 7000
   },
-  "manifest_sha256": "06bb93db67a72af5b22aa6e82f3049ef00cef6e700c08eeb5b58f644c795ee21",
-  "thresholds": {
-    "raster_slowdown_pct_max": 5.0,
-    "mixed_p50_strictly_less_than_solo_sum": true,
-    "end_to_end_ratio_max": 1.0,
+  "manifest_sha256": "357cb05b00627c7bd99e6b21be2aca86e30bf7321e0aadf0e933b0fb994dd151",
+  "correctness_thresholds": {
     "psnr_drop_db_max": 0.05,
     "ssim_drop_max": 0.0001,
     "lpips_increase_max": 0.0001
   },
-  "admission": {
+  "candidates": [
+    {
+      "variant_id": "serial",
+      "execution_mode": "serial",
+      "correctness": {"valid": false},
+      "performance": null,
+      "diagnostics": null
+    },
+    {
+      "variant_id": "two_stream",
+      "execution_mode": "two_stream",
+      "correctness": {"valid": false},
+      "performance": null,
+      "diagnostics": null
+    },
+    {
+      "variant_id": "legacy_pos_l1",
+      "execution_mode": "tacker",
+      "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128"
+      ],
+      "parallel_nodes": [
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta"
+      ],
+      "cuda_symbol": "tacker_mix_render_head_v1",
+      "abi_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+      "tensor_contract": {
+        "input_dtype": "float16",
+        "weight_dtype": "float16",
+        "bias_dtype": "float32",
+        "accumulation_dtype": "float32",
+        "output_dtype": "float32"
+      },
+      "physical_cta_threads": 384,
+      "raster_threads": 256,
+      "raster_thread_range_inclusive": [0, 255],
+      "raster_named_barrier_id": 1,
+      "backend_subgroups": [
+        {
+          "name": "pos_deform_l1",
+          "thread_range_inclusive": [256, 383],
+          "threads": 128,
+          "named_barrier_ids": []
+        }
+      ],
+      "persistent_blocks": 7000,
+      "tile_shape": [16, 16],
+      "resources": null,
+      "capability_requirements": {
+        "cuda_arch": "sm_86",
+        "compute_capability": [8, 6]
+      },
+      "correctness": {"valid": false},
+      "performance": null,
+      "diagnostics": null
+    }
+  ],
+  "selection": null,
+  "deployment": {
     "enabled": false,
     "valid": false
   },
-  "measurements": null,
-  "note": "Fail-closed qualification template; successful measurements write a separate admitted profile and never enable this file in place."
+  "provenance": {
+    "template": true,
+    "input_sha256": {
+      "mixed_abi": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+      "head_abi": "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac"
+    }
+  },
+  "profile_sha256": "109ac9f4aad7a640c50278f825f79ac066b0a30b1f063ae91a90a2fcb49723aa",
+  "note": "Disabled schema-v2 qualification template. Tuning writes a separate hashed winner profile and never enables this file in place."
 }

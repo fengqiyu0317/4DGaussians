@@ -1,213 +1,252 @@
-# Tacker 资格验证与准入
+# Tacker correctness qualification 与 FPS 选择
 
-仓库中已提交的 `raster_head_sm86.json` 被有意设置为禁用状态。它是一份密封的契约模板，并不能证明 CUDA 路径已经通过质量或性能资格验证。只有在所有必需的 JSON 输入均通过全部门禁后，准入工具才会写入启用的配置文件。
+当前 profile contract 已升级为 schema v2。仓库中的
+`raster_head_sm86.json` 始终是 disabled qualification template；它可以用来验证
+物理 Tacker 路径，但不是部署凭证，也不得被原地启用。新的准入流程只会
+在 Tacker 获得部署资格时写出一份独立、带哈希的 winner profile。
 
-## 固定的首个工作负载
+## 固定工作负载
 
-首个配置文件仅对以下精确契约有效：
+首个 v2 profile 只对下列精确契约有效：
 
-- 场景：`flame_steak`（使用 `dynerf` 加载器）
-- 检查点迭代次数：`14000`
-- 高斯数量：`111525`
-- 图像尺寸：`1352 x 1014`
-- GPU：NVIDIA RTX A6000，计算能力 8.6（`sm_86`）
-- 光栅化器上游提交：`e49506654e8e11ed8a62d22bcb693e943fdecacf`
-- 物理 CTA：384 个线程；Raster 使用 `[0, 255]`，head 使用 `[256, 383]`
-- Raster 命名屏障：ID 为 1，共 256 个参与者；head 不使用命名屏障
-- 选定任务：`pos_deform[1]`，输入/权重使用 FP16，偏置/累加/输出使用 FP32
+- `flame_steak`，iteration 14000，111,525 Gaussians；
+- 1352 × 1014，test 视角 0–49；
+- NVIDIA RTX A6000，compute capability 8.6（`sm_86`）；
+- Rasterizer commit `e49506654e8e11ed8a62d22bcb693e943fdecacf`；
+- 当前物理 ABI 为 384-thread CTA：Raster `[0,255]`，pos-L1 `[256,383]`；
+- Raster named barrier ID 1，256 participants；head 子组不使用 named barrier。
 
-仅在已配置的 `4A6000` 机器上运行 GPU 工作。除非后续实验明确需要更多 GPU，否则本次资格验证只使用一张 A6000。源代码、脚本、配置和小型配置文件存放在 `/home/qyfeng` 下；数据集、检查点、Nsight 文件、渲染输出和报告存放在 `/data/qyfeng` 下。
+`workload_key` 为
+`flame_steak:14000:111525:1352x1014:sm_86`。任何 workload、设备、ABI 或
+profile 哈希不匹配都会 fail closed。
 
-## 一条命令完成远程资格验证
+## Phase 1 决策契约
 
-仓库中已提交的入口脚本会执行完整的失败即拒绝（fail-closed）流程：检查主机是否恰好配备四张 A6000 且仅有一个设备可见、构建基于 CUDA 的 Tacker 运行时并运行 CTest、强制重新构建 simple-knn/head/Raster 的 sm_86 版本、运行 head 和 Raster CUDA 测试、执行 leaf/Raster 测量、进行三种模式的质量验证、采集可比较的端到端计时、执行准入，并进行一次常规的（非资格验证）Tacker 验证：
+Phase 1 把两件事显式拆开：
 
-```bash
-cd /home/qyfeng/4DGaussians
-CUDA_VISIBLE_DEVICES=0 ./scripts/run_tacker_qualification.sh
+1. **Correctness qualification** 决定候选是否有资格参与测量和排名。
+   Tacker 候选必须实际执行 `tacker`、无 fallback，并通过数值、画质、
+   workload、ABI 和 capability 契约。
+2. **Performance selection** 只在 correctness-valid 候选中，按多次完整序列
+   `median(throughput_fps)` 排名。`serial` 和 `two_stream` 也是正式候选，
+   因此“不融合”是合法结果。
+
+`raster_slowdown_pct`、`mixed_p50_ms < solo_raster + solo_head` 和历史的
+Tacker/two-stream 单次 p50 比值现在只是 diagnostics，不再否决候选。画质上限
+仍为 PSNR drop `<= 0.05 dB`、SSIM drop `<= 1e-4`、LPIPS increase
+`<= 1e-4`。
+
+选择器保留两个结果：
+
+- `experimental_winner`：所有有效候选中 median FPS 的精确全局 argmax；
+- `deployment_winner`：考虑 0.5% 等价区间的稳定资源 tie-break，以及替换
+  incumbent 时 `FPS ratio >= 1.01` 且 paired bootstrap 95% CI 下界
+  `> 1.0` 的最终部署结果。部署 Tacker 还不得慢于有效的
+  `two_stream` 和 incumbent。
+
+正式证据的统计协议不可由报告自由降级：bootstrap 固定为
+`confidence=0.95`、10,000 次、seed 0，并以共享的 whole-run round 为
+配对重采样单位。Admission 会重算区间，同时重建 seed 0 的 ABBA 或
+round-robin 调度，并要求每个有效候选在每个 round 恰好出现一次。
+
+如果 incumbent 已 correctness-invalid，它不会被调度或排名，1%/CI 替换门槛
+无法应用；系统会从顶部 0.5% 等价集中选择不慢于 two-stream 的
+稳定优选候选。如果基线获胜，
+准入报告仍会成功写出，但不生成 enabled Tacker profile。
+
+## Profile schema v2
+
+v2 的顶层密封字段包括：
+
+- `workload_key` 和 `selection_objective: "median_throughput_fps"`；
+- `candidates[]` 中的物理模式、variant/ABI/task-graph contract、correctness、
+  whole-run FPS trials、资源 tie-break 数据和 diagnostics；
+- 唯一的 `selected_variant_id`、完整排名、等价集和 promotion 证据；
+- `manifest_sha256`、`profile_sha256` 和输入 provenance。
+
+`profile_sha256` 对选择相关字段做 canonical JSON 哈希；
+`provenance.generated_at_utc` 不参与该哈希，所以同一输入可重现稳定的
+selection hash。`profile_render.py` 会对实际加载的同一份字节快照记录
+file SHA、manifest SHA、selection SHA 和 selected candidate ABI SHA，避免加载后
+再读文件引入 provenance 竞态。交错 benchmark 还会锁定 config、
+`gaussian_renderer` 两条执行路径、Raster Python wrapper 与实际加载的
+`diff_gaussian_rasterization._C` 二进制 SHA，并要求 repository dirty
+状态和子模块状态在所有 trial 间一致。这些源码、config 和已加载
+二进制的哈希在 warmup/计时前采集，后续结果只复用该快照。
+Admission 还会将每个 Tacker trial 的 manifest/selection SHA、selected
+variant、ABI SHA 和 `persistent_blocks` 与该文件 SHA 对应的已加载
+profile 逐项比对；`qualification_mode` 必须与 profile 的 deployment
+状态互补。可空的 fallback/profile 证据也必须显式出现，缺字段不等于
+`null`。
+
+Phase 1 绑定 model/source 路径、iteration、shape 和 Gaussian 数量，但尚未对
+checkpoint 文件内容做 fingerprint；PLY/PTH 内容哈希属于 Phase 4 的完整
+发布验收，不应把本阶段报告解读为已绑定权重字节。
+
+schema v1 仅作 `legacy_pos_l1` 兼容读取。运行时仍会验证它的结构、
+ABI 和画质证据，但不再重新执行旧 Raster QoS/leaf/E2E 性能否决。
+新的准入工具拒绝生成 v1 profile。缺少 Phase 1 correctness/selection
+字段的兼容路径只对仓库中封存的 Phase 0 报告开放，admission 会校验
+其完整 canonical SHA-256；任何修改或从新报告删字段都不能获得
+legacy 默认值。
+
+## 1. 准备 correctness 和 tie-break 输入
+
+FPS 驱动器的 `--correctness-json` 必须精确覆盖本次所有候选：
+
+```json
+{
+  "serial": {"valid": true},
+  "two_stream": {"valid": true},
+  "current_tacker": {"valid": true},
+  "pos_l1_pb80": {"valid": true}
+}
 ```
 
-数据和报告默认写入 `/data/qyfeng/tacker_admission`。唯一生成的小型配置文件默认写入 `/home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.json`。每次运行都会使用全新的扩展对象目录，并将两份 ptxas 资源日志一并保存在数据输出目录下；系统绝不会接受旧对象缓存中的扩展。脚本会拒绝复用该文件，也不会覆盖已禁用的模板。因此，重新运行前必须先保留或移动之前已准入的配置文件，或者选择一个全新的路径，例如 `ADMITTED_PROFILE=/home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.run2.json`。任何阶段都不会把跳过的测试、回退元数据或旧 JSON 当作通过结果。下面列出的各条命令仍可用于问题诊断。
+这份文件是 benchmark 的调度前置过滤：invalid 候选不会被运行，也不会进入
+summary 或排名。最终 admission 仍会从质量报告和候选 correctness 证据中
+重新验证物理模式、fallback 和画质数值，不会只信任这个布尔值。
+对新报告，selector 的完整结果和顶层镜像字段也是必填证据；admission
+会按同一固定参数重算并逐字段比对，不允许删除、改写或只保留 winner。
 
-## 1. 质量验证
+可选的 `--selection-metadata-json` 用于 0.5% 等价集，所有值都是越小越好：
 
-`scripts/validate_tacker_modes.py` 会在每种请求的模式下渲染完全相同且顺序一致的视图批次，并使用同一组真值评估每张图像。它复用仓库中的 PSNR、SSIM 和 LPIPS 实现，并以原子方式写入一份 JSON 报告。该脚本不执行带计时的性能测量。
+```json
+{
+  "pos_l1_pb80": {
+    "abi_complexity": 2,
+    "peak_memory_bytes": 123456,
+    "registers_per_thread": 64,
+    "shared_memory_bytes": 0
+  }
+}
+```
 
-默认模式集合仅为 `serial two_stream`。物理 Tacker 执行绝不会被隐式启用。第一次测量运行使用有意限制的资格验证覆盖方式：必须同时提供 `--qualification-mode` 和显式的 `--qualification-profile`。这条路径会保留对清单、工作负载、模型、ABI、布局和 sm_86 的全部检查，仅跳过“准入测量结果必须已经存在”这一循环依赖要求。
+缺省时 `serial`/`two_stream`/Tacker 的 ABI complexity 分别为 0/1/2；显式资源值
+会被密封到报告和 winner profile。只接受示例中的四个字段；可选值
+应当直接省略，不应写为 `null`。未知字段、非有限数或负数会在任何
+GPU child 启动前 fail closed，避免 producer 生成 admission 无法消费的报告。
+
+额外 Tacker 候选在最终准入时还需要完整的 `--candidate-correctness-json`
+证据，例如：
+
+```json
+{
+  "pos_l1_pb80": {
+    "valid": true,
+    "actual_execution_mode": "tacker",
+    "fallback_reason": null,
+    "psnr_drop_db": 0.01,
+    "ssim_drop": 0.00001,
+    "lpips_increase": 0.00001,
+    "numerics": {"passed": true}
+  }
+}
+```
+
+该文档的候选名必须与 FPS 报告和 `--candidate-profile` 中的名字一致。
+
+## 2. 交错测量 whole-run FPS
+
+`scripts/benchmark_tacker_fps.py` 每轮以 ABBA 或 round-robin 顺序交错启动
+`serial`、`two_stream`、`current_tacker` 和额外候选。关闭的 v2 candidate
+profile 会自动通过显式 qualification mode 执行；`current_tacker` 如果是 v2，
+则必须是已启用的部署 profile。
 
 ```bash
 cd /home/qyfeng/4DGaussians
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=1
 export PYTHONPATH="$PWD/submodules/depth-diff-gaussian-rasterization:$PWD/submodules/simple-knn${PYTHONPATH:+:$PYTHONPATH}"
 
-python scripts/validate_tacker_modes.py \
-  --model_path /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak \
-  --source_path /data/qyfeng/datasets/n3dv/flame_steak \
+python scripts/benchmark_tacker_fps.py \
+  --output /data/qyfeng/tacker_phase1/fps-report.json \
+  --runs-dir /data/qyfeng/tacker_phase1/runs \
+  --run-id a6000-gpu1-phase1 \
+  --current-tacker-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.full_20260831.json \
+  --candidate pos_l1_pb80=/home/qyfeng/4DGaussians/tacker_profiles/pos_l1_pb80.disabled.json \
+  --correctness-json /data/qyfeng/tacker_phase1/correctness.json \
+  --selection-metadata-json /data/qyfeng/tacker_phase1/selection-metadata.json \
+  --model-path /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak \
+  --source-path /data/qyfeng/datasets/n3dv/flame_steak \
   --configs arguments/dynerf/flame_steak.py \
-  --iteration 14000 \
-  --split test \
-  --frames 50 \
-  --modes serial two_stream tacker \
-  --qualification-mode \
-  --qualification-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.json \
-  --output /data/qyfeng/tacker_admission/quality.json
+  --workload-name flame_steak --iteration 14000 --split test \
+  --frames 50 --warmup 10 --trials 10 --schedule abba --seed 0 \
+  --bootstrap-resamples 10000 --timeout-seconds 300 \
+  --expected-image-width 1352 --expected-image-height 1014 \
+  --expected-gaussian-count 111525
 ```
 
-请将示例中的数据集和模型位置替换为远程机器上的实际路径。发生回退即视为验证失败：报告会记录 `actual_mode` 和 `fallback_reason`，且只有物理 Tacker 模式确实运行时，准入工具才会接受质量数据。
+报告和 run directory 均拒绝覆盖；重跑必须使用新路径或新 `run-id`。每个子进程
+必须返回请求/实际模式、无 fallback、精确 workload 和同一 profile 字节哈希，
+否则整份报告 fail closed。正式 admission 会直接复核每个有效候选至少 10 个
+paired whole-run trial，且每个 trial 必须恰好包含 50 帧；不依赖报告中可删除的
+声明性字段放行。
 
-这里有一个有意设置的引导边界。禁用的模板通常不能执行物理路径，但最终准入又需要该路径产生的质量数据。资格验证模式只会将其作为显式的内存中 `profile_override` 接受，绝不会重写或启用模板。报告会标记 `qualification.enabled: true` 和 `admission_claimed: false`。下文生成的最终配置文件是唯一能够代表全部门禁均已通过的产物。准入完成后，去掉资格验证参数，并通过 `--tacker-profile` 传入已准入的配置文件，即可执行常规验证复跑。
+## 3. 生成准入报告和 winner profile
 
-质量报告包含：
+`scripts/benchmark_tacker_admission.py` 不启动 GPU 内核；它校验已存的设备、ABI、
+质量、leaf/Raster diagnostics 和 whole-run FPS 证据。当 benchmark 含额外
+Tacker 候选时，使用可重复的 `--candidate-profile NAME=PATH` 传入候选的
+物理 v2 descriptor；该文件的完整 file SHA 必须与 FPS 报告中的实际运行
+输入一致。
 
-- `workload`、`device`、选定的 `view_indices` 以及精确路径；
-- 每种模式的 `requested_mode`、`actual_mode`、回退原因、平均指标和逐视图指标；
-- 相对于 serial 的有符号差值 `deltas.<mode>.psnr_drop_db`、`ssim_drop` 和 `lpips_increase`；
-- 每个非 serial 模式对应一个门禁，以及一个总的 `passed` 标志。
-
-## 2. 测量 JSON 输入
-
-`scripts/benchmark_tacker_admission.py` 负责验证测量结果；它不会启动内核，也不会声称已在本机完成基准测试。请提供以下相互独立的输入：
-
-首先采集规范的设备、完整 Raster、真实 head 和物理混合测量结果。该分析器会同时验证已编译的能力查询和 ABI 清单，在计时前检查数值等价性，并且只在本次运行通过后写入全部三项准入输入：
-
-```bash
-cd /home/qyfeng/4DGaussians
-export CUDA_VISIBLE_DEVICES=0
-export PYTHONPATH="$PWD/tacker_ext:$PWD/submodules/depth-diff-gaussian-rasterization:$PWD/submodules/simple-knn${PYTHONPATH:+:$PYTHONPATH}"
-
-python profile_tacker_leaves.py \
-  --model_path /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak \
-  --source_path /data/qyfeng/datasets/n3dv/flame_steak \
-  --configs arguments/dynerf/flame_steak.py \
-  --scene-name flame_steak --iteration 14000 \
-  --split test --views 2 --warmup 5 --repetitions 50 \
-  --persistent-blocks 7000 \
-  --device-output /data/qyfeng/tacker_admission/device.json \
-  --raster-output /data/qyfeng/tacker_admission/raster.json \
-  --leaf-output /data/qyfeng/tacker_admission/leaf.json \
-  --report /data/qyfeng/tacker_admission/leaf-profile-report.json
-```
-
-密封的首个工作负载配置文件使用 `persistent_blocks=7000`。对于固定的 A6000 工作负载，这会让每个 1352x1014 Raster 图块拥有自己的物理混合 CTA，同时在同一次启动中分配 13,942 个 positional-head 逻辑块。资格验证必须测量这个精确值；`0`（每个 SM 一个物理块）只是用于诊断的默认值，并非获准使用的调度方案。
-
-可接受的源目录基本名称包括规范名称 `flame_steak`，以及已知的最小化数据集目录 `flame_steak_4dgs_min`；显式的场景、加载器、检查点、高斯数量和分辨率门禁仍为必需项。
-
-请使用相同的数据划分、预热次数和帧数采集可比较的端到端元数据。第一次 Tacker 计时运行使用与质量验证相同的显式资格验证覆盖方式：
+新的 prefiltered FPS 报告始终要求显式传入
+`--candidate-profile current_tacker=/absolute/current-profile.json`。首次从严格
+验证的 enabled/valid schema v1 incumbent 迁移时，它会被 SHA 绑定并映射为
+`legacy_pos_l1`；后续则直接从已部署 v2 winner 提取真实 variant 和
+`persistent_blocks`。因此每一轮 1% promotion 比较都继续绑定实际 incumbent，
+缺失 descriptor 不会默认回退到 legacy。只有没有 Phase 1 correctness 字段的
+封存 Phase 0 报告可使用兼容映射。
 
 ```bash
-cd /home/qyfeng/4DGaussians
-export CUDA_VISIBLE_DEVICES=0
-export PYTHONPATH="$PWD/submodules/depth-diff-gaussian-rasterization:$PWD/submodules/simple-knn${PYTHONPATH:+:$PYTHONPATH}"
-
-python profile_render.py \
-  --model_path /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak \
-  --source_path /data/qyfeng/datasets/n3dv/flame_steak \
-  --configs arguments/dynerf/flame_steak.py \
-  --iteration 14000 --split test --warmup 10 --frames 50 \
-  --execution-mode two_stream --workload-name flame_steak \
-  --metadata /data/qyfeng/tacker_admission/two-stream.json
-
-python profile_render.py \
-  --model_path /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak \
-  --source_path /data/qyfeng/datasets/n3dv/flame_steak \
-  --configs arguments/dynerf/flame_steak.py \
-  --iteration 14000 --split test --warmup 10 --frames 50 \
-  --execution-mode tacker --workload-name flame_steak \
-  --qualification-mode \
-  --qualification-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.json \
-  --metadata /data/qyfeng/tacker_admission/tacker.json
-```
-
-准入完成后，将第二条命令中的两个资格验证参数替换为 `--tacker-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.json`，即可执行常规验证。Tacker 回退结果绝不会被接受为 Tacker 测量结果。
-
-1. 只有成功的 `4dgaussians_tacker_device` schema-v1 文档才会被接受为 `device.json`。除了精确的工作负载和 A6000/sm_86 标识外，它还必须包含已编译的 Raster 与 head 能力字典，以及 `profile_tacker_leaves.py` 输出的三个带版本 CUDA 符号。有意拒绝仅手工填写设备名称的文档。
-
-2. `raster.json` 必须是成功的 `4dgaussians_tacker_raster_profile` schema-v1 文档，其中包含 `solo_raster_p50_ms`、`mixed_raster_p50_ms`、通过检查的数值证据，以及 `measurement_config.persistent_blocks`。
-
-3. `leaf.json` 必须是成功的 `4dgaussians_tacker_leaf_profile` schema-v1 文档，其中包含 `mixed_p50_ms`、`solo_raster_p50_ms`、`solo_head_p50_ms`、同一份通过检查的数值证据，以及相同的 persistent-block 配置。`raster.json` 与 `leaf.json` 中的 `solo_raster_p50_ms` 必须是完全相同的规范测量值。设备、Raster 和 leaf 文档还必须在数据划分、解析后的模型/源路径，以及结构有效且有序的视图对方面保持一致；它们的模型/源/数据划分来源信息必须与质量和端到端运行相匹配。
-
-4. 分别提供一份 `two_stream` 和一份 `tacker` 的端到端 JSON。推荐使用的聚合字段为 `p50_frame_ms`：
-
-   ```json
-   {
-     "schema_version": 1,
-     "kind": "4dgaussians_tacker_render_profile",
-     "passed": true,
-     "workload_name": "flame_steak",
-     "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
-     "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
-     "iteration": 14000,
-     "split": "test",
-     "warmup_frames": 10,
-     "profile_frames": 4,
-     "view_indices": [0, 1, 2, 3],
-     "image_width": 1352,
-     "image_height": 1014,
-     "gaussian_count": 111525,
-     "gpu_name": "NVIDIA RTX A6000",
-     "actual_execution_mode": "two_stream",
-     "p50_frame_ms": 1.0,
-     "timing_method": "perf_counter_with_cuda_synchronize",
-     "frame_timing_method": "cuda_event_consumer_completion_intervals",
-     "io_in_timed_region": false
-   }
-   ```
-
-   `tacker` 文档还必须将 `persistent_blocks` 和 `profile_manifest_sha256` 绑定到运行时实际使用的精确模板。如果两种模式都使用同一统计量，也接受包含 `mean_frame_ms` 的 `profile_render.py` 元数据。两份计时文档必须在数据划分、有序视图列表、帧数、模型和源方面彼此一致，并与 `quality.json` 一致；两者的预热次数也必须相同。绝不能将一种模式的平均值与另一种模式的 p50 进行比较。
-
-5. 第 1 步生成的 `quality.json`。该工具要求它是成功的 schema-v1 验证文档，要求 `modes.tacker.actual_mode == "tacker"`，并读取 `deltas.tacker.{psnr_drop_db,ssim_drop,lpips_increase}`。
-
-混合 Raster+head ABI、独立 head ABI 和禁用的配置模板默认使用仓库中的路径。可以通过 `--mixed-abi-json`、`--head-abi-json` 和 `--template-profile` 显式覆盖。
-
-## 3. 失败即拒绝的准入流程
-
-在一张 A6000 上采集真实测量结果后，运行：
-
-```bash
-cd /home/qyfeng/4DGaussians
-
 python scripts/benchmark_tacker_admission.py \
-  --device-json /data/qyfeng/tacker_admission/device.json \
-  --quality-json /data/qyfeng/tacker_admission/quality.json \
-  --raster-json /data/qyfeng/tacker_admission/raster.json \
-  --leaf-json /data/qyfeng/tacker_admission/leaf.json \
-  --two-stream-json /data/qyfeng/tacker_admission/two-stream.json \
-  --tacker-json /data/qyfeng/tacker_admission/tacker.json \
-  --report /data/qyfeng/tacker_admission/admission-report.json \
-  --enabled-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.json
+  --device-json /data/qyfeng/tacker_phase1/device.json \
+  --quality-json /data/qyfeng/tacker_phase1/quality.json \
+  --raster-json /data/qyfeng/tacker_phase1/raster.json \
+  --leaf-json /data/qyfeng/tacker_phase1/leaf.json \
+  --fps-benchmark-json /data/qyfeng/tacker_phase1/fps-report.json \
+  --candidate-profile current_tacker=/home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.full_20260831.json \
+  --candidate-profile pos_l1_pb80=/home/qyfeng/4DGaussians/tacker_profiles/pos_l1_pb80.disabled.json \
+  --candidate-correctness-json /data/qyfeng/tacker_phase1/candidate-correctness.json \
+  --report /data/qyfeng/tacker_phase1/admission-report.json \
+  --enabled-profile /home/qyfeng/4DGaussians/tacker_profiles/raster_head_sm86.admitted.phase1.json
 ```
 
-所有门禁均执行精确检查，并遵循失败即拒绝原则：
+`device.json`、`raster.json`、`leaf.json` 仍可由 `profile_tacker_leaves.py` 采集；
+Raster slowdown 和 leaf-sum 结果会原样保存在 diagnostics，但无论数值多高都不会
+转换为性能否决。结构、数值证据或 provenance 无效时，对应的物理
+Tacker 候选会被标记为 correctness-invalid。
 
-- Raster LC 减速幅度：最多 5%；
-- 完整混合 leaf：必须严格快于 `solo_raster_p50_ms + solo_head_p50_ms`；
-- Tacker 端到端耗时 / two-stream 端到端耗时：最多 1.0；
-- 平均 PSNR 降幅：最多 0.05 dB；
-- 平均 SSIM 降幅：最多 `1e-4`；
-- 平均 LPIPS 增幅：最多 `1e-4`；
-- A6000/sm_86、工作负载、迭代次数、分辨率、高斯数量、光栅化器提交、ABI v1 符号、CTA 布局、数据类型和命名屏障必须精确匹配；
-- 规范分析器输出的 schema/kind/数值证据必须成功；
-- 两次端到端测量的模型、源、数据划分、有序视图列表、帧数、预热次数和计时方法必须完全相同；
-- `persistent_blocks` 和配置清单哈希必须与测量期间运行时使用的模板完全一致。
+输出使用同目录临时文件、finite canonical JSON、`fsync` 和 `os.replace`。
+报告/profile 路径不得相同，也不得覆盖 disabled template。建议每次运行使用新的
+winner 文件名，以便保留完整回滚记录。
 
-字段缺失、将布尔值用作数值、计时为零或负数、`NaN` 以及无穷值都会导致失败。报告始终以原子方式替换。只有当每项输入契约和门禁都通过时，启用的配置文件才会以原子方式写入；失败时不会创建或修改目标配置文件。请使用新的已准入配置文件名，避免把旧的已准入文件误认为失败复跑的结果。
+## Phase 0 封存基线
 
-启用后的配置文件使用运行时 schema：
+Phase 0 于 2026-09-10 在独占 RTX A6000 GPU 1 上完成。三种模式以 ABBA、
+seed 0 各执行 10 个 50-frame trial，warmup 10；30/30 次均通过物理模式、
+fallback、workload、计时边界、profile 哈希和 provenance 校验。
 
-- `schema_version: 1`；
-- `manifest`，以及基于规范化排序并最小化后的 JSON 计算出的 `manifest_sha256`；
-- 锁定的 `thresholds`；
-- `admission: {"enabled": true, "valid": true}`；
-- 九项有限值运行时 `measurements`；
-- `provenance`，其中包含输入文档哈希和计时统计量。
+| 排名 | 模式 | median FPS | median total | FPS 范围 |
+|---:|---|---:|---:|---:|
+| 1 | current Tacker | 86.979719 | 574.846646 ms | 86.597897–87.099374 |
+| 2 | two-stream | 86.254250 | 579.681585 ms | 85.856130–86.436900 |
+| 3 | serial | 82.423385 | 606.623962 ms | 81.264402–82.890268 |
 
-独立报告会包含每项门禁的测量值、限制值、比较方式、通过/失败结果、派生比率、输入哈希、错误信息，以及是否已写入启用的配置文件。
+current Tacker / two-stream ratio-of-medians 为 `1.0084108268`，10,000 次配对
+bootstrap 95% CI 为 `[1.0061090994, 1.0097120318]`。聚合报告、30 份原始
+JSON、哈希和复现说明位于
+`tacker_profiles/baselines/a6000_flame_steak_phase0_20260910/`。
 
-## CPU 契约检查
-
-准入单元测试无需 CUDA 或 PyTorch：
+## CPU contract 回归
 
 ```bash
-cd /home/qyfeng/4DGaussians
-PYTHONDONTWRITEBYTECODE=1 python -m unittest tests.test_tacker_admission -v
+PYTHONDONTWRITEBYTECODE=1 python -m unittest \
+  tests.test_tacker_pipeline \
+  tests.test_profile_render_modes \
+  tests.test_benchmark_tacker_fps \
+  tests.test_tacker_admission -v
 ```
+
+`scripts/run_tacker_qualification.sh` 仍是 schema-v1 历史编排入口，不代表新的
+Phase 1 准入契约；将它串接到多候选 correctness/FPS 流程属于 Phase 4。
