@@ -14,7 +14,7 @@ os.environ.setdefault("TORCH_CUDA_ARCH_LIST", "8.6")
 
 setup(
     name="tacker-4dgs-head",
-    version="0.1.0",
+    version="0.2.0",
     description="Functional 4DGaussians deformation-head kernels for Tacker",
     packages=find_packages(),
     ext_modules=[
@@ -23,6 +23,7 @@ setup(
             sources=[
                 str(ROOT / "csrc" / "bindings.cpp"),
                 str(ROOT / "csrc" / "head_linear.cu"),
+                str(ROOT / "csrc" / "head_linear_v2.cu"),
             ],
             include_dirs=[str(ROOT / "include")],
             extra_compile_args={

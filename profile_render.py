@@ -822,6 +822,11 @@ def main(args, dataset, hyperparam, pipeline):
             )
         execution_state = {field: trials[0][field] for field in execution_fields}
         actual_execution_mode = execution_state["actual_execution_mode"]
+        pipeline_execution_counts = (
+            pipeline_renderer.last_execution_counts
+            if actual_execution_mode == "tacker"
+            else None
+        )
         two_stream_fallback_reason = execution_state[
             "two_stream_fallback_reason"
         ]
@@ -878,6 +883,7 @@ def main(args, dataset, hyperparam, pipeline):
             "view_indices": view_indices,
             "execution_mode": args.execution_mode,
             "actual_execution_mode": actual_execution_mode,
+            "pipeline_execution_counts": pipeline_execution_counts,
             "two_stream_fallback_reason": two_stream_fallback_reason,
             "tacker_fallback_reason": tacker_fallback_reason,
             "qualification_mode_requested": bool(args.qualification_mode),

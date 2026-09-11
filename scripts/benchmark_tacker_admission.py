@@ -74,9 +74,46 @@ EXPECTED_PAIR_KEY = (
 EXPECTED_MIXED_SYMBOL = "tacker_mix_render_head_v1"
 EXPECTED_HEAD_SOLO_SYMBOL = "tacker_head_linear_solo_v1"
 EXPECTED_HEAD_GPTB_SYMBOL = "tacker_head_linear_gptb_v1"
+EXPECTED_HEAD_MULTI_SOLO_SYMBOL = "tacker_head_linear_multi_solo_v2"
+EXPECTED_HEAD_MULTI_GPTB_SYMBOL = "tacker_head_linear_multi_gptb_v2"
 EXPECTED_MIXED_ABI_SHA256 = (
     "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426"
 )
+EXPECTED_HEAD_ABI_SHA256 = (
+    "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac"
+)
+EXPECTED_MIXED_MULTI_ABI_SHA256 = (
+    "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056"
+)
+EXPECTED_HEAD_MULTI_ABI_SHA256 = (
+    "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f"
+)
+# The public ABI constants above are raw-file digests used by profile and run
+# provenance. Admission receives parsed JSON objects, so these canonical JSON
+# digests independently seal every semantic manifest field (including nested
+# layouts, tensor contracts, limits and failure/lifetime contracts).
+EXPECTED_MIXED_ABI_CANONICAL_SHA256 = (
+    "1e8e5ce14a5acdb6d989388c8b3b1ad54bf668a0882f37b7631fd78fd59d5705"
+)
+EXPECTED_HEAD_ABI_CANONICAL_SHA256 = (
+    "22704180f6759444a2397467d68f3db52d87bd4dd35bbb3c9a0eec35afe6b450"
+)
+EXPECTED_MIXED_MULTI_ABI_CANONICAL_SHA256 = (
+    "ccb1945373e5de542cc8489e9075967bc36ee242dc3b982bb37030c22e0ba4d7"
+)
+EXPECTED_HEAD_MULTI_ABI_CANONICAL_SHA256 = (
+    "650867ba75e0eee4f74ad1c39d9eb6a3c709a9a5ff1729ded40070e174d606bb"
+)
+EXPECTED_MIXED_MULTI_SYMBOL = "tacker_mix_render_heads_v2"
+FIRST_LINEAR_PARTITION_KIND = "first_linear_heads"
+HEAD_ORDER = ("pos", "scales", "rotations", "opacity", "shs")
+HEAD_MODULES = {
+    "pos": "pos_deform",
+    "scales": "scales_deform",
+    "rotations": "rotations_deform",
+    "opacity": "opacity_deform",
+    "shs": "shs_deform",
+}
 
 EXPECTED_RASTER_CAPABILITIES = {
     "stream_aware": True,
@@ -161,6 +198,19 @@ def _canonical_json(value):
 
 def manifest_sha256(manifest):
     return hashlib.sha256(_canonical_json(manifest)).hexdigest()
+
+
+def _require_sealed_manifest(manifest, expected_sha256, label):
+    try:
+        actual_sha256 = manifest_sha256(manifest)
+    except (TypeError, ValueError) as error:
+        raise AdmissionInputError(
+            "{} is not canonical JSON: {}".format(label, error)
+        )
+    if actual_sha256 != expected_sha256:
+        raise AdmissionInputError(
+            "{} semantic digest does not match the sealed manifest".format(label)
+        )
 
 
 def profile_sha256(profile):
@@ -476,6 +526,80 @@ def _optional_device_name(document, expected_name, label):
 
 def _validate_mixed_abi(abi):
     abi = _mapping(abi, "mixed ABI")
+    if abi.get("abi_version") == 2:
+        required = {
+            "rasterizer_upstream_commit": EXPECTED_RASTERIZER_COMMIT,
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "global_kernel_symbol": EXPECTED_MIXED_MULTI_SYMBOL,
+            "python_binding": "rasterize_gaussians_with_heads",
+            "python_method": "GaussianRasterizer.forward_with_heads",
+            "capability_query": "tacker_capabilities",
+        }
+        for key, expected in required.items():
+            if abi.get(key) != expected:
+                raise AdmissionInputError(
+                    "mixed ABI v2 {} must be {!r}".format(key, expected)
+                )
+        dependency = _mapping(
+            abi.get("tacker_ext_dependency"),
+            "mixed ABI v2 tacker_ext_dependency",
+        )
+        if dependency.get("abi_version") != 2 or dependency.get(
+            "manifest_sha256"
+        ) != EXPECTED_HEAD_MULTI_ABI_SHA256:
+            raise AdmissionInputError(
+                "mixed ABI v2 must lock the exact head ABI v2 manifest"
+            )
+        legacy = _mapping(abi.get("legacy_abi"), "mixed ABI v2 legacy_abi")
+        if (
+            legacy.get("preserved") is not True
+            or legacy.get("global_kernel_symbol") != EXPECTED_MIXED_SYMBOL
+        ):
+            raise AdmissionInputError("mixed ABI v2 must preserve ABI v1")
+        launch = _mapping(
+            abi.get("physical_launch"), "mixed ABI v2 physical_launch"
+        )
+        if launch.get("thread_counts_by_worker_groups") != {
+            "1": 384,
+            "2": 512,
+            "3": 640,
+            "4": 768,
+            "5": 896,
+        }:
+            raise AdmissionInputError(
+                "mixed ABI v2 physical thread-count table changed"
+            )
+        subgroups = _mapping(abi.get("subgroups"), "mixed ABI v2 subgroups")
+        raster = _mapping(subgroups.get("raster"), "mixed ABI v2 raster subgroup")
+        workers = _mapping(
+            subgroups.get("head_workers"), "mixed ABI v2 head workers"
+        )
+        if (
+            raster.get("thread_range") != [0, 255]
+            or raster.get("threads") != 256
+            or raster.get("named_barrier_id") != 1
+            or raster.get("named_barrier_participants") != 256
+        ):
+            raise AdmissionInputError("mixed ABI v2 Raster subgroup changed")
+        if (
+            workers.get("threads_per_group") != 128
+            or workers.get("descriptor_named_barrier_id") != 2
+            or workers.get("adapter_named_barrier_ids") != []
+            or workers.get("cta_wide_barriers") is not False
+        ):
+            raise AdmissionInputError("mixed ABI v2 head subgroup changed")
+        resource_query = _mapping(
+            abi.get("resource_query"), "mixed ABI v2 resource_query"
+        )
+        if resource_query.get("runtime_normalized") != "tacker_variant_resources":
+            raise AdmissionInputError("mixed ABI v2 resource query changed")
+        _require_sealed_manifest(
+            abi,
+            EXPECTED_MIXED_MULTI_ABI_CANONICAL_SHA256,
+            "mixed ABI v2",
+        )
+        return frozenset((1, 2))
+
     required = {
         "abi_version": 1,
         "rasterizer_upstream_commit": EXPECTED_RASTERIZER_COMMIT,
@@ -522,10 +646,67 @@ def _validate_mixed_abi(abi):
             raise AdmissionInputError(
                 "mixed ABI head.{} must be {!r}".format(key, expected)
             )
+    _require_sealed_manifest(
+        abi, EXPECTED_MIXED_ABI_CANONICAL_SHA256, "mixed ABI v1"
+    )
+    return frozenset((1,))
 
 
 def _validate_head_abi(abi):
     abi = _mapping(abi, "head ABI")
+    if abi.get("abi_version") == 2:
+        if abi.get("cuda_arch") != EXPECTED_CUDA_ARCH:
+            raise AdmissionInputError("head ABI v2 cuda_arch must be sm_86")
+        if abi.get("capability_query") != "tacker_capabilities_v2":
+            raise AdmissionInputError(
+                "head ABI v2 capability_query must be tacker_capabilities_v2"
+            )
+        if abi.get("resource_query") != "tacker_resources_v2":
+            raise AdmissionInputError(
+                "head ABI v2 resource_query must be tacker_resources_v2"
+            )
+        legacy = _mapping(abi.get("legacy_abi"), "head ABI v2 legacy_abi")
+        if legacy.get("preserved_symbols") != [
+            EXPECTED_HEAD_SOLO_SYMBOL,
+            EXPECTED_HEAD_GPTB_SYMBOL,
+        ]:
+            raise AdmissionInputError("head ABI v2 must preserve ABI v1 symbols")
+        task = _mapping(
+            abi.get("head_linear_task_v2"), "head ABI v2 task descriptor"
+        )
+        if task.get("size_bytes") != 40 or task.get("alignment_bytes") != 8:
+            raise AdmissionInputError("head ABI v2 task layout changed")
+        multi = _mapping(
+            abi.get("multi_first_linear"), "head ABI v2 multi adapter"
+        )
+        adapter = _mapping(
+            multi.get("device_adapter"), "head ABI v2 device adapter"
+        )
+        if (
+            adapter.get("symbol")
+            != "tacker_4dgs::head_linear_multi_gptb_device"
+            or adapter.get("named_barrier_ids") != []
+            or adapter.get("cta_wide_barriers") is not False
+        ):
+            raise AdmissionInputError("head ABI v2 multi adapter changed")
+        symbols = _mapping(
+            abi.get("global_kernel_symbols"), "head ABI v2 global symbols"
+        )
+        if _mapping(symbols.get("multi_solo"), "head ABI v2 solo symbol").get(
+            "symbol"
+        ) != EXPECTED_HEAD_MULTI_SOLO_SYMBOL:
+            raise AdmissionInputError("head ABI v2 solo symbol changed")
+        if _mapping(symbols.get("multi_gptb"), "head ABI v2 GPTB symbol").get(
+            "symbol"
+        ) != EXPECTED_HEAD_MULTI_GPTB_SYMBOL:
+            raise AdmissionInputError("head ABI v2 GPTB symbol changed")
+        _require_sealed_manifest(
+            abi,
+            EXPECTED_HEAD_MULTI_ABI_CANONICAL_SHA256,
+            "head ABI v2",
+        )
+        return frozenset((1, 2))
+
     if abi.get("abi_version") != 1:
         raise AdmissionInputError("head ABI version must be 1")
     if abi.get("cuda_arch") != EXPECTED_CUDA_ARCH:
@@ -558,6 +739,37 @@ def _validate_head_abi(abi):
         if tensor.get("dtype") != dtype:
             raise AdmissionInputError(
                 "head ABI {} dtype must be {}".format(name, dtype)
+            )
+    _require_sealed_manifest(
+        abi, EXPECTED_HEAD_ABI_CANONICAL_SHA256, "head ABI v1"
+    )
+    return frozenset((1,))
+
+
+def _validate_candidate_abi_evidence(
+    candidates, mixed_abi_versions, head_abi_versions
+):
+    """Require ABI inputs to cover every selectable physical candidate."""
+
+    for candidate in candidates:
+        if (
+            candidate.get("execution_mode") != "tacker"
+            or not candidate.get("correctness", {}).get("valid", False)
+            or candidate.get("performance") is None
+        ):
+            continue
+        required_version = 2 if candidate.get("partition") is not None else 1
+        if required_version not in mixed_abi_versions:
+            raise AdmissionInputError(
+                "candidate {} requires mixed ABI v{} evidence".format(
+                    candidate.get("variant_id"), required_version
+                )
+            )
+        if required_version not in head_abi_versions:
+            raise AdmissionInputError(
+                "candidate {} requires head ABI v{} evidence".format(
+                    candidate.get("variant_id"), required_version
+                )
             )
 
 
@@ -2531,6 +2743,180 @@ def _validate_pos_l1_descriptor(candidate, label):
     return candidate
 
 
+def _first_linear_node(head_name):
+    return "deformation.{}[1].linear_128x128".format(HEAD_MODULES[head_name])
+
+
+def _full_head_node(head_name):
+    return "deformation.{}".format(HEAD_MODULES[head_name])
+
+
+def _suffix_head_nodes(head_name):
+    module_name = HEAD_MODULES[head_name]
+    return [
+        "deformation.{}[2]".format(module_name),
+        "deformation.{}[3]".format(module_name),
+    ]
+
+
+def _validate_first_linear_descriptor(candidate, label):
+    candidate = _mapping(candidate, label)
+    variant_id = candidate.get("variant_id")
+    if not isinstance(variant_id, str) or not variant_id.strip():
+        raise AdmissionInputError(
+            "{}.variant_id must be a non-empty string".format(label)
+        )
+    partition = _mapping(candidate.get("partition"), "{}.partition".format(label))
+    if partition.get("kind") != FIRST_LINEAR_PARTITION_KIND:
+        raise AdmissionInputError(
+            "{}.partition.kind must be {!r}".format(
+                label, FIRST_LINEAR_PARTITION_KIND
+            )
+        )
+    heads = partition.get("selected_heads")
+    if not isinstance(heads, list) or not heads:
+        raise AdmissionInputError(
+            "{}.partition.selected_heads must be non-empty".format(label)
+        )
+    if any(name not in HEAD_ORDER for name in heads) or len(set(heads)) != len(heads):
+        raise AdmissionInputError(
+            "{}.partition.selected_heads are invalid".format(label)
+        )
+    canonical_heads = [name for name in HEAD_ORDER if name in heads]
+    if heads != canonical_heads:
+        raise AdmissionInputError(
+            "{}.partition.selected_heads must use canonical order".format(label)
+        )
+    worker_groups = partition.get("worker_groups")
+    if (
+        type(worker_groups) is not int
+        or worker_groups < 1
+        or worker_groups > len(heads)
+    ):
+        raise AdmissionInputError(
+            "{}.partition.worker_groups must be in [1, selected head count]"
+            .format(label)
+        )
+    delta_outputs = {
+        "pos": "deformation.pos_delta",
+        "scales": "deformation.scales_delta",
+        "rotations": "deformation.rotations_delta",
+        "opacity": "deformation.opacity_delta",
+        "shs": "deformation.shs_delta",
+    }
+    subgroups = []
+    for worker_index in range(worker_groups):
+        begin = 256 + 128 * worker_index
+        subgroups.append(
+            {
+                "name": "head_worker_{}".format(worker_index),
+                "thread_range_inclusive": [begin, begin + 127],
+                "threads": 128,
+                "named_barrier_ids": [2],
+            }
+        )
+    expected = {
+        "execution_mode": "tacker",
+        "cuda_symbol": EXPECTED_MIXED_MULTI_SYMBOL,
+        "abi_manifest_sha256": EXPECTED_MIXED_MULTI_ABI_SHA256,
+        "head_abi_manifest_sha256": EXPECTED_HEAD_MULTI_ABI_SHA256,
+        "physical_cta_threads": 256 + 128 * worker_groups,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "tile_shape": [16, 16],
+        "fused_nodes": ["raster.render_leaf"]
+        + [_first_linear_node(name) for name in heads],
+        "parallel_nodes": [
+            _full_head_node(name) for name in HEAD_ORDER if name not in heads
+        ],
+        "suffix_nodes": sum((_suffix_head_nodes(name) for name in heads), [])
+        + ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_first_linear_node(name) for name in heads],
+        "required_outputs": [
+            "raster.color",
+            "raster.depth",
+            "raster.radii",
+        ]
+        + [delta_outputs[name] for name in HEAD_ORDER],
+        "stream_lifetimes": [
+            "head_inputs:deform_prefix->mixed_done",
+            "head_parameters:cache_ready->mixed_done",
+            "head_outputs:mixed_done->suffix_ready",
+            "render_state:suffix_ready->raster_done",
+        ],
+        "backend_named_barriers": [
+            {
+                "id": 2,
+                "participants": 128 * worker_groups,
+                "purpose": "head_descriptor_broadcast",
+            }
+        ],
+        "backend_subgroups": subgroups,
+        "tensor_contract": {
+            "input_dtype": "float16",
+            "weight_dtype": "float16",
+            "bias_dtype": "float32",
+            "accumulation_dtype": "float32",
+            "output_dtype": "float32",
+            "features": 128,
+            "max_heads": 5,
+        },
+        "capability_requirements": {
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "compute_capability": EXPECTED_COMPUTE_CAPABILITY,
+            "mixed_render_heads_abi": 2,
+        },
+    }
+    for key, expected_value in expected.items():
+        if candidate.get(key) != expected_value:
+            raise AdmissionInputError(
+                "{}.{} must be {!r}".format(label, key, expected_value)
+            )
+    persistent_blocks = candidate.get("persistent_blocks")
+    if type(persistent_blocks) is not int or persistent_blocks < 0:
+        raise AdmissionInputError(
+            "{}.persistent_blocks must be an int >= 0".format(label)
+        )
+    resources = candidate.get("resources")
+    if not isinstance(resources, dict):
+        raise AdmissionInputError(
+            "{}.resources must contain measured v2 kernel resources".format(label)
+        )
+    for name, value in resources.items():
+        if value is not None and (
+            not _is_finite_number(value) or float(value) < 0.0
+        ):
+            raise AdmissionInputError(
+                "{}.resources.{} must be null or a finite non-negative "
+                "number".format(label, name)
+            )
+    for name in (
+        "registers_per_thread",
+        "static_shared_memory_bytes",
+        "max_threads_per_block",
+        "active_blocks_per_sm",
+    ):
+        value = resources.get(name)
+        if not _is_finite_number(value) or float(value) < 0.0:
+            raise AdmissionInputError(
+                "{}.resources.{} must be finite and non-negative".format(
+                    label, name
+                )
+            )
+    if int(resources["active_blocks_per_sm"]) < 1:
+        raise AdmissionInputError(
+            "{}.resources.active_blocks_per_sm must be >= 1".format(label)
+        )
+    return candidate
+
+
+def _validate_tacker_descriptor(candidate, label):
+    if isinstance(candidate, dict) and candidate.get("partition") is not None:
+        return _validate_first_linear_descriptor(candidate, label)
+    return _validate_pos_l1_descriptor(candidate, label)
+
+
 def _validate_tacker_run_profile_identity(
     benchmark_candidate, descriptor, runs
 ):
@@ -2586,7 +2972,7 @@ def _validate_tacker_run_profile_identity(
             raise AdmissionInputError(
                 "{}.profile_sha256 must be a lowercase SHA-256".format(label)
             )
-        # _validate_pos_l1_descriptor pins this to the canonical mixed ABI
+        # _validate_tacker_descriptor pins this to the candidate's canonical mixed ABI
         # manifest digest instead of trusting a hash repeated by the run.
         candidate_abi_hash = descriptor["abi_manifest_sha256"]
 
@@ -3003,7 +3389,7 @@ def _validate_source_profile_runtime_contract(profile, label):
                 )
             )
         if mode == "tacker":
-            _validate_pos_l1_descriptor(
+            _validate_tacker_descriptor(
                 candidate, "{} candidate {}".format(label, variant_id)
             )
         candidates.append(candidate)
@@ -3614,8 +4000,8 @@ def evaluate_admission_v2(inputs):
         device_contract = _leaf_workload_contract(
             inputs["device"], "device input"
         )
-        _validate_mixed_abi(inputs["mixed_abi"])
-        _validate_head_abi(inputs["head_abi"])
+        mixed_abi_versions = _validate_mixed_abi(inputs["mixed_abi"])
+        head_abi_versions = _validate_head_abi(inputs["head_abi"])
         manifest, legacy_descriptor, correctness_thresholds = _v2_template_parts(
             inputs["template"]
         )
@@ -3667,7 +4053,7 @@ def evaluate_admission_v2(inputs):
     elif isinstance(current_descriptor_value, dict):
         current_descriptor = dict(current_descriptor_value)
         try:
-            _validate_pos_l1_descriptor(
+            _validate_tacker_descriptor(
                 current_descriptor, "current_tacker descriptor"
             )
         except AdmissionInputError as error:
@@ -3783,7 +4169,7 @@ def evaluate_admission_v2(inputs):
                 descriptor = dict(raw_descriptor)
         if mode == "tacker" and descriptor is not None:
             try:
-                _validate_pos_l1_descriptor(
+                _validate_tacker_descriptor(
                     descriptor, "candidate {} descriptor".format(name)
                 )
             except AdmissionInputError as error:
@@ -3889,6 +4275,15 @@ def evaluate_admission_v2(inputs):
             report["errors"].append(str(error))
             return report, None
         candidates.append(candidate)
+
+    try:
+        _validate_candidate_abi_evidence(
+            candidates, mixed_abi_versions, head_abi_versions
+        )
+    except AdmissionInputError as error:
+        report["candidates"] = candidates
+        report["errors"].append(str(error))
+        return report, None
 
     # The deployed runtime always needs both physical fallback baselines.  Do
     # not rely solely on the benchmark's prefilter declaration: independently
@@ -4258,6 +4653,14 @@ def evaluate_admission_v2(inputs):
         "enabled": deployment_winner["execution_mode"] == "tacker",
         "valid": deployment_winner["execution_mode"] == "tacker",
     }
+    selected_abi_candidate = (
+        deployment_winner
+        if deployment_winner["execution_mode"] == "tacker"
+        else incumbent
+    )
+    selected_abi_version = (
+        2 if selected_abi_candidate.get("partition") is not None else 1
+    )
     provenance = {
         "generated_at_utc": report["generated_at_utc"],
         "input_sha256": dict(digests),
@@ -4266,12 +4669,22 @@ def evaluate_admission_v2(inputs):
         "fps_benchmark_stable_provenance": benchmark["stable_provenance"],
         "validated_abi": {
             "rasterizer_commit": EXPECTED_RASTERIZER_COMMIT,
-            "mixed_abi_version": 1,
-            "mixed_abi_manifest_sha256": EXPECTED_MIXED_ABI_SHA256,
-            "mixed_kernel_symbol": EXPECTED_MIXED_SYMBOL,
-            "head_abi_version": 1,
-            "head_solo_kernel_symbol": EXPECTED_HEAD_SOLO_SYMBOL,
-            "head_gptb_kernel_symbol": EXPECTED_HEAD_GPTB_SYMBOL,
+            "mixed_abi_version": selected_abi_version,
+            "mixed_abi_manifest_sha256": selected_abi_candidate[
+                "abi_manifest_sha256"
+            ],
+            "mixed_kernel_symbol": selected_abi_candidate["cuda_symbol"],
+            "head_abi_version": selected_abi_version,
+            "head_solo_kernel_symbol": (
+                EXPECTED_HEAD_MULTI_SOLO_SYMBOL
+                if selected_abi_version == 2
+                else EXPECTED_HEAD_SOLO_SYMBOL
+            ),
+            "head_gptb_kernel_symbol": (
+                EXPECTED_HEAD_MULTI_GPTB_SYMBOL
+                if selected_abi_version == 2
+                else EXPECTED_HEAD_GPTB_SYMBOL
+            ),
         },
     }
     common = {
@@ -4618,7 +5031,7 @@ def _descriptor_from_candidate_profile(
     descriptor.pop("performance", None)
     descriptor.pop("diagnostics", None)
     descriptor.pop("selection_metadata", None)
-    _validate_pos_l1_descriptor(
+    _validate_tacker_descriptor(
         descriptor, "candidate profile {} descriptor".format(candidate_name)
     )
     descriptor.update(

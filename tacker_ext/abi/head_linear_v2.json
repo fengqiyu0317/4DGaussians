@@ -1,0 +1,241 @@
+{
+  "abi_version": 2,
+  "name": "4dgs_head_bundle_fp16_fp32",
+  "cuda_arch": "sm_86",
+  "pointer_size_bytes": 8,
+  "legacy_abi": {
+    "manifest": "abi/head_linear_v1.json",
+    "preserved_symbols": [
+      "tacker_head_linear_solo_v1",
+      "tacker_head_linear_gptb_v1"
+    ],
+    "capability_query": "tacker_capabilities"
+  },
+  "capability_query": "tacker_capabilities_v2",
+  "resource_query": "tacker_resources_v2",
+  "limits": {
+    "max_head_tasks": 5,
+    "worker_group_threads": 128,
+    "worker_groups_min": 1,
+    "worker_groups_max": 5,
+    "max_backend_threads": 640,
+    "raster_threads": 256,
+    "max_mixed_cta_threads": 896,
+    "thread_base_alignment": 32,
+    "pointer_alignment_bytes": 32
+  },
+  "head_linear_task_v2": {
+    "header": "include/head_linear_v2_device.cuh",
+    "cpp_type": "tacker_4dgs::HeadLinearTaskV2",
+    "size_bytes": 40,
+    "alignment_bytes": 8,
+    "fields": [
+      {"name": "input", "type": "const half*", "offset_bytes": 0},
+      {"name": "weight", "type": "const half*", "offset_bytes": 8},
+      {"name": "bias", "type": "const float*", "offset_bytes": 16},
+      {"name": "output", "type": "float*", "offset_bytes": 24},
+      {"name": "rows", "type": "int32", "offset_bytes": 32}
+    ]
+  },
+  "multi_first_linear": {
+    "operation_per_task": "output = input @ weight.T + bias",
+    "tensors_per_task": {
+      "input": {"dtype": "float16", "layout": "row_major", "shape": ["N_i", 128]},
+      "weight": {"dtype": "float16", "layout": "row_major_out_in", "shape": [128, 128]},
+      "bias": {"dtype": "float32", "layout": "contiguous", "shape": [128]},
+      "output": {"dtype": "float32", "layout": "row_major", "shape": ["N_i", 128]}
+    },
+    "task_count": {"min": 1, "max": 5},
+    "worker_assignment": "group g owns tasks g, g+worker_groups, ...",
+    "logical_launch_per_task": {
+      "grid": ["ceil_div(N_i,16)", 2, 1],
+      "output_tile": [16, 64]
+    },
+    "empty_rows": "valid_noop",
+    "tail_rows": "fp32_accumulating_scalar_path",
+    "device_adapter": {
+      "symbol": "tacker_4dgs::head_linear_multi_gptb_device",
+      "argument_order": [
+        "tasks",
+        "task_count",
+        "worker_groups",
+        "ptb_start_block_pos",
+        "ptb_iter_block_step",
+        "ptb_end_block_pos",
+        "thread_base"
+      ],
+      "tasks_type": "const HeadLinearTaskV2*",
+      "named_barrier_ids": [],
+      "dynamic_shared_memory_bytes": 0,
+      "cta_wide_barriers": false
+    }
+  },
+  "packed_first_linear": {
+    "operation": "for h: outputs[h] = input @ weights[h].T + biases[h]",
+    "tensors": {
+      "input": {"dtype": "float16", "layout": "row_major", "shape": ["N", 128]},
+      "weights": {"dtype": "float16", "layout": "packed_head_out_in", "shape": ["H", 128, 128]},
+      "biases": {"dtype": "float32", "layout": "packed_head", "shape": ["H", 128]},
+      "outputs": {"dtype": "float32", "layout": "packed_head_row_major", "shape": ["H", "N", 128]}
+    },
+    "head_count": {"min": 1, "max": 5},
+    "device_adapter": {
+      "symbol": "tacker_4dgs::head_linear_packed_gptb_device",
+      "argument_order": [
+        "input",
+        "packed_weights",
+        "packed_biases",
+        "packed_outputs",
+        "rows",
+        "head_count",
+        "worker_groups",
+        "ptb_start_block_pos",
+        "ptb_iter_block_step",
+        "ptb_end_block_pos",
+        "thread_base"
+      ],
+      "named_barrier_ids": [],
+      "dynamic_shared_memory_bytes": 0,
+      "cta_wide_barriers": false
+    }
+  },
+  "whole_head": {
+    "operation": "tail_output = relu(input @ first_weight.T + first_bias) @ tail_weight.T + tail_bias",
+    "first_linear": {
+      "input_dtype": "float16",
+      "weight_dtype": "float16",
+      "bias_dtype": "float32",
+      "accumulation_dtype": "float32"
+    },
+    "tail_linear": {
+      "weight_dtype": "float32",
+      "bias_dtype": "float32",
+      "output_dtype": "float32",
+      "tail_features": {"min": 1, "max": 128}
+    },
+    "device_adapter": {
+      "symbol": "tacker_4dgs::whole_head_multi_gptb_device",
+      "argument_order": [
+        "tasks",
+        "task_count",
+        "worker_groups",
+        "ptb_start_row",
+        "ptb_iter_row_step",
+        "ptb_end_row",
+        "thread_base",
+        "shared_hidden",
+        "barrier_base_id"
+      ],
+      "shared_scratch_bytes_per_worker_group": 512,
+      "named_barriers_per_worker_group": 1,
+      "recommended_mixed_barrier_ids": [2, 3, 4, 5, 6],
+      "cta_wide_barriers": false
+    }
+  },
+  "global_kernel_symbols": {
+    "declarations": "include/head_linear_v2_kernels.cuh",
+    "multi_solo": {
+      "symbol": "tacker_head_linear_multi_solo_v2",
+      "argument_order": [
+        "task0",
+        "task1",
+        "task2",
+        "task3",
+        "task4",
+        "task_count",
+        "worker_groups",
+        "logical_end"
+      ]
+    },
+    "multi_gptb": {
+      "symbol": "tacker_head_linear_multi_gptb_v2",
+      "argument_order": [
+        "task0",
+        "task1",
+        "task2",
+        "task3",
+        "task4",
+        "task_count",
+        "worker_groups",
+        "ptb_start_block_pos",
+        "ptb_iter_block_step",
+        "ptb_end_block_pos"
+      ]
+    },
+    "packed_gptb": {
+      "symbol": "tacker_head_linear_packed_gptb_v2",
+      "argument_order": [
+        "input",
+        "packed_weights",
+        "packed_biases",
+        "packed_outputs",
+        "rows",
+        "head_count",
+        "worker_groups",
+        "ptb_start_block_pos",
+        "ptb_iter_block_step",
+        "ptb_end_block_pos"
+      ]
+    },
+    "whole_head_gptb": {
+      "symbol": "tacker_whole_head_gptb_v2",
+      "argument_order": [
+        "task",
+        "ptb_start_row",
+        "ptb_iter_row_step",
+        "ptb_end_row"
+      ]
+    }
+  },
+  "public_api": {
+    "python_allocating": {
+      "head_linear_multi_solo": ["inputs", "weights", "biases", "worker_groups"],
+      "head_linear_multi_gptb": ["inputs", "weights", "biases", "worker_groups", "persistent_blocks"],
+      "head_linear_packed_gptb": ["input", "weights", "biases", "worker_groups", "persistent_blocks"],
+      "whole_head_gptb": ["input", "first_weight", "first_bias", "tail_weight", "tail_bias", "persistent_blocks"]
+    },
+    "python_out": {
+      "head_linear_multi_solo_out": ["inputs", "weights", "biases", "outputs", "worker_groups"],
+      "head_linear_multi_gptb_out": ["inputs", "weights", "biases", "outputs", "worker_groups", "persistent_blocks"],
+      "head_linear_packed_gptb_out": ["input", "weights", "biases", "output", "worker_groups", "persistent_blocks"]
+    }
+  },
+  "canonical_variants": [
+    {"family": "C1", "variant_id": "c1_position_first_linear", "head_roles": ["position"], "worker_groups": 1},
+    {"family": "C1", "variant_id": "c1_scale_first_linear", "head_roles": ["scale"], "worker_groups": 1},
+    {"family": "C1", "variant_id": "c1_rotation_first_linear", "head_roles": ["rotation"], "worker_groups": 1},
+    {"family": "C1", "variant_id": "c1_opacity_first_linear", "head_roles": ["opacity"], "worker_groups": 1},
+    {"family": "C1", "variant_id": "c1_sh_first_linear", "head_roles": ["sh"], "worker_groups": 1},
+    {"family": "C2", "variant_id": "c2_position_scale_first_linear_wg2", "head_roles": ["position", "scale"], "worker_groups": 2}
+  ],
+  "resource_contract": {
+    "query_before_launch": true,
+    "required_checks": [
+      "device_max_threads_per_block",
+      "kernel_max_threads_per_block",
+      "registers_per_thread_times_cta_threads",
+      "static_plus_dynamic_shared_memory",
+      "occupancy_active_blocks_per_sm_at_selected_cta"
+    ],
+    "ptxas_fields": [
+      "registers_per_thread",
+      "static_shared_memory_bytes",
+      "local_memory_bytes"
+    ],
+    "runtime_query_fields": [
+      "max_threads_per_block",
+      "worker_group_threads",
+      "active_blocks_per_sm",
+      "ptx_version",
+      "binary_version"
+    ],
+    "fail_closed": true
+  },
+  "lifetime_and_alias_contract": {
+    "caller_keeps_all_tensors_alive_until_completion_event": true,
+    "outputs_must_not_alias_any_input_weight_or_bias": true,
+    "outputs_must_not_alias_each_other": true,
+    "same_cuda_device_required": true,
+    "inference_only": true
+  }
+}

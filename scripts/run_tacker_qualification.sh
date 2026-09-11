@@ -284,7 +284,7 @@ try:
     import torch
     from diff_gaussian_rasterization import _C as raster_backend
     from simple_knn._C import distCUDA2
-    from tacker_4dgs_head import head_linear_solo
+    from tacker_4dgs_head import head_linear_multi_gptb, head_linear_solo
 except Exception as error:
     print("built extension import failed: {}".format(error), file=sys.stderr)
     raise SystemExit(1)
@@ -293,16 +293,23 @@ if not torch.cuda.is_available():
     raise SystemExit("CUDA became unavailable after the extension build")
 if not callable(head_linear_solo):
     raise SystemExit("head_linear_solo is not callable")
+if not callable(head_linear_multi_gptb):
+    raise SystemExit("head_linear_multi_gptb is not callable")
 if not callable(distCUDA2):
     raise SystemExit("simple_knn.distCUDA2 is not callable")
 if not hasattr(raster_backend, "rasterize_gaussians_with_head"):
     raise SystemExit("mixed Raster entry point is unavailable")
+if not hasattr(raster_backend, "rasterize_gaussians_with_heads"):
+    raise SystemExit("mixed Raster ABI v2 entry point is unavailable")
+if not hasattr(raster_backend, "tacker_resource_requirements"):
+    raise SystemExit("mixed Raster resource query is unavailable")
 PY
 
 step "4/10 run the head CUDA tests"
 (
     cd "${HEAD_EXTENSION_DIR}"
     "${PYTHON_BIN}" -m unittest tests.test_head_linear_cuda -v
+    "${PYTHON_BIN}" -m unittest tests.test_head_linear_v2_cuda -v
 )
 
 step "5/10 run the mixed and legacy stream-aware Raster CUDA tests"

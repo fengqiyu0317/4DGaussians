@@ -202,6 +202,9 @@ class GaussianRasterizer:
     def forward_with_head(self, **_kwargs):
         raise AssertionError("the CPU contract must install a physical stub")
 
+    def forward_with_heads(self, **_kwargs):
+        raise AssertionError("the CPU contract must install a physical v2 stub")
+
 
 def _load_module(available=False, grad_enabled=False, capability=(8, 6)):
     log = []
@@ -218,16 +221,84 @@ def _load_module(available=False, grad_enabled=False, capability=(8, 6)):
     capabilities = {
         "stream_aware": True,
         "mixed_render_head_abi": 1,
+        "mixed_render_head": True,
+        "mixed_symbol": "tacker_mix_render_head_v1",
+        "mixed_manifest_sha256": (
+            "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426"
+        ),
+        "head_manifest_sha256": (
+            "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac"
+        ),
         "sm_target": "sm_86",
         "mixed_threads": 384,
         "raster_threads": 256,
         "head_threads": 128,
         "head_thread_base": 256,
+        "head_features": 128,
         "raster_named_barrier_id": 1,
+        "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+        "mixed_render_heads_abi": 2,
+        "mixed_render_heads": True,
+        "mixed_multi_symbol": "tacker_mix_render_heads_v2",
+        "mixed_multi_manifest_sha256": (
+            "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056"
+        ),
+        "head_multi_manifest_sha256": (
+            "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f"
+        ),
+        "max_head_tasks": 5,
+        "max_mixed_heads": 5,
+        "min_worker_groups": 1,
+        "max_worker_groups": 5,
+        "worker_group_threads": 128,
+        "head_descriptor_named_barrier_id": 2,
+        "supported_worker_groups": [1, 2, 3, 4, 5],
+        "mixed_threads_by_worker_groups": {
+            worker_groups: 256 + 128 * worker_groups
+            for worker_groups in range(1, 6)
+        },
+        "resource_query": "tacker_resource_requirements",
     }
     diff_stub = types.ModuleType("diff_gaussian_rasterization")
     diff_stub.GaussianRasterizer = GaussianRasterizer
     diff_stub.tacker_capabilities = lambda: dict(capabilities)
+
+    def resource_requirements(abi_version=2, worker_groups=1):
+        physical_threads = (
+            384 if abi_version == 1 else 256 + 128 * worker_groups
+        )
+        return {
+            "abi_version": abi_version,
+            "worker_groups": worker_groups,
+            "physical_threads": physical_threads,
+            "device_ordinal": 0,
+            "compute_capability_major": 8,
+            "compute_capability_minor": 6,
+            "multiprocessor_count": 84,
+            "device_max_threads_per_block": 1024,
+            "device_max_threads_per_multiprocessor": 1536,
+            "warp_size": 32,
+            "kernel_max_threads_per_block": 1024,
+            "registers_per_thread": 32,
+            "static_shared_bytes": 0,
+            "local_bytes_per_thread": 0,
+            "max_dynamic_shared_bytes": 0,
+            "active_blocks_per_multiprocessor": 1,
+            "active_warps_per_multiprocessor": physical_threads // 32,
+            "max_warps_per_multiprocessor": 48,
+            "occupancy": 0.5,
+            "launch_supported": True,
+        }
+
+    diff_stub.tacker_resource_requirements = resource_requirements
+    diff_stub.tacker_variant_resources = lambda worker_groups: {
+        **resource_requirements(2, worker_groups),
+        "block_threads": 256 + 128 * worker_groups,
+        "registers_per_thread": 32,
+        "static_shared_memory_bytes": 0,
+        "max_threads_per_block": 1024,
+        "active_blocks_per_sm": 1,
+    }
 
     renderer_stub = types.ModuleType("gaussian_renderer")
     renderer_stub.GaussianRasterizer = GaussianRasterizer
@@ -254,6 +325,7 @@ def _load_module(available=False, grad_enabled=False, capability=(8, 6)):
     module._test_log = log
     module._test_torch = torch_stub
     module._test_capabilities = capabilities
+    module._test_resource_requirements = resource_requirements
     return module
 
 
@@ -276,6 +348,14 @@ def _valid_profile(module):
             "fallback_reason": None,
         }
         if candidate["execution_mode"] == "tacker":
+            candidate["resources"] = {
+                "block_threads": 384,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 0,
+                "max_threads_per_block": 1024,
+                "active_blocks_per_sm": 1,
+                "occupancy": 0.5,
+            }
             candidate["correctness"].update(
                 {
                     "psnr_drop_db": 0.05,
@@ -1345,6 +1425,68 @@ class SupportGateContractTest(unittest.TestCase):
         self.assertIsNone(module._view_profile_reason(matching, profile))
         self.assertIn("resolution", module._view_profile_reason(mismatch, profile))
 
+    def test_legacy_capability_identity_and_resources_fail_closed(self):
+        module = _load_module(available=True, grad_enabled=False)
+        pc = _exact_model(training=False)
+        pipe = types.SimpleNamespace(
+            debug=False,
+            compute_cov3D_python=False,
+            convert_SHs_python=False,
+        )
+        profile = _valid_profile(module)
+        common = {
+            "stage": "fine",
+            "cam_type": "dynerf",
+            "workload_name": "flame_steak",
+            "iteration": 14000,
+        }
+
+        selected = module.selected_tacker_candidate(profile)
+        selected["resources"]["optional_build_diagnostic"] = None
+        profile["profile_sha256"] = module.profile_sha256(profile)
+        self.assertIsNone(
+            module.tacker_support_reason(pc, pipe, profile, **common)
+        )
+        for field, replacement in (
+            ("mixed_symbol", "wrong_symbol"),
+            ("mixed_manifest_sha256", "f" * 64),
+            ("head_manifest_sha256", "f" * 64),
+        ):
+            capabilities = dict(module._test_capabilities)
+            capabilities[field] = replacement
+            with self.subTest(capability=field), mock.patch.object(
+                module, "_query_rasterizer_capabilities", return_value=capabilities
+            ):
+                self.assertIn(
+                    field,
+                    module.tacker_support_reason(pc, pipe, profile, **common),
+                )
+
+        resource_cases = []
+        changed = module._test_resource_requirements(1, 1)
+        changed["registers_per_thread"] = 33
+        resource_cases.append((changed, "registers_per_thread changed"))
+        zero = module._test_resource_requirements(1, 1)
+        zero["active_blocks_per_multiprocessor"] = 0
+        zero["occupancy"] = 0.0
+        resource_cases.append((zero, "zero runtime occupancy"))
+        too_large = module._test_resource_requirements(1, 1)
+        too_large["kernel_max_threads_per_block"] = 383
+        resource_cases.append((too_large, "compiled maximum thread count"))
+        unsupported = module._test_resource_requirements(1, 1)
+        unsupported["launch_supported"] = False
+        resource_cases.append((unsupported, "not launch-supported"))
+        for resources, message in resource_cases:
+            with self.subTest(resource=message), mock.patch.object(
+                module,
+                "_query_rasterizer_variant_resources",
+                return_value=resources,
+            ):
+                self.assertIn(
+                    message,
+                    module.tacker_support_reason(pc, pipe, profile, **common),
+                )
+
     def test_qualification_skips_only_measured_admission(self):
         module = _load_module(available=True, grad_enabled=False)
         pc = _exact_model(training=False)
@@ -1365,6 +1507,20 @@ class SupportGateContractTest(unittest.TestCase):
             module.tacker_support_reason(pc, pipe, candidate, **common),
             "Tacker profile deployment is disabled",
         )
+        selected = module.selected_tacker_candidate(candidate)
+        selected["resources"] = {
+            "block_threads": 384,
+            "registers_per_thread": 32,
+            "static_shared_memory_bytes": 0,
+            "max_threads_per_block": 1024,
+            "active_blocks_per_sm": 1,
+            "occupancy": 0.5,
+        }
+        for index, profile_candidate in enumerate(candidate["candidates"]):
+            if profile_candidate["variant_id"] == selected["variant_id"]:
+                candidate["candidates"][index] = selected
+                break
+        candidate["profile_sha256"] = module.profile_sha256(candidate)
         self.assertIsNone(
             module.tacker_support_reason(
                 pc,

@@ -1,6 +1,6 @@
 # Tacker 去 QoS、FPS 优先的融合计划
 
-- 状态：Phase 0–1 complete；Phase 2–4 proposed
+- 状态：Phase 0–2 complete；Phase 3–4 proposed
 - 首期目标平台：NVIDIA RTX A6000（`sm_86`）
 - 首期目标负载：`flame_steak`，iteration 14000，111,525 Gaussians，1352 × 1014，test 前 50 个视角
 
@@ -210,32 +210,44 @@ current Tacker / two-stream 的 FPS ratio-of-medians 为 `1.0084108268`，按 pa
 
 退出条件：使用合成数据时，selector 能在多个候选和“不融合”基线间稳定选择全局最高 FPS，并拒绝任何 correctness-invalid 候选。
 
-Phase 1 已于 2026-09-10 完成。CPU contract 覆盖了多候选全局 FPS 排名、
-correctness-invalid 预过滤、0.5% 等价集的稳定资源优先级、1% + paired
-bootstrap CI promotion、invalid incumbent 替换、two-stream 性能下限、baseline
-获胜时不生成 Tacker profile，以及生成 profile 后的运行时交叉验证。
-Phase 0 的真实 A6000 数据可被新 admission parser 作为兼容输入；Phase 1
-本身不新增 CUDA variant，因此未伪造新的 GPU 性能结论。
+**完成状态：2026-09-10**
 
-发布收口还将正式证据锁定为 10,000 次、seed 0 的 paired bootstrap，
-重建并校验 ABBA/round-robin 的每轮执行轨迹，对 selector 完整输出与
-admission 独立重算做一致性检查，并将 legacy 兼容仅限定为封存
-Phase 0 报告的精确 canonical SHA-256。源码、config 和已加载 Raster
-二进制的 provenance 哈希现在于 warmup/计时前采集，以避免后采样竞态。
-每个 Tacker trial 的 manifest/selection SHA、variant、ABI 和
-`persistent_blocks` 也会与 SHA-bound source profile 逐项绑定；
-qualification 状态和所有可空证据均按显式字段 fail closed。
+- **CPU contract**：覆盖多候选全局 FPS 排名、`correctness-invalid` 预过滤、0.5% 等价集的稳定资源优先级、1% + paired bootstrap CI promotion、invalid incumbent 替换、two-stream 性能下限、baseline 获胜时不生成 Tacker profile，以及生成 profile 后的运行时交叉验证。
+- **兼容性**：Phase 0 的真实 A6000 数据可被新的 admission parser 作为兼容输入。
+- **GPU 结论**：Phase 1 本身不新增 CUDA variant，因此未伪造新的 GPU 性能结论。
+
+**发布收口要求**
+
+- **统计证据**：锁定为 10,000 次、seed 0 的 paired bootstrap。
+- **执行轨迹**：重建并校验 ABBA/round-robin 的每轮执行轨迹。
+- **选择一致性**：对 selector 完整输出与 admission 独立重算做一致性检查。
+- **Legacy 兼容**：仅限封存 Phase 0 报告的精确 canonical SHA-256。
+- **Provenance 采集**：源码、config 和已加载 Raster 二进制的 provenance 哈希在 warmup/计时前采集，以避免后采样竞态。
+- **Trial 绑定**：每个 Tacker trial 的 manifest/selection SHA、variant、ABI 和 `persistent_blocks` 均与 SHA-bound source profile 逐项绑定。
+- **Fail-closed**：qualification 状态和所有可空证据均使用显式字段，并按 fail-closed 原则处理。
 
 ### Phase 2：泛化 Python 任务分区与混合 ABI
 
-- [ ] 将 `PosHeadTask`、`prepare_pos_head_task`、`finish_pos_head_task` 和 `_forward_with_head` 抽象为候选接口。
-- [ ] 保留两槽事件链，针对每种 partition 验证 prefix/mixed/parallel/suffix 的依赖和输出生命周期。
-- [ ] 在 `tacker_ext` 增加多 head/packed/whole-head device adapter 和独立 ABI manifest。
-- [ ] 在 Raster 子模块增加多 variant mixed wrapper、Python binding 和 capability query。
-- [ ] 对每个 variant 收集 ptxas 资源；补上通用 runtime 目前缺失的寄存器/occupancy 过滤。
-- [ ] 增加重复执行检测、空输入/尾块、非对齐、错误 dtype/shape、alias、barrier 和 launch-failure fallback 测试。
+- [x] 将 `PosHeadTask`、`prepare_pos_head_task`、`finish_pos_head_task` 和 `_forward_with_head` 抽象为候选接口。
+- [x] 保留两槽事件链，针对每种 partition 验证 prefix/mixed/parallel/suffix 的依赖和输出生命周期。
+- [x] 在 `tacker_ext` 增加多 head/packed/whole-head device adapter 和独立 ABI manifest。
+- [x] 在 Raster 子模块增加多 variant mixed wrapper、Python binding 和 capability query。
+- [x] 对每个 variant 收集 ptxas 资源；补上通用 runtime 目前缺失的寄存器/occupancy 过滤。（A6000 实测 mixed v2 为 68 registers/thread、7376 B static shared memory、0 spill；1–5 个 worker group 的 runtime query 均取得非零 occupancy，并由 profile 生成与运行时路径 fail closed 校验。）
+- [x] 增加重复执行检测、空输入/尾块、非对齐、错误 dtype/shape、alias、barrier 和 launch-failure fallback 测试。
 
 退出条件：至少完成 C0、全部 C1 和一个 C2 双-head variant，且它们均能在真实 50-view 流水中无重复计算、无 fallback 地执行。
+
+**实现状态：2026-09-10，真实 A6000 Phase 2 退出验收通过**
+
+- **候选覆盖**：通用 `FusionTask`/`FusionPartition` 已覆盖 C0、五个 C1 和 `pos+scales` C2；生成器仅写出 disabled qualification profile，不伪造资源或性能数据。
+- **ABI 封存**：legacy head/Raster SHA-256 分别为 `24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac` / `231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426`；head v2 为 `9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f`，Raster v2 显式锁定该依赖，自身为 `310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056`。四个哈希均由已加载 Raster binary 的 capability 回报并与 profile 核对。
+- **本机验证**：175 项 Phase 2 CPU/源码契约通过；28 项 CUDA 测试因本机无 PyTorch/CUDA 按预期跳过；另有 18 项 `profile_render` 元数据契约测试通过。Python 3.7 语法、shell 语法和两个工作树的 `diff --check` 通过。
+- **远端路径**：通过 Windows OpenSSH 客户端连接 `4A6000` alias，在隔离快照 `/data/qyfeng/tacker_phase2_validation/20260910-codex-phase2` 内构建和测试，没有修改原有脏工作树。使用 PyTorch `2.4.1+cu124`、CUDA 12.4 和物理 GPU 1；`nvidia-smi` 因 NVML driver/library `580.173` 不匹配而不可用，但 PyTorch CUDA 编译、加载和执行正常，因此这里不声称完整 Phase 4 qualification preflight 已通过。
+- **CUDA correctness**：重编后的 head 完整套件 60/60、Raster v2/legacy 完整套件 34/34 通过，其中 CUDA 定向测试分别为 16/16 与 12/12；覆盖真实 binding、尾块/非对齐输入、错误 contract、barrier 以及 legacy 路径。
+- **编译资源**：ptxas 报告 mixed v2 为 68 registers/thread、7376 B static shared memory、0 spill；whole-head 为 32 registers/thread、512 B static shared memory、0 spill；packed 为 48 registers/thread、0 spill；multi GPTB/solo 为 48 registers/thread、200 B stack、0 spill。runtime query 对 1–5 个 worker group 分别返回 384/512/640/768/896 threads，active blocks/SM 为 2/1/1/1/1，occupancy 为 0.5/0.333333/0.416667/0.5/0.583333，且全部 `launch_supported=true`、kernel max threads 为 896。
+- **50-view 物理路径**：7 份 disabled qualification profile（C0、全部五个 C1、一个 `pos+scales` C2）各以 warmup 10、50 measured views、111,525 Gaussians、1352 × 1014 跑通；最终 metadata 均通过已加载 binary manifest SHA 与实时资源门控，且为 `actual_execution_mode=tacker`、`tacker_fallback_reason=null`。最终单 trial diagnostic FPS 依次为 C0 87.983156、C1 opacity 85.842899、C1 pos 85.779940、C1 rotations 85.229702、C1 scales 84.982640、C1 shs 85.338641、C2 pos+scales WG2 66.852933。
+- **无重复执行证据**：每个候选的 50-view 复跑均记录 `input_frames=50`、`full_deformation=1`、`prefix=49`、`mixed_launches=49`、`suffix=49`、`solo_raster=1`、`outputs=50`、`selected_head_evaluations_per_head=50`，并在最后一个输出前由运行时不变量 fail closed 校验。结合 selected Linear 的 Python 跳过/重复调用测试，Phase 2 的无重复计算、无 fallback 退出条件已满足。
+- **证据边界**：上述 FPS 只证明候选能在真实流水执行，不是 Phase 3 的交错多 trial 排名，也没有选出 winner；完整 Phase 4 preflight、50-view 画质门槛和正式 admission 仍未声称完成。定向验证摘要保存在 `tacker_profiles/baselines/a6000_phase2_20260910/`。
 
 ### Phase 3：实现 E2E autotuner 与候选选择
 

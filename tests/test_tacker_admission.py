@@ -2285,5 +2285,204 @@ class OutputContractTests(unittest.TestCase):
             self.assertEqual(_read_json(profile_path), sentinel)
 
 
+class Phase2DescriptorContractTests(unittest.TestCase):
+    @staticmethod
+    def _descriptor(heads, worker_groups):
+        modules = ADMISSION.HEAD_MODULES
+        first = lambda name: "deformation.{}[1].linear_128x128".format(modules[name])
+        suffix = lambda name: [
+            "deformation.{}[2]".format(modules[name]),
+            "deformation.{}[3]".format(modules[name]),
+        ]
+        deltas = {
+            "pos": "deformation.pos_delta",
+            "scales": "deformation.scales_delta",
+            "rotations": "deformation.rotations_delta",
+            "opacity": "deformation.opacity_delta",
+            "shs": "deformation.shs_delta",
+        }
+        subgroups = []
+        for index in range(worker_groups):
+            begin = 256 + 128 * index
+            subgroups.append(
+                {
+                    "name": "head_worker_{}".format(index),
+                    "thread_range_inclusive": [begin, begin + 127],
+                    "threads": 128,
+                    "named_barrier_ids": [2],
+                }
+            )
+        return {
+            "variant_id": "phase2_{}".format("_".join(heads)),
+            "execution_mode": "tacker",
+            "partition": {
+                "kind": "first_linear_heads",
+                "selected_heads": list(heads),
+                "worker_groups": worker_groups,
+            },
+            "cuda_symbol": "tacker_mix_render_heads_v2",
+            "abi_manifest_sha256": ADMISSION.EXPECTED_MIXED_MULTI_ABI_SHA256,
+            "head_abi_manifest_sha256": ADMISSION.EXPECTED_HEAD_MULTI_ABI_SHA256,
+            "physical_cta_threads": 256 + 128 * worker_groups,
+            "raster_threads": 256,
+            "raster_thread_range_inclusive": [0, 255],
+            "raster_named_barrier_id": 1,
+            "persistent_blocks": 80,
+            "tile_shape": [16, 16],
+            "fused_nodes": ["raster.render_leaf"] + [first(name) for name in heads],
+            "parallel_nodes": [
+                "deformation.{}".format(modules[name])
+                for name in ADMISSION.HEAD_ORDER if name not in heads
+            ],
+            "suffix_nodes": sum((suffix(name) for name in heads), [])
+            + ["deformation.apply_residuals"],
+            "skipped_python_nodes": [first(name) for name in heads],
+            "required_outputs": ["raster.color", "raster.depth", "raster.radii"]
+            + [deltas[name] for name in ADMISSION.HEAD_ORDER],
+            "stream_lifetimes": [
+                "head_inputs:deform_prefix->mixed_done",
+                "head_parameters:cache_ready->mixed_done",
+                "head_outputs:mixed_done->suffix_ready",
+                "render_state:suffix_ready->raster_done",
+            ],
+            "backend_named_barriers": [
+                {
+                    "id": 2,
+                    "participants": 128 * worker_groups,
+                    "purpose": "head_descriptor_broadcast",
+                }
+            ],
+            "backend_subgroups": subgroups,
+            "tensor_contract": {
+                "input_dtype": "float16",
+                "weight_dtype": "float16",
+                "bias_dtype": "float32",
+                "accumulation_dtype": "float32",
+                "output_dtype": "float32",
+                "features": 128,
+                "max_heads": 5,
+            },
+            "capability_requirements": {
+                "cuda_arch": "sm_86",
+                "compute_capability": [8, 6],
+                "mixed_render_heads_abi": 2,
+            },
+            "resources": {
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 0,
+                "max_threads_per_block": 1024,
+                "active_blocks_per_sm": 1,
+            },
+        }
+
+    def test_all_c1_and_one_c2_descriptors_pass_generic_admission_contract(self):
+        for head in ADMISSION.HEAD_ORDER:
+            descriptor = self._descriptor([head], 1)
+            self.assertIs(
+                ADMISSION._validate_tacker_descriptor(descriptor, "candidate"),
+                descriptor,
+            )
+        pair = self._descriptor(["pos", "scales"], 2)
+        self.assertIs(
+            ADMISSION._validate_tacker_descriptor(pair, "candidate"), pair
+        )
+
+    def test_v2_descriptor_requires_resource_and_dependency_evidence(self):
+        for field in (
+            "resources",
+            "stream_lifetimes",
+            "skipped_python_nodes",
+            "head_abi_manifest_sha256",
+        ):
+            descriptor = self._descriptor(["pos", "scales"], 2)
+            descriptor.pop(field)
+            with self.assertRaises(ADMISSION.AdmissionInputError):
+                ADMISSION._validate_tacker_descriptor(descriptor, "candidate")
+
+    def test_v2_descriptor_resources_match_runtime_numeric_rules(self):
+        for name, value in (
+            ("launch_supported", True),
+            ("local_memory_bytes", -1),
+        ):
+            descriptor = self._descriptor(["pos"], 1)
+            descriptor["resources"][name] = value
+            with self.subTest(name=name), self.assertRaisesRegex(
+                ADMISSION.AdmissionInputError,
+                "finite non-negative number",
+            ):
+                ADMISSION._validate_tacker_descriptor(descriptor, "candidate")
+
+        descriptor = self._descriptor(["pos"], 1)
+        descriptor["resources"]["local_memory_bytes"] = None
+        self.assertIs(
+            ADMISSION._validate_tacker_descriptor(descriptor, "candidate"),
+            descriptor,
+        )
+
+    def test_v2_manifests_are_validated_and_v1_evidence_cannot_label_v2(self):
+        mixed_v2 = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_heads_v2.json"
+        )
+        head_v2 = _read_json(
+            PROJECT_ROOT / "tacker_ext" / "abi" / "head_linear_v2.json"
+        )
+        self.assertEqual(
+            ADMISSION._validate_mixed_abi(mixed_v2), frozenset((1, 2))
+        )
+        self.assertEqual(
+            ADMISSION._validate_head_abi(head_v2), frozenset((1, 2))
+        )
+
+        candidate = self._descriptor(["pos", "scales"], 2)
+        candidate["correctness"] = {"valid": True}
+        candidate["performance"] = {"median_throughput_fps": 1.0}
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "mixed ABI v2 evidence"
+        ):
+            ADMISSION._validate_candidate_abi_evidence(
+                [candidate], frozenset((1,)), frozenset((1,))
+            )
+        ADMISSION._validate_candidate_abi_evidence(
+            [candidate], frozenset((1, 2)), frozenset((1, 2))
+        )
+
+        tampered = copy.deepcopy(mixed_v2)
+        tampered["tacker_ext_dependency"]["manifest_sha256"] = "0" * 64
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "exact head ABI"
+        ):
+            ADMISSION._validate_mixed_abi(tampered)
+
+    def test_v2_manifest_semantic_mutations_fail_closed(self):
+        mixed_v2 = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_heads_v2.json"
+        )
+        head_v2 = _read_json(
+            PROJECT_ROOT / "tacker_ext" / "abi" / "head_linear_v2.json"
+        )
+
+        tampered_mixed = copy.deepcopy(mixed_v2)
+        tampered_mixed["tensor_contract"]["output_dtype"] = "float16"
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "semantic digest"
+        ):
+            ADMISSION._validate_mixed_abi(tampered_mixed)
+
+        tampered_head = copy.deepcopy(head_v2)
+        tampered_head["limits"]["max_head_tasks"] = 4
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "semantic digest"
+        ):
+            ADMISSION._validate_head_abi(tampered_head)
+
+
 if __name__ == "__main__":
     unittest.main()

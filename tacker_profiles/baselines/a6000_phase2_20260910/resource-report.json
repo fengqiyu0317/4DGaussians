@@ -1,0 +1,252 @@
+{
+  "abi": {
+    "head_v1_manifest_sha256": "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac",
+    "head_v2_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+    "loaded_raster_binary_capabilities_verified": true,
+    "raster_v1_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+    "raster_v2_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056"
+  },
+  "access": {
+    "client": "/mnt/c/Windows/System32/OpenSSH/ssh.exe",
+    "host_alias": "4A6000",
+    "snapshot": "/data/qyfeng/tacker_phase2_validation/20260910-codex-phase2"
+  },
+  "candidates": [
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 87.98315630911013,
+      "diagnostic_throughput_fps": 87.629535,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c0_pos_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "a565b6d149757949f08588f477a86984bba58cb52f8d8c0458c0bd0c114c4646",
+      "partition": "C0_pos",
+      "profile_enabled": false,
+      "variant_id": "c0_pos_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 85.84289851425841,
+      "diagnostic_throughput_fps": 85.339025,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c1_opacity_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "d3bf396089acb61980591e566a0c1721658348ba378b68067de02fe091a63671",
+      "partition": "C1_opacity",
+      "profile_enabled": false,
+      "variant_id": "c1_opacity_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 85.77994010612437,
+      "diagnostic_throughput_fps": 85.846198,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c1_pos_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "00dcdec3acb9b6770c1c34daebd6fbcc0e5a7bd6725f2177ffe2bd6f5252de37",
+      "partition": "C1_pos",
+      "profile_enabled": false,
+      "variant_id": "c1_pos_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 85.22970201507108,
+      "diagnostic_throughput_fps": 85.068259,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c1_rotations_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "21d9a2bf6f720a2ff4ce97267996c30f441c6b4001a75d75a787e1e3f191c688",
+      "partition": "C1_rotations",
+      "profile_enabled": false,
+      "variant_id": "c1_rotations_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 84.98264035405639,
+      "diagnostic_throughput_fps": 85.128992,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c1_scales_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "b77d5b668705abfd63b6532bf8b3264d23f4a2ab0b6cf23f8c5e8f16a763cf83",
+      "partition": "C1_scales",
+      "profile_enabled": false,
+      "variant_id": "c1_scales_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 85.33864087371627,
+      "diagnostic_throughput_fps": 84.745141,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c1_shs_l1_pb7000-final-50view.json",
+      "final_metadata_sha256": "b80dba29e900443b3d1c71512b13957d818dcc7a06dd81fa7e7479145260a39d",
+      "partition": "C1_shs",
+      "profile_enabled": false,
+      "variant_id": "c1_shs_l1_pb7000",
+      "worker_groups": 1
+    },
+    {
+      "actual_execution_mode": "tacker",
+      "counted_replay_throughput_fps": 66.85293292248086,
+      "diagnostic_throughput_fps": 67.083068,
+      "execution_counts_match": true,
+      "fallback_reason": null,
+      "final_metadata_file": "c2_pos_scales_l1_wg2_pb7000-final-50view.json",
+      "final_metadata_sha256": "01a5d7f0c6a109348c0031e8233ac0f3b82d563a4c38f84de6a29e65fdbff065",
+      "partition": "C2_pos_scales",
+      "profile_enabled": false,
+      "variant_id": "c2_pos_scales_l1_wg2_pb7000",
+      "worker_groups": 2
+    }
+  ],
+  "cuda_tests": {
+    "head": {
+      "passed": 16,
+      "total": 16
+    },
+    "raster_v2_and_legacy": {
+      "passed": 12,
+      "total": 12
+    }
+  },
+  "remote_full_test_suites": {
+    "head": {
+      "passed": 60,
+      "total": 60
+    },
+    "raster_v2_and_legacy": {
+      "passed": 34,
+      "total": 34
+    }
+  },
+  "date": "2026-09-10",
+  "environment": {
+    "cuda_runtime": "12.4",
+    "cuda_visible_devices": "1",
+    "nvidia_smi": {
+      "error": "NVML driver/library version mismatch",
+      "related_version": "580.173",
+      "usable": false
+    },
+    "physical_gpu_index": 1,
+    "pytorch": "2.4.1+cu124",
+    "visible_gpu_index": 0
+  },
+  "execution_counts": {
+    "candidate_count": 7,
+    "metadata_glob": "logs/*-final-50view.json",
+    "observed_for_every_candidate": {
+      "full_deformation": 1,
+      "input_frames": 50,
+      "mixed_launches": 49,
+      "outputs": 50,
+      "prefix": 49,
+      "selected_head_evaluations_per_head": 50,
+      "solo_raster": 1,
+      "suffix": 49
+    },
+    "runtime_invariant_checked_before_final_output": true,
+    "status": "passed"
+  },
+  "kind": "4dgaussians_tacker_phase2_targeted_validation",
+  "ptxas": [
+    {
+      "kernel_family": "mixed_v2",
+      "registers_per_thread": 68,
+      "spills_bytes": 0,
+      "static_shared_memory_bytes": 7376
+    },
+    {
+      "kernel_family": "whole_head",
+      "registers_per_thread": 32,
+      "spills_bytes": 0,
+      "static_shared_memory_bytes": 512
+    },
+    {
+      "kernel_family": "packed_head",
+      "registers_per_thread": 48,
+      "spills_bytes": 0
+    },
+    {
+      "kernel_family": "multi_gptb_and_solo",
+      "registers_per_thread": 48,
+      "spills_bytes": 0,
+      "stack_bytes": 200
+    }
+  ],
+  "runtime_resources": {
+    "device_max_threads_per_block": 1024,
+    "device_sm_count": 84,
+    "kernel_max_threads_per_block": 896,
+    "queries": [
+      {
+        "active_blocks_per_sm": 2,
+        "block_threads": 384,
+        "launch_supported": true,
+        "occupancy": 0.5,
+        "registers_per_thread": 68,
+        "static_shared_memory_bytes": 7376,
+        "worker_groups": 1
+      },
+      {
+        "active_blocks_per_sm": 1,
+        "block_threads": 512,
+        "launch_supported": true,
+        "occupancy": 0.333333,
+        "registers_per_thread": 68,
+        "static_shared_memory_bytes": 7376,
+        "worker_groups": 2
+      },
+      {
+        "active_blocks_per_sm": 1,
+        "block_threads": 640,
+        "launch_supported": true,
+        "occupancy": 0.416667,
+        "registers_per_thread": 68,
+        "static_shared_memory_bytes": 7376,
+        "worker_groups": 3
+      },
+      {
+        "active_blocks_per_sm": 1,
+        "block_threads": 768,
+        "launch_supported": true,
+        "occupancy": 0.5,
+        "registers_per_thread": 68,
+        "static_shared_memory_bytes": 7376,
+        "worker_groups": 4
+      },
+      {
+        "active_blocks_per_sm": 1,
+        "block_threads": 896,
+        "launch_supported": true,
+        "occupancy": 0.583333,
+        "registers_per_thread": 68,
+        "static_shared_memory_bytes": 7376,
+        "worker_groups": 5
+      }
+    ]
+  },
+  "schema_version": 1,
+  "status": {
+    "not_for_phase3_ranking": true,
+    "phase2_exit_condition_complete": true,
+    "reason": "All seven candidates completed counted 50-view Tacker replays without fallback; no winner has been selected."
+  },
+  "workload": {
+    "gaussian_count": 111525,
+    "image_height": 1014,
+    "image_width": 1352,
+    "iteration": 14000,
+    "profile_frames": 50,
+    "single_trial_per_candidate": true,
+    "split": "test",
+    "view_indices": "0-49",
+    "warmup_frames": 10,
+    "workload_name": "flame_steak"
+  }
+}

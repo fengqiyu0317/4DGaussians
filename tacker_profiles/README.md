@@ -13,8 +13,10 @@
 - 1352 × 1014，test 视角 0–49；
 - NVIDIA RTX A6000，compute capability 8.6（`sm_86`）；
 - Rasterizer commit `e49506654e8e11ed8a62d22bcb693e943fdecacf`；
-- 当前物理 ABI 为 384-thread CTA：Raster `[0,255]`，pos-L1 `[256,383]`；
-- Raster named barrier ID 1，256 participants；head 子组不使用 named barrier。
+- 当前已部署的 v1 ABI 为 384-thread CTA：Raster `[0,255]`，pos-L1 `[256,383]`；Phase 2 v2 qualification 候选根据 1–5 个 worker group 使用 384–896 threads；
+- Raster named barrier ID 1，256 participants；head device adapter 内部不使用
+  named barrier。v2 mixed wrapper 仍以 barrier ID 2、`128 * worker_groups`
+  participants 广播 task descriptors。
 
 `workload_key` 为
 `flame_steak:14000:111525:1352x1014:sm_86`。任何 workload、设备、ABI 或
@@ -82,6 +84,32 @@ profile 逐项比对；`qualification_mode` 必须与 profile 的 deployment
 Phase 1 绑定 model/source 路径、iteration、shape 和 Gaussian 数量，但尚未对
 checkpoint 文件内容做 fingerprint；PLY/PTH 内容哈希属于 Phase 4 的完整
 发布验收，不应把本阶段报告解读为已绑定权重字节。
+
+## Phase 2 候选 profile
+
+Phase 2 的通用 first-linear partition 使用同一套候选描述覆盖五个
+C1（`pos`、`scales`、`rotations`、`opacity`、`shs`）和一个
+`pos+scales` C2。每个候选都锁定两层 ABI：
+
+- `tacker_ext/abi/head_linear_v2.json`：`9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f`；
+- `submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_heads_v2.json`：`310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056`。
+
+在 A6000 上构建两个扩展后，以编译后的函数属性和 occupancy 生成
+C0 + 全部 C1 + 一个 C2 的 disabled qualification profile：
+
+```bash
+cd /home/qyfeng/4DGaussians
+export PYTHONPATH="$PWD/submodules/depth-diff-gaussian-rasterization${PYTHONPATH:+:$PYTHONPATH}"
+python scripts/generate_tacker_phase2_profiles.py \
+  --output-dir /data/qyfeng/tacker_phase2/candidates \
+  --persistent-blocks 7000
+```
+
+生成器要求 resource query 显式返回 `launch_supported=true`、非零
+`active_blocks_per_sm`、寄存器、static shared memory 和 kernel thread limit；
+任一缺失或不匹配都 fail closed。生成的文件始终保持
+`deployment.enabled=false` 和 `deployment.valid=false`，只是真实 CUDA 数值、
+50-view 画质和 whole-run FPS 验证的输入，不是可部署凭证。
 
 schema v1 仅作 `legacy_pos_l1` 兼容读取。运行时仍会验证它的结构、
 ABI 和画质证据，但不再重新执行旧 Raster QoS/leaf/E2E 性能否决。
