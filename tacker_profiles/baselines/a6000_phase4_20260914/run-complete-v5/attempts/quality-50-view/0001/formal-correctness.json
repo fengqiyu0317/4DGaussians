@@ -1,0 +1,251 @@
+{
+  "c0_legacy_pos_l1_pb5440": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "5c836048011c3634b9a1f205870309aa869019bf3f7662fb47b6ba54693e7c4a",
+    "fallback_reason": null,
+    "lpips_increase": 1.0550022125355163e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/report.json",
+        "sha256": "c151cb13f828e5a5a3fa75f5a5b8fde0aafb4752ef8c62fc1a9525a155ef504e",
+        "size_bytes": 874075
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.0001391601562517053,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.json",
+      "sha256": "f2fc457b887fd707694af8edee1a1bed493c16353ab3dca250ce9b000908db41",
+      "size_bytes": 33627
+    },
+    "reasons": [],
+    "ssim_drop": 1.2326240539373146e-06,
+    "valid": true
+  },
+  "c1_opacity_l1_wg1_pb13942": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "e5d8b285e3a1290fc50b48f8abd453b81d39a5e442ac026998d74526f31ce36d",
+    "fallback_reason": null,
+    "lpips_increase": -9.834766390159899e-08,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/report.json",
+        "sha256": "c635d470265922089538fcf499c507eee10452e3bc8ad8741d2c04132b5c6a3d",
+        "size_bytes": 890067
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": -1.5716552731248612e-05,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.json",
+      "sha256": "9793c392dda76eccf5b309fc765a1beef37ef2dca3813cf77e6a66d9a5bd6dc5",
+      "size_bytes": 33267
+    },
+    "reasons": [],
+    "ssim_drop": -8.344650304081824e-09,
+    "valid": true
+  },
+  "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "17062db9028370d1ca21e0aad4490ff03cd92ae5463408bf2c6a014fd893bd52",
+    "fallback_reason": null,
+    "lpips_increase": 6.729364395163806e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/report.json",
+        "sha256": "d71bb8245c5b506741db7e8436813c7e02ea69a0ea436268be278acca0ddda64",
+        "size_bytes": 923777
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.00020996093750369482,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.json",
+      "sha256": "eb744967ca2d75d87b87b78788001c7d72e1f67f7a4b33b8ae8b2ab3a3f62ac0",
+      "size_bytes": 33694
+    },
+    "reasons": [],
+    "ssim_drop": 1.3160705566450659e-06,
+    "valid": true
+  },
+  "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "4436c3e0e7d9823b5ec645a0ce19976e9e5e3781182f62fcbe3f92f1810acf55",
+    "fallback_reason": null,
+    "lpips_increase": 2.604722976473628e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/report.json",
+        "sha256": "d4860a0df8bf3a0ff719149047df4438ed51c22afeade7e7581efdf0322adb33",
+        "size_bytes": 904311
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.00013587951660554154,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.json",
+      "sha256": "559f406c50331b72dc2effa77be2eec7f08a52bd756eede440189b41db4b9228",
+      "size_bytes": 33669
+    },
+    "reasons": [],
+    "ssim_drop": 1.2433528899791213e-06,
+    "valid": true
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "b85d23d8496a13a0ad7024e55d273df21b3c1b1ca4ac4aa3b3e45a174f931294",
+    "fallback_reason": null,
+    "lpips_increase": 6.729364395163806e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/report.json",
+        "sha256": "c11b1ca0ed10e4bd210550cd9eaaee242fe6afe31ba151e17f27045f47cf3226",
+        "size_bytes": 921261
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.00020996093750369482,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.json",
+      "sha256": "e91086938158a13879a160fcecf2f7e2d291d74aef962754bd28939f5a5eec06",
+      "size_bytes": 33726
+    },
+    "reasons": [],
+    "ssim_drop": 1.3160705566450659e-06,
+    "valid": true
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "615594b32a83cea9eab03683487403dd27032ae15ea853dad744095dc5acb451",
+    "fallback_reason": null,
+    "lpips_increase": 6.729364395163806e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json",
+        "sha256": "cd68537d8b04e48f21402b8bb0d3bd1058790d1e4ddbb0165d63c3319998401c",
+        "size_bytes": 921239
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.00020996093750369482,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.json",
+      "sha256": "75ffa314291908ae6973d02c51de605d373acfa3bfcf1d720996dd8b3627e723",
+      "size_bytes": 33724
+    },
+    "reasons": [],
+    "ssim_drop": 1.3160705566450659e-06,
+    "valid": true
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "fd18a0b1f492086d6fa282d1481d36f1a2f78f3adf6bb0c115fdec1edd55f9d0",
+    "fallback_reason": null,
+    "lpips_increase": 6.729364395163806e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/report.json",
+        "sha256": "0e32c1a66a15fadbdd469c9a8d6155d5afbed2dfc2211855b3a486a57b3944a6",
+        "size_bytes": 921241
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.00020996093750369482,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.json",
+      "sha256": "1d1fd750385f0e7813c8a913c77772e4ba404aa823072619d006330fe304eb81",
+      "size_bytes": 33724
+    },
+    "reasons": [],
+    "ssim_drop": 1.3160705566450659e-06,
+    "valid": true
+  },
+  "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "8ee489cb888569113545ff774009671d4082efe70e04bb1a6e87870ee423e517",
+    "fallback_reason": null,
+    "lpips_increase": 2.577900886369111e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/report.json",
+        "sha256": "64e4bcf18d60330dc91e886a114c70c58f1db177e6cb8b66996e196c835c358e",
+        "size_bytes": 904419
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 2.174377441122033e-05,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.json",
+      "sha256": "1d5b1c59ed6dd0cc0f20a9038850aa14a35801558b41b68cbff38939e6319bce",
+      "size_bytes": 33439
+    },
+    "reasons": [],
+    "ssim_drop": 4.887580873358388e-08,
+    "valid": true
+  },
+  "c4_whole_heads_opacity_wg1_pb5440": {
+    "actual_execution_mode": "tacker",
+    "candidate_sha256": "f7c76db66b2868021e4f1bc845581a7af39d3779702e0075e0ae1933330e64b6",
+    "fallback_reason": null,
+    "lpips_increase": -9.14931297391064e-08,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json",
+        "sha256": "6ea8c6b4a0dea68f31de0e8dfdaaefd339cdb48fe73961071e1056a0627878dc",
+        "size_bytes": 886659
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": -1.594543456917563e-05,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.json",
+      "sha256": "6f4e369d51ee44c6110952f18fbe90cd44b4cd30b4798ef4362687b18dad25ed",
+      "size_bytes": 33283
+    },
+    "reasons": [],
+    "ssim_drop": -3.576278717609682e-09,
+    "valid": true
+  },
+  "current_tacker": {
+    "actual_execution_mode": "tacker",
+    "fallback_reason": null,
+    "lpips_increase": 1.0550022125355163e-07,
+    "numerics": {
+      "passed": true,
+      "source_report": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json",
+        "sha256": "5bf329e85300ba74e7019bf44fc9f0e1dad8530406be66b583219aa9c0a0a1f9",
+        "size_bytes": 11157
+      }
+    },
+    "passed": true,
+    "psnr_drop_db": 0.0001391601562517053,
+    "quality_report": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/baseline-quality.json",
+      "sha256": "211e780d55789cb89b3e396a94f679112ebeaf6cf3ae4a3232c3da553518662b",
+      "size_bytes": 51949
+    },
+    "reasons": [],
+    "ssim_drop": 1.2326240539373146e-06,
+    "valid": true
+  },
+  "serial": {
+    "actual_execution_mode": "serial",
+    "fallback_reason": null,
+    "valid": true
+  },
+  "two_stream": {
+    "actual_execution_mode": "two_stream",
+    "fallback_reason": null,
+    "valid": true
+  }
+}

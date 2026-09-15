@@ -1,0 +1,22 @@
+argv_sha256=8d10e3cf1458a09be6189e0e30dddcf1cbb829a416b04a35697148bfa44bdf33
+test_c3_c4_fail_closed_and_recover_on_non_default_stream (tests.test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_c3_packed_empty_tail_and_parallel_heads_match_reference (tests.test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_c4_single_multi_empty_and_variable_tail_widths_match_reference (tests.test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_family_specific_resource_queries_and_mismatch_rejection (tests.test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_cpu_placeholder_is_rejected (tests.test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_misaligned_mixed_head_input_is_rejected (tests.test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_misaligned_mixed_head_weight_is_rejected (tests.test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_zero_row_alternatives_remain_strictly_exclusive (tests.test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_zero_row_ranked_alternatives_are_not_placeholders (tests.test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_dual_head_c2_serial_and_parallel_groups_agree (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_invalid_bundle_is_rejected_and_next_valid_launch_succeeds (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_misaligned_task_and_wrong_dtype_are_rejected (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_one_to_five_heads_all_worker_groups_match_fp32_reference (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_resource_query_covers_all_dynamic_cta_sizes (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_shared_read_only_input_alias_is_allowed_outputs_are_distinct (tests.test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_forward_and_backward_complete_on_nondefault_stream (tests.test_stream_aware_legacy_cuda.StreamAwareLegacyCudaTest) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.427s
+
+OK

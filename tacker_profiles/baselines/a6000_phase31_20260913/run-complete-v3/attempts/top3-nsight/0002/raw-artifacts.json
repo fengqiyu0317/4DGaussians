@@ -1,0 +1,114 @@
+{
+  "artifacts": [
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker.nsys-rep",
+      "sha256": "395870a5b9acadee9a30ead63531c41e7eef2e41eb3e0b5516214218e7c959c2",
+      "size_bytes": 1753171
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker.sqlite",
+      "sha256": "a06f82d83b196ce721f70998451ba95c2afde687e67a01475c99f8795e7ac19e",
+      "size_bytes": 3813376
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker_stats.csv",
+      "sha256": "c7cae8e3194e133d00fc4af5fc5946b5d7b499caee4e06d2bb2468faa80407ba",
+      "size_bytes": 26787
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stderr.txt",
+      "sha256": "e3023b968aad25dc8fc4195d2a736d3719c08adbfab2abcfe345cbf30737493e",
+      "size_bytes": 166
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt",
+      "sha256": "27bd7a40911c2ad1696d4a338c267aeeb0592b03cabe292146c7e017b2f2d593",
+      "size_bytes": 2999
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_profile_metadata.json",
+      "sha256": "885735291aa41b834b505a0ea082d9ab654ae9959fe96b591a37f52e76f04ff3",
+      "size_bytes": 13957
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json",
+      "sha256": "0dac5904daf75b9341263aebe35dc63dcc5f107ebc79086f7758b4ce35617cc5",
+      "size_bytes": 29256
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/4dgs_render_tacker.nsys-rep",
+      "sha256": "fcf8f4cdcbcce3cadf00eba7a9edb5820cf39a1eeb180e725f0d86803abed2b2",
+      "size_bytes": 1751533
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/4dgs_render_tacker.sqlite",
+      "sha256": "5d54a838bded434cb7750d4edab56207e7c4e08d1d30f6cf95d56533c1d22c34",
+      "size_bytes": 3817472
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/4dgs_render_tacker_stats.csv",
+      "sha256": "c6b887d3f59fca2e7b734b9b1587d0772c1ca7a4db0feb5377832df029a8d304",
+      "size_bytes": 26788
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stderr.txt",
+      "sha256": "b6c9610f37cfc0807cdaf65d726169d1956752bb4471e5fa6edaa9b35c8ab930",
+      "size_bytes": 166
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stdout.txt",
+      "sha256": "fbfc9191c895d254da1a617cb699bc1e26dcd03778d357dfd6fa9ba080bf738d",
+      "size_bytes": 2999
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_profile_metadata.json",
+      "sha256": "c6e7e232bb8a89de9e679b4f37d5a9198fc81f835832be37524fd6765f60ac58",
+      "size_bytes": 13946
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_summary.json",
+      "sha256": "9f22a2a020066fef5670e66e1d99d99d734457ad461336bee7bcc66164a8a09e",
+      "size_bytes": 29196
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker.nsys-rep",
+      "sha256": "64ceed3dbba5d188ceb5d54e652dafee92190c0a5a6af46c07c6b1de9fd13e58",
+      "size_bytes": 1751026
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker.sqlite",
+      "sha256": "69c00442b4abd5302d09c454c74c142696a17c56622867d0ad590e77bfd42353",
+      "size_bytes": 3813376
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker_stats.csv",
+      "sha256": "122423348d93ef841f7fb96e161cb453e762da9fafbe7adf20792164d0bb9456",
+      "size_bytes": 26794
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stderr.txt",
+      "sha256": "1d62368432d60a45564be66201cca347fae83b1332b8aef28c58adb28f9244ec",
+      "size_bytes": 166
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stdout.txt",
+      "sha256": "54680f0a635b56d92152dfd41cdab44f7b1befb40da94b7ec1d2385a78eb3663",
+      "size_bytes": 2873
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_profile_metadata.json",
+      "sha256": "c3da8ca6be0206c8838e3776aa2ab11df0f9008d6c7e6089651b994499273951",
+      "size_bytes": 13943
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_summary.json",
+      "sha256": "52110807a851767c26e9576a26e3652bd3058eff8027231249fb9239fe95de09",
+      "size_bytes": 29226
+    },
+    {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/top3.checkpoint.json",
+      "sha256": "b6e21b9883635287039eb5028ae66faf70c1e580636058afcebcf0b3999a5492",
+      "size_bytes": 32774
+    }
+  ]
+}

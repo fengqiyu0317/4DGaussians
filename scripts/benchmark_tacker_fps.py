@@ -29,7 +29,10 @@ overridden.  Commands are always executed as argv lists with ``shell=False``.
 from __future__ import print_function
 
 import argparse
+import ast
+import contextlib
 import datetime
+import fcntl
 import hashlib
 import json
 import math
@@ -46,6 +49,8 @@ import uuid
 SCHEMA_VERSION = 1
 REPORT_KIND = "4dgaussians_tacker_fps_benchmark"
 CHILD_KIND = "4dgaussians_tacker_render_profile"
+CHECKPOINT_KIND = "4dgaussians_tacker_fps_checkpoint"
+CHECKPOINT_FILE_NAME = "benchmark.checkpoint.json"
 SELECTION_OBJECTIVE = "median_throughput_fps"
 TIMING_METHOD = "perf_counter_with_cuda_synchronize"
 FRAME_TIMING_METHOD = "cuda_event_consumer_completion_intervals"
@@ -60,7 +65,7 @@ REQUIRED_PROVENANCE_SOURCE_FILES = (
     "diff_gaussian_rasterization/__init__.py",
     "diff_gaussian_rasterization._C",
 )
-NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$")
+NAME_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
 RESERVED_CANDIDATE_NAMES = frozenset(
     ("serial", "two_stream", "current_tacker")
 )
@@ -73,6 +78,7 @@ TIMING_CONTRACT = {
     "cuda_events": "start_end_and_per_frame_completion",
     "setup_policy": "single_load_prepare_warmup_before_all_trials",
     "io_in_timed_region": False,
+    "cuda_peak_memory": "reset_before_each_trial_query_after_wall_boundary",
 }
 
 # These options define the comparison contract or a candidate's identity.  If
@@ -227,6 +233,33 @@ def atomic_write_json_no_clobber(path, value):
         raise
 
 
+@contextlib.contextmanager
+def _publish_lock(path):
+    """Serialize cooperating publishers of one final report."""
+
+    target = Path(path).expanduser().resolve()
+    lock_path = target.parent / ".{}.publish.lock".format(target.name)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with lock_path.open("a+") as handle:
+        fcntl.flock(handle.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+def atomic_write_json_compare_and_swap(path, value, expected_sha256):
+    """Replace a report only if the currently published bytes still match."""
+
+    target = Path(path).expanduser().resolve()
+    with _publish_lock(target):
+        if not target.is_file() or sha256_file(target) != expected_sha256:
+            raise BenchmarkContractError(
+                "published report changed before compare-and-swap"
+            )
+        atomic_write_json(target, value)
+
+
 def atomic_write_text(path, value):
     """Atomically persist captured child output beside its metadata."""
 
@@ -250,6 +283,304 @@ def atomic_write_text(path, value):
         except OSError:
             pass
         raise
+
+
+def _sha256_json(value):
+    """Return the canonical digest used to bind a resumable invocation."""
+
+    try:
+        return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+    except (TypeError, ValueError) as error:
+        raise BenchmarkContractError(
+            "benchmark resume identity must be finite JSON: {}".format(error)
+        )
+
+
+def _optional_file_identity(path, label):
+    """Seal an optional driver input by resolved path and content digest."""
+
+    if path is None:
+        return None
+    resolved = Path(path).expanduser().resolve()
+    if not resolved.is_file():
+        raise BenchmarkContractError(
+            "{} does not exist: {}".format(label, resolved)
+        )
+    return {"path": str(resolved), "sha256": sha256_file(resolved)}
+
+
+def _configuration_chain_identity(configs):
+    """Seal a literal Python ``_base_`` graph without executing config code."""
+
+    if configs is None:
+        return []
+    chain = []
+    active = []
+
+    def visit(raw_path):
+        unresolved = Path(raw_path).expanduser()
+        if unresolved.is_symlink():
+            raise BenchmarkContractError(
+                "configuration files must not be symlinks: {}".format(unresolved)
+            )
+        resolved = unresolved.resolve()
+        if not resolved.is_file():
+            raise BenchmarkContractError(
+                "configuration file does not exist: {}".format(resolved)
+            )
+        key = str(resolved)
+        if key in active:
+            raise BenchmarkContractError(
+                "configuration _base_ cycle includes {}".format(resolved)
+            )
+        try:
+            source = resolved.read_text(encoding="utf-8")
+            tree = ast.parse(source, str(resolved))
+        except (OSError, UnicodeError, SyntaxError) as error:
+            raise BenchmarkContractError(
+                "cannot parse configuration {}: {}".format(resolved, error)
+            )
+        assignments = []
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and any(
+                isinstance(target, ast.Name) and target.id == "_base_"
+                for target in node.targets
+            ):
+                assignments.append(node.value)
+            elif (
+                isinstance(node, ast.AnnAssign)
+                and isinstance(node.target, ast.Name)
+                and node.target.id == "_base_"
+            ):
+                assignments.append(node.value)
+        if len(assignments) > 1:
+            raise BenchmarkContractError(
+                "configuration assigns _base_ more than once: {}".format(resolved)
+            )
+        bases = []
+        if assignments:
+            try:
+                value = ast.literal_eval(assignments[0])
+            except (TypeError, ValueError) as error:
+                raise BenchmarkContractError(
+                    "configuration has non-literal _base_: {}".format(error)
+                )
+            values = (
+                [value]
+                if isinstance(value, str)
+                else list(value)
+                if isinstance(value, (list, tuple))
+                else []
+            )
+            if not values or any(
+                not isinstance(item, str) or not item for item in values
+            ):
+                raise BenchmarkContractError(
+                    "configuration _base_ must be a string or string list"
+                )
+            bases = [resolved.parent / item for item in values]
+        active.append(key)
+        chain.append(
+            {
+                "path": key,
+                "sha256": sha256_file(resolved),
+                "size_bytes": resolved.stat().st_size,
+            }
+        )
+        for base in bases:
+            visit(base)
+        active.pop()
+
+    visit(configs)
+    return chain
+
+
+def _required_source_identity(profile_render, project_root, configs):
+    """Hash every locally resolvable source represented in child provenance."""
+
+    root = Path(project_root).expanduser().resolve()
+    raster_roots = (
+        root / "diff_gaussian_rasterization",
+        root
+        / "submodules"
+        / "depth-diff-gaussian-rasterization"
+        / "diff_gaussian_rasterization",
+    )
+    raster_root = next((path for path in raster_roots if path.is_dir()), None)
+    paths = {
+        # ``profile_render`` may be the sealed stdlib bootstrap.  Child
+        # provenance deliberately identifies the actual application module;
+        # the entry point itself is bound separately in the resume identity.
+        "profile_render.py": root / "profile_render.py",
+        "configs": (
+            None if configs is None else Path(configs).expanduser().resolve()
+        ),
+        "gaussian_renderer/__init__.py": root
+        / "gaussian_renderer"
+        / "__init__.py",
+        "gaussian_renderer/tacker_pipeline.py": root
+        / "gaussian_renderer"
+        / "tacker_pipeline.py",
+        "diff_gaussian_rasterization/__init__.py": (
+            None if raster_root is None else raster_root / "__init__.py"
+        ),
+    }
+    result = {}
+    for name in REQUIRED_PROVENANCE_SOURCE_FILES:
+        if name == "diff_gaussian_rasterization._C":
+            binaries = (
+                [] if raster_root is None else sorted(raster_root.glob("_C*.so"))
+            )
+            result[name] = [
+                {"path": str(path.resolve()), "sha256": sha256_file(path)}
+                for path in binaries
+                if path.is_file()
+            ]
+            continue
+        path = paths[name]
+        result[name] = (
+            None
+            if path is None or not path.is_file()
+            else {"path": str(path), "sha256": sha256_file(path)}
+        )
+    return result
+
+
+def _profile_project_root(profile_render):
+    """Resolve the repository root for either direct or sealed entry points."""
+
+    entry = Path(profile_render).expanduser().resolve()
+    if (
+        entry.name == "run_profile_render_sealed.py"
+        and entry.parent.name == "scripts"
+        and (entry.parent.parent / "profile_render.py").is_file()
+    ):
+        return entry.parent.parent
+    return entry.parent
+
+
+def _workload_file_identity(contract):
+    """Hash the small fixed set of files that defines the measured workload."""
+
+    model_root = Path(contract["model_path"]).expanduser().resolve()
+    source_root = Path(contract["source_path"]).expanduser().resolve()
+    iteration_root = (
+        model_root / "point_cloud" / "iteration_{}".format(contract["iteration"])
+    )
+    paths = {
+        "cfg_args": model_root / "cfg_args",
+        "point_cloud.ply": iteration_root / "point_cloud.ply",
+        "deformation.pth": iteration_root / "deformation.pth",
+        "deformation_table.pth": iteration_root / "deformation_table.pth",
+        "poses_bounds.npy": source_root / "poses_bounds.npy",
+    }
+    return {
+        name: (
+            {"path": str(path), "sha256": sha256_file(path)}
+            if path.is_file()
+            else None
+        )
+        for name, path in sorted(paths.items())
+    }
+
+
+def benchmark_resume_identity(
+    candidates,
+    contract,
+    correctness_qualifications,
+    selection_metadata,
+    schedule,
+    strategy,
+    seed,
+    trials,
+    bootstrap_resamples,
+    incumbent_name,
+    promotion_min_ratio,
+    equivalence_fraction,
+    profile_render_path,
+    python_executable,
+    project_root,
+    configs=None,
+    profile_args=None,
+    selection_inputs=None,
+):
+    """Build the immutable identity for an interrupted benchmark session.
+
+    Paths and input bytes are intentionally included.  A checkpoint is useful
+    only when it proves that every recovered child would have been launched by
+    the current invocation; a source/config/profile change therefore starts a
+    new session instead of silently reusing stale measurements.
+    """
+
+    profile_render = Path(profile_render_path).expanduser().resolve()
+    root = Path(project_root).expanduser().resolve()
+    payload = {
+        "schema_version": SCHEMA_VERSION,
+        "report_kind": REPORT_KIND,
+        "driver_sha256": sha256_file(Path(__file__).resolve()),
+        "contract": contract,
+        "candidates": candidates,
+        "correctness_qualifications": correctness_qualifications,
+        "candidate_selection_metadata": selection_metadata,
+        "schedule": schedule,
+        "schedule_strategy": strategy,
+        "schedule_seed": seed,
+        "trials": trials,
+        "bootstrap_resamples": bootstrap_resamples,
+        "incumbent_name": incumbent_name,
+        "promotion_min_ratio": float(promotion_min_ratio),
+        "equivalence_fraction": float(equivalence_fraction),
+        "profile_render": {
+            "path": str(profile_render),
+            "sha256": sha256_file(profile_render),
+        },
+        "python_executable": _optional_file_identity(
+            Path(python_executable).expanduser().resolve(), "python executable"
+        ),
+        "project_root": str(root),
+        "configs": _optional_file_identity(configs, "configs"),
+        "configs_chain": _configuration_chain_identity(configs),
+        "profile_args": list(profile_args or []),
+        "selection_inputs": _normalize_selection_inputs(selection_inputs),
+        "required_provenance_sources": _required_source_identity(
+            profile_render, root, configs
+        ),
+        "workload_files": _workload_file_identity(contract),
+    }
+    return {"sha256": _sha256_json(payload), "payload": payload}
+
+
+def _normalize_selection_inputs(selection_inputs):
+    if selection_inputs is None:
+        return {}
+    if not isinstance(selection_inputs, dict):
+        raise BenchmarkContractError("selection_inputs must be a JSON object")
+    unknown = sorted(
+        set(selection_inputs) - {"correctness_json", "selection_metadata_json"}
+    )
+    if unknown:
+        raise BenchmarkContractError(
+            "selection_inputs contains unknown fields: {!r}".format(unknown)
+        )
+    result = {}
+    for name, identity in sorted(selection_inputs.items()):
+        if not isinstance(identity, dict) or set(identity) != {"path", "sha256"}:
+            raise BenchmarkContractError(
+                "selection_inputs.{} must contain path and sha256".format(name)
+            )
+        path = Path(identity["path"]).expanduser().resolve()
+        digest = identity["sha256"]
+        if (
+            not path.is_file()
+            or not isinstance(digest, str)
+            or not re.match(r"^[0-9a-f]{64}$", digest)
+            or sha256_file(path) != digest
+        ):
+            raise BenchmarkContractError(
+                "selection_inputs.{} path/bytes changed".format(name)
+            )
+        result[name] = {"path": str(path), "sha256": digest}
+    return result
 
 
 def _stable_order(names, seed):
@@ -668,6 +999,22 @@ def validate_child_metadata(metadata, candidate, contract):
         "child metadata.trials[0]",
         nonnegative=True,
     )
+    cuda_peak_allocated_bytes = _finite(
+        trial,
+        "cuda_peak_allocated_bytes",
+        "child metadata.trials[0]",
+        nonnegative=True,
+    )
+    cuda_peak_reserved_bytes = _finite(
+        trial,
+        "cuda_peak_reserved_bytes",
+        "child metadata.trials[0]",
+        nonnegative=True,
+    )
+    if cuda_peak_allocated_bytes > cuda_peak_reserved_bytes:
+        raise BenchmarkContractError(
+            "child CUDA peak allocated bytes exceed reserved bytes"
+        )
     if not p50_frame_ms <= p95_frame_ms <= max_frame_ms:
         raise BenchmarkContractError(
             "child frame statistics must satisfy p50 <= p95 <= max"
@@ -760,6 +1107,8 @@ def validate_child_metadata(metadata, candidate, contract):
         ("p50_frame_ms", p50_frame_ms),
         ("p95_frame_ms", p95_frame_ms),
         ("max_frame_ms", max_frame_ms),
+        ("cuda_peak_allocated_bytes", cuda_peak_allocated_bytes),
+        ("cuda_peak_reserved_bytes", cuda_peak_reserved_bytes),
         ("median_elapsed_seconds", elapsed_seconds),
         ("median_total_render_ms", total_render_ms),
         ("median_throughput_fps", throughput_fps),
@@ -935,6 +1284,8 @@ def validate_child_metadata(metadata, candidate, contract):
         "max_frame_ms": max_frame_ms,
         "cuda_event_total_render_ms": cuda_event_total_render_ms,
         "cuda_event_mean_frame_ms": cuda_event_mean_frame_ms,
+        "cuda_peak_allocated_bytes": cuda_peak_allocated_bytes,
+        "cuda_peak_reserved_bytes": cuda_peak_reserved_bytes,
         "actual_execution_mode": document.get("actual_execution_mode"),
         "two_stream_fallback_reason": document.get(
             "two_stream_fallback_reason"
@@ -1234,6 +1585,37 @@ def selection_metadata_with_defaults(
         if "abi_complexity" not in entry:
             entry["abi_complexity"] = default_complexity
         effective[name] = entry
+    return effective
+
+
+def selection_metadata_with_measured_peaks(
+    candidate_names, selection_metadata, runs
+):
+    """Fill missing peak-memory tie breaks from the sealed formal trials."""
+
+    effective = {
+        name: dict(selection_metadata.get(name, {}))
+        for name in candidate_names
+    }
+    peaks = {name: [] for name in candidate_names}
+    for run in runs:
+        name = run.get("candidate_name")
+        metrics = run.get("metrics")
+        if name not in peaks or run.get("passed") is not True or not isinstance(
+            metrics, dict
+        ):
+            continue
+        value = metrics.get("cuda_peak_reserved_bytes")
+        if not _is_finite_number(value) or float(value) < 0.0:
+            raise BenchmarkContractError(
+                "formal run has invalid CUDA peak reserved bytes"
+            )
+        peaks[name].append(float(value))
+    for name in candidate_names:
+        if peaks[name] and "peak_memory_bytes" not in effective[name]:
+            # A maximum across complete trials is the conservative process
+            # peak used by the lower-is-better equivalence preference.
+            effective[name]["peak_memory_bytes"] = max(peaks[name])
     return effective
 
 
@@ -1701,6 +2083,18 @@ def aggregate_runs(runs, candidate_names, trials, bootstrap_resamples, seed):
             "median_total_render_ms": statistics.median(
                 item["metrics"]["total_render_ms"] for item in ordered
             ),
+            "cuda_peak_allocated_bytes_trials": [
+                item["metrics"]["cuda_peak_allocated_bytes"] for item in ordered
+            ],
+            "cuda_peak_reserved_bytes_trials": [
+                item["metrics"]["cuda_peak_reserved_bytes"] for item in ordered
+            ],
+            "max_cuda_peak_allocated_bytes": max(
+                item["metrics"]["cuda_peak_allocated_bytes"] for item in ordered
+            ),
+            "max_cuda_peak_reserved_bytes": max(
+                item["metrics"]["cuda_peak_reserved_bytes"] for item in ordered
+            ),
             "metadata_paths": [item["metadata_path"] for item in ordered],
             "profile_manifest_sha256_values": sorted(
                 set(
@@ -2003,6 +2397,87 @@ def _safe_run_stem(schedule_item):
     )
 
 
+RUN_RECORD_FIELDS = frozenset(
+    (
+        "run_index",
+        "round_index",
+        "position_in_round",
+        "candidate_name",
+        "requested_execution_mode",
+        "profile_path",
+        "qualification_mode",
+        "command",
+        "metadata_path",
+        "stdout_path",
+        "stderr_path",
+        "passed",
+        "returncode",
+        "error",
+        "stdout_sha256",
+        "stderr_sha256",
+        "metadata_sha256",
+        "metrics",
+    )
+)
+
+
+def _make_run_record(
+    schedule_item,
+    candidate,
+    session,
+    profile_render,
+    python_executable,
+    contract,
+    configs,
+    profile_args,
+):
+    stem = _safe_run_stem(schedule_item)
+    metadata_path = session / "{}.metadata.json".format(stem)
+    stdout_path = session / "{}.stdout.txt".format(stem)
+    stderr_path = session / "{}.stderr.txt".format(stem)
+    record = dict(schedule_item)
+    record.update(
+        {
+            "requested_execution_mode": candidate["execution_mode"],
+            "profile_path": candidate["profile_path"],
+            "qualification_mode": bool(candidate.get("qualification_mode", False)),
+            "command": build_child_command(
+                python_executable,
+                profile_render,
+                candidate,
+                contract,
+                metadata_path,
+                configs=configs,
+                profile_args=profile_args,
+            ),
+            "metadata_path": str(metadata_path),
+            "stdout_path": str(stdout_path),
+            "stderr_path": str(stderr_path),
+            "passed": False,
+            "returncode": None,
+            "error": None,
+            "stdout_sha256": None,
+            "stderr_sha256": None,
+            "metadata_sha256": None,
+            "metrics": None,
+        }
+    )
+    return record
+
+
+def _prepare_run_artifacts(record):
+    """Ensure a child attempt cannot consume metadata from an older attempt."""
+
+    for key in ("metadata_path", "stdout_path", "stderr_path"):
+        path = Path(record[key])
+        if path.exists() or path.is_symlink():
+            if not path.is_file() and not path.is_symlink():
+                raise BenchmarkContractError(
+                    "run artifact path is not a file: {}".format(path)
+                )
+            path.unlink()
+
+
 def _completed_output(completed, name):
     value = getattr(completed, name, "")
     if value is None:
@@ -2010,6 +2485,159 @@ def _completed_output(completed, name):
     if isinstance(value, bytes):
         return value.decode("utf-8", errors="replace")
     return str(value)
+
+
+def _checkpoint_document(report, resume_identity):
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "kind": CHECKPOINT_KIND,
+        "resume_identity": resume_identity,
+        "report": report,
+    }
+
+
+def _write_benchmark_checkpoint(path, report, resume_identity):
+    """Atomically persist all completed work after each child attempt."""
+
+    atomic_write_json(path, _checkpoint_document(report, resume_identity))
+
+
+def _load_benchmark_checkpoint(path, expected_identity):
+    document, _ = load_json_mapping_snapshot(path, "benchmark checkpoint")
+    _require_equal(document, "schema_version", SCHEMA_VERSION, "checkpoint")
+    _require_equal(document, "kind", CHECKPOINT_KIND, "checkpoint")
+    identity = _mapping(document.get("resume_identity"), "checkpoint.resume_identity")
+    if identity != expected_identity:
+        raise BenchmarkContractError(
+            "benchmark checkpoint identity does not match the current invocation"
+        )
+    report = _mapping(document.get("report"), "checkpoint.report")
+    _require_equal(report, "kind", REPORT_KIND, "checkpoint.report")
+    return report
+
+
+def _recover_checkpoint_prefix(
+    checkpoint_report,
+    schedule,
+    candidate_by_name,
+    contract,
+    session,
+    profile_render,
+    python_executable,
+    root,
+    configs,
+    profile_args,
+):
+    """Revalidate and return the successful prefix of a saved schedule.
+
+    The failed terminal attempt, if present, is deliberately discarded.  All
+    successful metadata and text artifacts are hashed again and the complete
+    child contract is replayed before any GPU child is skipped.
+    """
+
+    saved_runs = checkpoint_report.get("runs")
+    if not isinstance(saved_runs, list):
+        raise BenchmarkContractError("checkpoint.report.runs must be an array")
+    if len(saved_runs) > len(schedule):
+        raise BenchmarkContractError("checkpoint contains too many run records")
+    recovered = []
+    stable_environment = None
+    stable_provenance = None
+    failed_seen = False
+    for index, saved in enumerate(saved_runs):
+        if not isinstance(saved, dict):
+            raise BenchmarkContractError("checkpoint run records must be objects")
+        expected_schedule = schedule[index]
+        candidate = candidate_by_name[expected_schedule["candidate_name"]]
+        expected_record = _make_run_record(
+            expected_schedule,
+            candidate,
+            session,
+            profile_render,
+            python_executable,
+            contract,
+            configs,
+            profile_args,
+        )
+        if set(saved) != RUN_RECORD_FIELDS:
+            raise BenchmarkContractError(
+                "checkpoint run {} record schema changed".format(index)
+            )
+        for key in (
+            "run_index",
+            "round_index",
+            "position_in_round",
+            "candidate_name",
+            "requested_execution_mode",
+            "profile_path",
+            "qualification_mode",
+            "command",
+            "metadata_path",
+            "stdout_path",
+            "stderr_path",
+        ):
+            if saved[key] != expected_record[key]:
+                raise BenchmarkContractError(
+                    "checkpoint run {} {} changed".format(index, key)
+                )
+        if type(saved.get("passed")) is not bool:
+            raise BenchmarkContractError(
+                "checkpoint run {} passed must be boolean".format(index)
+            )
+        if saved.get("passed") is not True:
+            failed_seen = True
+            if index != len(saved_runs) - 1:
+                raise BenchmarkContractError(
+                    "checkpoint failure must be the final saved run"
+                )
+            continue
+        if failed_seen:
+            raise BenchmarkContractError(
+                "checkpoint cannot contain success after a failed run"
+            )
+        expected_metadata = Path(expected_record["metadata_path"])
+        expected_stdout = Path(expected_record["stdout_path"])
+        expected_stderr = Path(expected_record["stderr_path"])
+        if saved.get("returncode") != 0 or saved.get("error") is not None:
+            raise BenchmarkContractError(
+                "checkpoint run {} success status changed".format(index)
+            )
+        for key, path in (
+            ("stdout_sha256", expected_stdout),
+            ("stderr_sha256", expected_stderr),
+        ):
+            if not path.is_file() or saved.get(key) != sha256_file(path):
+                raise BenchmarkContractError(
+                    "checkpoint run {} {} artifact changed".format(index, key)
+                )
+        metadata, metadata_hash = load_json_mapping_snapshot(
+            expected_metadata, "checkpoint child metadata"
+        )
+        if saved.get("metadata_sha256") != metadata_hash:
+            raise BenchmarkContractError(
+                "checkpoint run {} metadata artifact changed".format(index)
+            )
+        metrics = validate_child_metadata(metadata, candidate, contract)
+        if saved.get("metrics") != metrics:
+            raise BenchmarkContractError(
+                "checkpoint run {} normalized metrics changed".format(index)
+            )
+        if stable_environment is None:
+            stable_environment = metrics["stable_environment"]
+        elif metrics["stable_environment"] != stable_environment:
+            raise BenchmarkContractError(
+                "stable GPU/CUDA/PyTorch environment changed in checkpoint"
+            )
+        if stable_provenance is None:
+            stable_provenance = metrics["stable_provenance"]
+        elif metrics["stable_provenance"] != stable_provenance:
+            raise BenchmarkContractError(
+                "repository/submodule/source provenance changed in checkpoint"
+            )
+        recovered.append(dict(saved))
+    if len(recovered) < len(saved_runs) - (1 if failed_seen else 0):
+        raise BenchmarkContractError("checkpoint successful runs are not a prefix")
+    return recovered, stable_environment, stable_provenance
 
 
 def run_interleaved_benchmark(
@@ -2032,6 +2660,8 @@ def run_interleaved_benchmark(
     incumbent_name="current_tacker",
     promotion_min_ratio=DEFAULT_PROMOTION_MIN_RATIO,
     equivalence_fraction=DEFAULT_EQUIVALENCE_FRACTION,
+    resume=False,
+    selection_inputs=None,
 ):
     """Execute the benchmark and return a report, including on child failure."""
 
@@ -2048,7 +2678,7 @@ def run_interleaved_benchmark(
             "profile_render.py does not exist: {}".format(profile_render)
         )
     root = (
-        profile_render.parent
+        _profile_project_root(profile_render)
         if project_root is None
         else Path(project_root).expanduser().resolve()
     )
@@ -2100,7 +2730,38 @@ def run_interleaved_benchmark(
         name for name in candidate_names if correctness_qualifications[name]["valid"]
     ]
     schedule = build_schedule(eligible_names, trials, strategy, seed)
-    session.mkdir(parents=True, exist_ok=False)
+    resume_identity = benchmark_resume_identity(
+        candidates,
+        contract,
+        correctness_qualifications,
+        selection_metadata,
+        schedule,
+        strategy,
+        seed,
+        trials,
+        bootstrap_resamples,
+        incumbent_name,
+        promotion_min_ratio,
+        equivalence_fraction,
+        profile_render,
+        python_executable,
+        root,
+        configs=configs,
+        profile_args=profile_args,
+        selection_inputs=selection_inputs,
+    )
+    checkpoint_path = session / CHECKPOINT_FILE_NAME
+    if resume:
+        if not session.is_dir():
+            raise BenchmarkContractError(
+                "resume session directory does not exist: {}".format(session)
+            )
+        if not checkpoint_path.is_file():
+            raise BenchmarkContractError(
+                "resume checkpoint does not exist: {}".format(checkpoint_path)
+            )
+    else:
+        session.mkdir(parents=True, exist_ok=False)
     report = {
         "schema_version": SCHEMA_VERSION,
         "kind": REPORT_KIND,
@@ -2111,6 +2772,7 @@ def run_interleaved_benchmark(
         "candidates": candidates,
         "correctness_qualifications": correctness_qualifications,
         "candidate_selection_metadata": selection_metadata,
+        "selection_inputs": _normalize_selection_inputs(selection_inputs),
         "eligible_candidates": eligible_names,
         "excluded_candidates": [
             {
@@ -2142,6 +2804,12 @@ def run_interleaved_benchmark(
             "session_dir": str(session),
             "driver_sha256": sha256_file(Path(__file__).resolve()),
             "profile_render_sha256": sha256_file(profile_render),
+            "checkpoint_path": str(checkpoint_path),
+        },
+        "resume_identity": resume_identity,
+        "resume": {
+            "enabled": bool(resume),
+            "recovered_execution_count": 0,
         },
         "runs": [],
         "summaries": {},
@@ -2157,38 +2825,53 @@ def run_interleaved_benchmark(
 
     stable_environment = None
     stable_provenance = None
-    for schedule_item in schedule:
+    if resume:
+        checkpoint_report = _load_benchmark_checkpoint(
+            checkpoint_path, resume_identity
+        )
+        recovered, stable_environment, stable_provenance = (
+            _recover_checkpoint_prefix(
+                checkpoint_report,
+                schedule,
+                candidate_by_name,
+                contract,
+                session,
+                profile_render,
+                python_executable,
+                root,
+                configs,
+                profile_args,
+            )
+        )
+        report["generated_at_utc"] = checkpoint_report.get(
+            "generated_at_utc", report["generated_at_utc"]
+        )
+        report["runs"] = recovered
+        report["resume"]["recovered_execution_count"] = len(recovered)
+
+    # Establish an identity-bound empty prefix before launching the first
+    # child.  This closes the hard-kill window where the session directory (and
+    # possibly partial child artifacts) exists but ``--resume`` has no trusted
+    # checkpoint from which to recover.
+    _write_benchmark_checkpoint(checkpoint_path, report, resume_identity)
+
+    for schedule_item in schedule[len(report["runs"]):]:
         candidate = candidate_by_name[schedule_item["candidate_name"]]
-        stem = _safe_run_stem(schedule_item)
-        metadata_path = session / "{}.metadata.json".format(stem)
-        stdout_path = session / "{}.stdout.txt".format(stem)
-        stderr_path = session / "{}.stderr.txt".format(stem)
-        command = build_child_command(
-            python_executable,
-            profile_render,
+        run_record = _make_run_record(
+            schedule_item,
             candidate,
+            session,
+            profile_render,
+            python_executable,
             contract,
-            metadata_path,
-            configs=configs,
-            profile_args=profile_args,
+            configs,
+            profile_args,
         )
-        run_record = dict(schedule_item)
-        run_record.update(
-            {
-                "requested_execution_mode": candidate["execution_mode"],
-                "profile_path": candidate["profile_path"],
-                "qualification_mode": bool(
-                    candidate.get("qualification_mode", False)
-                ),
-                "command": command,
-                "metadata_path": str(metadata_path),
-                "stdout_path": str(stdout_path),
-                "stderr_path": str(stderr_path),
-                "passed": False,
-                "returncode": None,
-                "error": None,
-            }
-        )
+        metadata_path = Path(run_record["metadata_path"])
+        stdout_path = Path(run_record["stdout_path"])
+        stderr_path = Path(run_record["stderr_path"])
+        command = run_record["command"]
+        _prepare_run_artifacts(run_record)
         report["runs"].append(run_record)
         try:
             completed = runner(
@@ -2203,6 +2886,8 @@ def run_interleaved_benchmark(
             run_record["returncode"] = int(completed.returncode)
             atomic_write_text(stdout_path, _completed_output(completed, "stdout"))
             atomic_write_text(stderr_path, _completed_output(completed, "stderr"))
+            run_record["stdout_sha256"] = sha256_file(stdout_path)
+            run_record["stderr_sha256"] = sha256_file(stderr_path)
             if completed.returncode != 0:
                 raise BenchmarkContractError(
                     "child exited with status {}".format(completed.returncode)
@@ -2210,6 +2895,7 @@ def run_interleaved_benchmark(
             metadata, metadata_hash = load_json_mapping_snapshot(
                 metadata_path, "child metadata"
             )
+            run_record["metadata_sha256"] = metadata_hash
             metrics = validate_child_metadata(metadata, candidate, contract)
             if stable_environment is None:
                 stable_environment = metrics["stable_environment"]
@@ -2224,11 +2910,17 @@ def run_interleaved_benchmark(
                     "repository/submodule/source provenance changed between runs"
                 )
             run_record["metrics"] = metrics
-            run_record["metadata_sha256"] = metadata_hash
             run_record["passed"] = True
+            report["stable_environment"] = stable_environment
+            report["stable_provenance"] = stable_provenance
+            _write_benchmark_checkpoint(
+                checkpoint_path, report, resume_identity
+            )
         except subprocess.TimeoutExpired as error:
             atomic_write_text(stdout_path, _completed_output(error, "stdout"))
             atomic_write_text(stderr_path, _completed_output(error, "stderr"))
+            run_record["stdout_sha256"] = sha256_file(stdout_path)
+            run_record["stderr_sha256"] = sha256_file(stderr_path)
             run_record["error"] = "child timed out after {} seconds".format(
                 timeout_seconds
             )
@@ -2239,6 +2931,9 @@ def run_interleaved_benchmark(
                     run_record["error"],
                 )
             )
+            _write_benchmark_checkpoint(
+                checkpoint_path, report, resume_identity
+            )
             break
         except Exception as error:
             # Preserve the expected paths even when the child never created its
@@ -2247,6 +2942,8 @@ def run_interleaved_benchmark(
                 atomic_write_text(stdout_path, "")
             if not stderr_path.exists():
                 atomic_write_text(stderr_path, "")
+            run_record["stdout_sha256"] = sha256_file(stdout_path)
+            run_record["stderr_sha256"] = sha256_file(stderr_path)
             run_record["error"] = str(error)
             report["errors"].append(
                 "run {} ({}): {}".format(
@@ -2254,6 +2951,9 @@ def run_interleaved_benchmark(
                     candidate["name"],
                     run_record["error"],
                 )
+            )
+            _write_benchmark_checkpoint(
+                checkpoint_path, report, resume_identity
             )
             break
 
@@ -2272,10 +2972,13 @@ def run_interleaved_benchmark(
                 bootstrap_resamples,
                 seed,
             )
+            measured_selection_metadata = selection_metadata_with_measured_peaks(
+                candidate_names, selection_metadata, report["runs"]
+            )
             selection = select_candidates(
                 summaries,
                 candidate_qualifications=correctness_qualifications,
-                candidate_selection_metadata=selection_metadata,
+                candidate_selection_metadata=measured_selection_metadata,
                 incumbent_name=incumbent_name,
                 candidate_names=candidate_names,
                 bootstrap_resamples=bootstrap_resamples,
@@ -2284,6 +2987,13 @@ def run_interleaved_benchmark(
                 equivalence_fraction=equivalence_fraction,
             )
             report["summaries"] = summaries
+            report["candidate_selection_metadata_input"] = selection_metadata
+            report["candidate_selection_metadata"] = measured_selection_metadata
+            report["peak_memory_tie_break"] = {
+                "metric": "max_cuda_peak_reserved_bytes_across_formal_trials",
+                "lower_is_better": True,
+                "measured_after_all_interleaved_trials_before_selection": True,
+            }
             report["ranking"] = ranking
             report["eligible_ranking"] = selection["eligible_ranking"]
             report["experimental_winner"] = selection["experimental_winner"]
@@ -2294,6 +3004,7 @@ def run_interleaved_benchmark(
             report["passed"] = True
         except Exception as error:
             report["errors"].append("aggregation failed: {}".format(error))
+    _write_benchmark_checkpoint(checkpoint_path, report, resume_identity)
     return report
 
 
@@ -2328,9 +3039,17 @@ def _parser():
         help="optional unique artifact directory name; must not already exist",
     )
     parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "resume an interrupted --run-id after revalidating its checkpoint; "
+            "all inputs and recovered artifacts must be byte-identical"
+        ),
+    )
+    parser.add_argument(
         "--profile-render",
-        default=str(project_root / "profile_render.py"),
-        help="profile_render.py path",
+        default=str(project_root / "scripts" / "run_profile_render_sealed.py"),
+        help="sealed profile_render entry-point path",
     )
     parser.add_argument(
         "--python-executable", default=sys.executable, help="Python executable"
@@ -2404,6 +3123,8 @@ def _session_dir(args, output_path):
         runs_parent = Path(args.runs_dir).expanduser().resolve()
     else:
         runs_parent = output_path.parent / "{}-runs".format(output_path.stem)
+    if args.resume and not args.run_id:
+        raise BenchmarkContractError("--resume requires an explicit --run-id")
     if args.run_id:
         if not NAME_PATTERN.match(args.run_id):
             raise BenchmarkContractError(
@@ -2421,7 +3142,9 @@ def _session_dir(args, output_path):
 def main(argv=None):
     args = _parser().parse_args(argv)
     output_path = Path(args.output).expanduser().resolve()
-    if output_path.exists():
+    existing_output = None
+    existing_output_sha256 = None
+    if output_path.exists() and not args.resume:
         print(
             "refusing to overwrite existing FPS benchmark report: {}".format(
                 output_path
@@ -2429,6 +3152,21 @@ def main(argv=None):
             file=sys.stderr,
         )
         return 1
+    if output_path.exists():
+        try:
+            existing_output, existing_output_sha256 = load_json_mapping_snapshot(
+                output_path, "existing resume report"
+            )
+            if existing_output.get("passed") is True:
+                raise BenchmarkContractError(
+                    "a completed FPS benchmark report cannot be resumed"
+                )
+        except Exception as error:
+            print(
+                "refusing to resume existing FPS report: {}".format(error),
+                file=sys.stderr,
+            )
+            return 1
     selection_inputs = {}
     try:
         view_indices = _parse_view_indices(args.expected_view_indices, args.frames)
@@ -2483,7 +3221,7 @@ def main(argv=None):
             session_dir,
             args.profile_render,
             python_executable=args.python_executable,
-            project_root=Path(args.profile_render).expanduser().resolve().parent,
+            project_root=_profile_project_root(args.profile_render),
             configs=(
                 str(Path(args.configs).expanduser().resolve())
                 if args.configs is not None
@@ -2493,6 +3231,8 @@ def main(argv=None):
             timeout_seconds=args.timeout_seconds,
             candidate_qualifications=candidate_qualifications,
             candidate_selection_metadata=candidate_selection_metadata,
+            resume=bool(args.resume),
+            selection_inputs=selection_inputs,
         )
     except Exception as error:
         report = {
@@ -2515,15 +3255,39 @@ def main(argv=None):
     report["selection_inputs"] = selection_inputs
     report["artifacts"] = dict(report.get("artifacts", {}))
     report["artifacts"]["report_path"] = str(output_path)
-    try:
-        atomic_write_json_no_clobber(output_path, report)
-    except FileExistsError:
-        print(
-            "refusing to overwrite FPS benchmark report created during run: {}"
-            .format(output_path),
-            file=sys.stderr,
-        )
-        return 1
+    if existing_output is not None:
+        if (
+            report.get("resume_identity") is None
+            or existing_output.get("resume_identity")
+            != report.get("resume_identity")
+        ):
+            print(
+                "refusing to replace a report from a different resume identity: {}"
+                .format(output_path),
+                file=sys.stderr,
+            )
+            return 1
+        try:
+            atomic_write_json_compare_and_swap(
+                output_path, report, existing_output_sha256
+            )
+        except Exception as error:
+            print(
+                "refusing to replace FPS report changed during resume: {} ({})"
+                .format(output_path, error),
+                file=sys.stderr,
+            )
+            return 1
+    else:
+        try:
+            atomic_write_json_no_clobber(output_path, report)
+        except FileExistsError:
+            print(
+                "refusing to overwrite FPS benchmark report created during run: {}"
+                .format(output_path),
+                file=sys.stderr,
+            )
+            return 1
     if report.get("passed"):
         winner = report["experimental_winner"]
         winner_fps = report["summaries"][winner]["median_throughput_fps"]

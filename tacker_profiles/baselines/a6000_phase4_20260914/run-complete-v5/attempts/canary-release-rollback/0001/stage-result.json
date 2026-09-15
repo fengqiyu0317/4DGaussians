@@ -1,0 +1,18 @@
+{
+  "canary": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/canary.json",
+    "sha256": "f24e2d450cfeb77d3874c6b62103a918049f85bc1450b3e6c6a2a79c436f7e7c",
+    "size_bytes": 2709
+  },
+  "release": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/release-selection.json",
+    "sha256": "8886c50839549eaaa14bc6bd318500ed99218fd02296954fa149d21df5c7ee41",
+    "size_bytes": 12582
+  },
+  "release_sha256": "e7dd8d081d445b51dc92cccc74704690e9187863163ae2dd26b6fb43d5ba88d8",
+  "rollback": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback.json",
+    "sha256": "bd3b135bec857f1dfdcc7d76941063b16c5c564fb4abab23e596e99adabcdf99",
+    "size_bytes": 5019
+  }
+}

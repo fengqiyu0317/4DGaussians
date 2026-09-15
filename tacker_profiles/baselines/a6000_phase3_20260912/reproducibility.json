@@ -1,0 +1,54 @@
+{
+  "database_valid": true,
+  "final_matrix": {
+    "byte_identical": true,
+    "candidate_count": 366,
+    "matrix_sha256": "8956a212b0ee99d9cf17fb2de3a43e793745eadfcc0651924fb135e2603c4295",
+    "original_sha256": "f351c5819b239b9324082b056c232ccbd293005f6a2d699686bacfbac7d6e144",
+    "recomputed_sha256": "f351c5819b239b9324082b056c232ccbd293005f6a2d699686bacfbac7d6e144"
+  },
+  "formal_selection": {
+    "candidate_names_original": [
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+      "c2h3_scales_opacity_shs_l1_wg1_pb5440",
+      "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440"
+    ],
+    "candidate_names_recomputed": [
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+      "c2h3_scales_opacity_shs_l1_wg1_pb5440",
+      "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440"
+    ],
+    "correctness_qualifications_identical": true,
+    "normalized_records_identical": true
+  },
+  "kind": "4dgaussians_tacker_phase3_postflight_reproducibility",
+  "nsight_resume_audit": {
+    "final_attempt": 2,
+    "final_status": "succeeded",
+    "first_attempt_failure": "Nsight qdstrm importer reported Wrong event order; orchestration failed closed and preserved formal evidence",
+    "report_passed": true,
+    "report_resume": {
+      "enabled": true,
+      "recovered_count": 0
+    },
+    "retry_policy": "same sealed identity, same tool/version, checkpoint resume",
+    "selected_candidate_count": 3,
+    "tool": "/usr/local/cuda-12.4/bin/nsys",
+    "tool_version": "NVIDIA Nsight Systems 2023.4.4.54"
+  },
+  "passed": true,
+  "phase3_status": "succeeded",
+  "qualification_profiles": {
+    "hash_mismatch_count": 0,
+    "hash_mismatches": [],
+    "original_count": 366,
+    "recomputed_count": 366
+  },
+  "run_identity_sha256": "b8f04b8fce967e4fd6a479b48265a59ea80a9cea9b05d546c7cf183a3cc0e8d8",
+  "schema_version": 1,
+  "source_commit": "f31762793604b66e7e4330d3b6254f053d73ab5b"
+}

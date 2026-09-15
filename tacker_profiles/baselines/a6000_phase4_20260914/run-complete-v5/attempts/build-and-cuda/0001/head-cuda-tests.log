@@ -1,0 +1,25 @@
+argv_sha256=9ddeb3701082448199df4696cde380ee6d1f5716aac4cbc8a72d6c91428fce57
+test_empty_and_out_storage_identity (tests.test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_exact_tile (tests.test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.011623382568359375, "mean_abs": 0.002604022854939103, "relative_l2": 0.0002848707081284374, "rmse": 0.003252179129049182}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 16}
+ok
+test_grad_mode_is_rejected (tests.test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_misaligned_contiguous_views_are_rejected (tests.test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_non_tile_tail (tests.test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.01462554931640625, "mean_abs": 0.002563143614679575, "relative_l2": 0.00028735719388350844, "rmse": 0.003238362492993474}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 37}
+ok
+test_out_storage_must_not_overlap_input (tests.test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_real_row_count (tests.test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.022823333740234375, "mean_abs": 0.002668471075594425, "relative_l2": 0.0002920951519627124, "rmse": 0.003365814685821533}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 111525}
+ok
+test_dual_head_c2_serial_and_parallel_workers (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_five_parallel_workers_and_real_tail_count (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_invalid_counts_worker_groups_dtype_shape_and_alias_fail_closed (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_misaligned_multi_input_is_rejected (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_multi_out_storage_identity_and_repeat_overwrite (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_non_default_stream_lifetime_and_capability_resources (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_one_to_five_heads_serial_worker (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_packed_two_and_five_heads (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_whole_head_tail_widths_and_tail_rows (tests.test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.484s
+
+OK

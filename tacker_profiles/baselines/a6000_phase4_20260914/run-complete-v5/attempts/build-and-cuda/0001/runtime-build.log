@@ -1,0 +1,11 @@
+argv_sha256=2c87e034507e2c11674bf704116628d28b57de61757e8ab8f03f63db476dbbcd
+[ 12%] Building CXX object CMakeFiles/tacker_runtime.dir/runtime/Kernel.cc.o
+[ 25%] Building CXX object CMakeFiles/tacker_runtime.dir/runtime/TaskGraph.cc.o
+[ 37%] Building CXX object CMakeFiles/tacker_runtime.dir/runtime/Scheduler.cc.o
+[ 50%] Building CXX object CMakeFiles/tacker_runtime.dir/runtime/Registry.cc.o
+[ 62%] Building CXX object CMakeFiles/tacker_runtime.dir/runtime/CudaExecutionBackend.cc.o
+[ 75%] Linking CXX shared library libtacker_runtime.so
+[ 75%] Built target tacker_runtime
+[ 87%] Building CXX object CMakeFiles/tacker_runtime_tests.dir/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/tests/runtime/runtime_tests.cc.o
+[100%] Linking CXX executable tacker_runtime_tests
+[100%] Built target tacker_runtime_tests

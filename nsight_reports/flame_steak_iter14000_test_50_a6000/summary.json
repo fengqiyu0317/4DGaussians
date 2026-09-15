@@ -1,0 +1,352 @@
+{
+  "source": "/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render_stats.csv",
+  "metadata": {
+    "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+    "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+    "iteration": 14000,
+    "split": "test",
+    "warmup_frames": 10,
+    "profile_frames": 50,
+    "gaussian_count": 111525,
+    "image_width": 1352,
+    "image_height": 1014,
+    "dataset_type": "dynerf",
+    "convert_SHs_python": false,
+    "compute_cov3D_python": false,
+    "gpu_name": "NVIDIA RTX A6000"
+  },
+  "frame_count": 50,
+  "render_loop": {
+    "total_ms": 657.75292,
+    "ms_per_frame": 13.1550584,
+    "fps": 76.01638621383847,
+    "gpu_projected_total_ms": 661.313403,
+    "gpu_projected_ms_per_frame": 13.22626806
+  },
+  "frame_nvtx": {
+    "mean_ms": 13.143061699999997,
+    "stddev_ms": 0.6471864802483517,
+    "min_ms": 12.874157,
+    "median_ms": 12.976561,
+    "max_ms": 16.785985
+  },
+  "main_stages": {
+    "renderer/setup": {
+      "instances": 50,
+      "cpu_total_ms": 196.125223,
+      "cpu_ms_per_frame": 3.9225044600000003,
+      "cpu_loop_percent": 29.817461395686394,
+      "gpu_projected_total_ms": 15.566145,
+      "gpu_projected_ms_per_frame": 0.3113229,
+      "gpu_projected_loop_percent": 2.3538227003090095,
+      "gpu_ops": 400
+    },
+    "renderer/deformation": {
+      "instances": 50,
+      "cpu_total_ms": 206.377783,
+      "cpu_ms_per_frame": 4.12755566,
+      "cpu_loop_percent": 31.376186516967493,
+      "gpu_projected_total_ms": 437.094451,
+      "gpu_projected_ms_per_frame": 8.74188902,
+      "gpu_projected_loop_percent": 66.09490281266838,
+      "gpu_ops": 5300
+    },
+    "renderer/activation": {
+      "instances": 50,
+      "cpu_total_ms": 7.806714,
+      "cpu_ms_per_frame": 0.15613428000000001,
+      "cpu_loop_percent": 1.1868763729699596,
+      "gpu_projected_total_ms": 1.260733,
+      "gpu_projected_ms_per_frame": 0.025214660000000003,
+      "gpu_projected_loop_percent": 0.19064077550534692,
+      "gpu_ops": 250
+    },
+    "renderer/rasterization": {
+      "instances": 50,
+      "cpu_total_ms": 241.98186,
+      "cpu_ms_per_frame": 4.8396372,
+      "cpu_loop_percent": 36.78917305300598,
+      "gpu_projected_total_ms": 206.92417,
+      "gpu_projected_ms_per_frame": 4.1384834,
+      "gpu_projected_loop_percent": 31.289879966337235,
+      "gpu_ops": 1400
+    }
+  },
+  "main_stage_unmarked": {
+    "cpu_total_ms": 5.46133999999995,
+    "cpu_ms_per_frame": 0.109226799999999,
+    "cpu_loop_percent": 0.8303026613701616,
+    "gpu_projected_total_ms": 0.4679039999999759,
+    "gpu_projected_ms_per_frame": 0.009358079999999517,
+    "gpu_projected_loop_percent": 0.07075374518002563
+  },
+  "deformation_stages": {
+    "deformation/positional_encoding": {
+      "instances": 50,
+      "cpu_total_ms": 15.894044,
+      "cpu_ms_per_frame": 0.31788088,
+      "cpu_loop_percent": 2.416415574407484,
+      "gpu_projected_total_ms": 18.21411,
+      "gpu_projected_ms_per_frame": 0.36428220000000006,
+      "gpu_projected_loop_percent": 2.754232700769865,
+      "gpu_ops": 600
+    },
+    "deformation/hexplane_feature_sampling": {
+      "instances": 50,
+      "cpu_total_ms": 117.245028,
+      "cpu_ms_per_frame": 2.34490056,
+      "cpu_loop_percent": 17.82508666020061,
+      "gpu_projected_total_ms": 113.640253,
+      "gpu_projected_ms_per_frame": 2.27280506,
+      "gpu_projected_loop_percent": 17.184023865912785,
+      "gpu_ops": 2800
+    },
+    "deformation/backbone_mlp": {
+      "instances": 50,
+      "cpu_total_ms": 4.08513,
+      "cpu_ms_per_frame": 0.08170260000000001,
+      "cpu_loop_percent": 0.621073639627476,
+      "gpu_projected_total_ms": 6.51521,
+      "gpu_projected_ms_per_frame": 0.13030419999999998,
+      "gpu_projected_loop_percent": 0.9851924927642817,
+      "gpu_ops": 50
+    },
+    "deformation/heads_and_residuals": {
+      "instances": 50,
+      "cpu_total_ms": 63.60069,
+      "cpu_ms_per_frame": 1.2720138,
+      "cpu_loop_percent": 9.669389229013229,
+      "gpu_projected_total_ms": 293.306822,
+      "gpu_projected_ms_per_frame": 5.86613644,
+      "gpu_projected_loop_percent": 44.35216656269706,
+      "gpu_ops": 1800
+    }
+  },
+  "kernels": {
+    "total_ms": 562.941256,
+    "ms_per_frame": 11.25882512,
+    "launches": 6050,
+    "launches_per_frame": 121.0,
+    "categories": {
+      "gemm": {
+        "instances": 500,
+        "total_ms": 197.341801,
+        "ms_per_frame": 3.94683602,
+        "kernel_percent": 35.055487388190286
+      },
+      "raster_render": {
+        "instances": 50,
+        "total_ms": 120.743361,
+        "ms_per_frame": 2.4148672199999996,
+        "kernel_percent": 21.448660888339653
+      },
+      "activation": {
+        "instances": 550,
+        "total_ms": 84.367453,
+        "ms_per_frame": 1.6873490599999998,
+        "kernel_percent": 14.986901759426209
+      },
+      "radix_sort": {
+        "instances": 400,
+        "total_ms": 51.653023,
+        "ms_per_frame": 1.03306046,
+        "kernel_percent": 9.175561828071098
+      },
+      "elementwise": {
+        "instances": 3300,
+        "total_ms": 46.357673,
+        "ms_per_frame": 0.92715346,
+        "kernel_percent": 8.234904176218345
+      },
+      "duplicate_with_keys": {
+        "instances": 50,
+        "total_ms": 23.545,
+        "ms_per_frame": 0.47090000000000004,
+        "kernel_percent": 4.182496796788332
+      },
+      "concat_copy": {
+        "instances": 300,
+        "total_ms": 16.215331,
+        "ms_per_frame": 0.32430662,
+        "kernel_percent": 2.880465914901785
+      },
+      "hexplane_grid_sample": {
+        "instances": 600,
+        "total_ms": 12.324896,
+        "ms_per_frame": 0.24649792,
+        "kernel_percent": 2.1893751556912004
+      },
+      "other": {
+        "instances": 250,
+        "total_ms": 7.600184,
+        "ms_per_frame": 0.15200368,
+        "kernel_percent": 1.3500847413464399
+      },
+      "raster_preprocess": {
+        "instances": 50,
+        "total_ms": 2.792534,
+        "ms_per_frame": 0.05585068,
+        "kernel_percent": 0.49606135102665133
+      }
+    },
+    "top": [
+      {
+        "name": "ampere_sgemm_128x64_tn",
+        "instances": 250,
+        "total_ms": 145.138896,
+        "ms_per_frame": 2.9027779199999997,
+        "kernel_percent": 25.782245385831164
+      },
+      {
+        "name": "void renderCUDA<(unsigned int)3>(const uint2 *, const unsigned int *, int, int, const float2 *, const float *, const float *, const float4 *, float *, unsigned int *, const float *, float *, float *)",
+        "instances": 50,
+        "total_ms": 120.743361,
+        "ms_per_frame": 2.4148672199999996,
+        "kernel_percent": 21.448660888339653
+      },
+      {
+        "name": "void at::native::vectorized_elementwise_kernel<(int)4, at::native::<unnamed>::launch_clamp_scalar(at::TensorIteratorBase &, c10::Scalar, c10::Scalar, at::native::detail::ClampLimits)::[lambda() (instance 1)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)",
+        "instances": 550,
+        "total_ms": 84.367453,
+        "ms_per_frame": 1.6873490599999998,
+        "kernel_percent": 14.986901759426209
+      },
+      {
+        "name": "void cub::CUB_200301_860_NS::DeviceRadixSortOnesweepKernel<cub::CUB_200301_860_NS::DeviceRadixSortPolicy<unsigned long, unsigned int, unsigned int>::Policy900, (bool)0, unsigned long, unsigned int, unsigned int, int, int, cub::CUB_200301_860_NS::detail::identity_decomposer_t>(T7 *, T7 *, T5 *, const T5 *, T3 *, const T3 *, T4 *, const T4 *, T6, int, int, T8)",
+        "instances": 300,
+        "total_ms": 48.690859,
+        "ms_per_frame": 0.9738171800000001,
+        "kernel_percent": 8.64936767043416
+      },
+      {
+        "name": "ampere_sgemm_32x128_tn",
+        "instances": 200,
+        "total_ms": 45.687695,
+        "ms_per_frame": 0.9137539,
+        "kernel_percent": 8.11589033723263
+      },
+      {
+        "name": "duplicateWithKeys(int, const float2 *, const float *, const unsigned int *, unsigned long *, unsigned int *, int *, dim3)",
+        "instances": 50,
+        "total_ms": 23.545,
+        "ms_per_frame": 0.47090000000000004,
+        "kernel_percent": 4.182496796788332
+      },
+      {
+        "name": "void at::native::vectorized_elementwise_kernel<(int)4, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>, at::detail::Array<char *, (int)3>>(int, T2, T3)",
+        "instances": 550,
+        "total_ms": 16.2703,
+        "ms_per_frame": 0.325406,
+        "kernel_percent": 2.890230521672762
+      },
+      {
+        "name": "void at::native::<unnamed>::grid_sampler_2d_kernel<float, int>(T2, at::cuda::detail::TensorInfo<const T1, T2>, at::cuda::detail::TensorInfo<const T1, T2>, at::cuda::detail::TensorInfo<T1, T2>, at::native::detail::GridSamplerInterpolation, at::native::detail::GridSamplerPadding, bool)",
+        "instances": 600,
+        "total_ms": 12.324896,
+        "ms_per_frame": 0.24649792,
+        "kernel_percent": 2.1893751556912004
+      },
+      {
+        "name": "void at::native::<unnamed>::CatArrayBatchedCopy_aligned16_contig<at::native::<unnamed>::OpaqueType<(unsigned int)4>, unsigned int, (int)2, (int)128, (int)1>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)",
+        "instances": 200,
+        "total_ms": 9.832513,
+        "ms_per_frame": 0.19665026000000002,
+        "kernel_percent": 1.7466321565886442
+      },
+      {
+        "name": "void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)",
+        "instances": 350,
+        "total_ms": 6.72424,
+        "ms_per_frame": 0.1344848,
+        "kernel_percent": 1.1944834258159256
+      },
+      {
+        "name": "void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_tn_align1>(T1::Params)",
+        "instances": 50,
+        "total_ms": 6.51521,
+        "ms_per_frame": 0.13030419999999998,
+        "kernel_percent": 1.1573516651264941
+      },
+      {
+        "name": "void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctor_add<float>, at::detail::Array<char *, (int)3>>(int, T2, T3)",
+        "instances": 200,
+        "total_ms": 5.318087,
+        "ms_per_frame": 0.10636174000000001,
+        "kernel_percent": 0.9446966167993912
+      },
+      {
+        "name": "std::enable_if<!T7, void>::type internal::gemvx::kernel<int, int, float, float, float, float, (bool)0, (bool)1, (bool)1, (bool)0, (int)5, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float>>(T13)",
+        "instances": 50,
+        "total_ms": 4.109422,
+        "ms_per_frame": 0.08218844,
+        "kernel_percent": 0.7299912657316414
+      },
+      {
+        "name": "void at::native::index_elementwise_kernel<(int)128, (int)4, void at::native::gpu_index_kernel<void at::native::index_kernel_impl<at::native::OpaqueType<(int)4>>(at::TensorIteratorBase &, c10::ArrayRef<long>, c10::ArrayRef<long>)::[lambda(char *, const char *, long) (instance 1)]>(at::TensorIteratorBase &, c10::ArrayRef<long>, c10::ArrayRef<long>, const T1 &)::[lambda(int) (instance 1)]>(long, T3)",
+        "instances": 600,
+        "total_ms": 3.92978,
+        "ms_per_frame": 0.0785956,
+        "kernel_percent": 0.6980799431761668
+      },
+      {
+        "name": "void at::native::<unnamed>::CatArrayBatchedCopy_aligned16_contig<at::native::<unnamed>::OpaqueType<(unsigned int)4>, unsigned int, (int)3, (int)128, (int)1>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)",
+        "instances": 50,
+        "total_ms": 3.92539,
+        "ms_per_frame": 0.0785078,
+        "kernel_percent": 0.6973001104754702
+      },
+      {
+        "name": "void at::native::vectorized_elementwise_kernel<(int)4, at::native::FillFunctor<float>, at::detail::Array<char *, (int)1>>(int, T2, T3)",
+        "instances": 450,
+        "total_ms": 3.697242,
+        "ms_per_frame": 0.07394484,
+        "kernel_percent": 0.656772258311798
+      },
+      {
+        "name": "void at::native::vectorized_elementwise_kernel<(int)4, at::native::cos_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)",
+        "instances": 150,
+        "total_ms": 2.948885,
+        "ms_per_frame": 0.0589777,
+        "kernel_percent": 0.5238352969461524
+      },
+      {
+        "name": "void cub::CUB_200301_860_NS::DeviceRadixSortHistogramKernel<cub::CUB_200301_860_NS::DeviceRadixSortPolicy<unsigned long, unsigned int, unsigned int>::Policy900, (bool)0, unsigned long, unsigned int, cub::CUB_200301_860_NS::detail::identity_decomposer_t>(T4 *, const T3 *, T4, int, int, T5)",
+        "instances": 50,
+        "total_ms": 2.86143,
+        "ms_per_frame": 0.0572286,
+        "kernel_percent": 0.5082999281900206
+      },
+      {
+        "name": "void preprocessCUDA<(int)3>(int, int, int, const float *, const glm::vec<(int)3, float, (glm::qualifier)0> *, float, const glm::vec<(int)4, float, (glm::qualifier)0> *, const float *, const float *, bool *, const float *, const float *, const float *, const float *, const glm::vec<(int)3, float, (glm::qualifier)0> *, int, int, float, float, float, float, int *, float2 *, float *, float *, float *, float4 *, dim3, unsigned int *, bool)",
+        "instances": 50,
+        "total_ms": 2.792534,
+        "ms_per_frame": 0.05585068,
+        "kernel_percent": 0.49606135102665133
+      },
+      {
+        "name": "identifyTileRanges(int, unsigned long *, uint2 *)",
+        "instances": 50,
+        "total_ms": 2.760787,
+        "ms_per_frame": 0.05521574,
+        "kernel_percent": 0.4904218638400878
+      }
+    ]
+  },
+  "cuda_api": {
+    "total_ms": 459.22686,
+    "stream_synchronize": {
+      "calls": 800,
+      "calls_per_frame": 16.0,
+      "total_ms": 180.015422
+    },
+    "kernel_launch": {
+      "calls": 6000,
+      "calls_per_frame": 120.0,
+      "total_ms": 42.576258
+    }
+  },
+  "gpu_memory_operations": {
+    "total_ms": 3.405909,
+    "ms_per_frame": 0.06811818
+  }
+}

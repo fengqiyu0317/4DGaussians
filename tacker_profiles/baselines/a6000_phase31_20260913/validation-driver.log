@@ -1,0 +1,7 @@
+973a3f9a66b5f69f1b85e62c3e94473c0221e3c0db83e7e7a9b8f435dc0cfdb7  /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-ptxas-full.log
+81e44586d93e33bcf314c4b079bd8736fc50ce6c299efd12ea531be49d543650  /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/head-extension-cuda.log
+0bc4624f07464aecd3466eade7841a71b7e45e20d5ffe8eaec0911da8275859f  /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-abi1-4-cuda.log
+449a8a341e4f1d23d1e790b2dc7f8864c2bbbcf79900e02a9aa528f29ac24186  /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/runtime-c3-c4-fallback.log
+a4ce707e575b880f51e5a7e58d98d17596355b6ed3a1199a70b2248e9bef7dc7  /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/phase31-cpu-contract.log
+cf75c80f737169b6c9c96610cbde78ff7b2359691178b08d31e3ddb2c541f0d9  /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_ext/tacker_4dgs_head/_C.cpython-310-x86_64-linux-gnu.so
+ef1478ffd323df4d9707044f01af4249d2f940d54b37b01600c354155fce9fa7  /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so

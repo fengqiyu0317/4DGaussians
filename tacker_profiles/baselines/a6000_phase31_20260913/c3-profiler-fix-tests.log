@@ -1,0 +1,47 @@
+test_atomic_writer_rejects_nan_without_replacing_old_file (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_failed_report_does_not_touch_measurement_targets (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_injected_publication_failure_rolls_back_this_run (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_passing_run_refuses_any_existing_target_without_writes (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_report_temp_unlink_failure_recovers_as_complete_publication (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_success_writes_all_machine_readable_documents (tests.test_tacker_leaf_profile.AtomicOutputContractTest) ... ok
+test_candidate_profile_hashes_bind_exact_file_and_candidate (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_disabled_v2_profile_resolves_unique_multi_head_variant (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_invalid_or_nonfinite_candidate_profiles_fail_closed (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_matrix_or_profile_identity_drift_fails_closed (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_matrix_proves_exact_multi_head_member_and_claims (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_matrix_proves_schema_v2_c0_while_preserving_v1_abi (tests.test_tacker_leaf_profile.CandidateProfileContractTest) ... ok
+test_packed_mixed_tensor_rejects_disagreeing_context_rows (tests.test_tacker_leaf_profile.Phase31StandaloneDispatchContractTest) ... ok
+test_packed_mixed_tensor_rejects_malformed_shapes (tests.test_tacker_leaf_profile.Phase31StandaloneDispatchContractTest) ... ok
+test_packed_mixed_tensor_slices_h2_and_h5_by_selected_head (tests.test_tacker_leaf_profile.Phase31StandaloneDispatchContractTest) ... ok
+test_packed_operands_share_input_and_dispatch_once (tests.test_tacker_leaf_profile.Phase31StandaloneDispatchContractTest) ... ok
+test_whole_head_dispatch_preserves_each_tail (tests.test_tacker_leaf_profile.Phase31StandaloneDispatchContractTest) ... ok
+test_checkpoint_and_config_chain_are_hashed_and_reverified (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_execution_snapshot_precedes_config_load_and_supports_base_lists (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_phase31_head_resources_select_backend_specific_symbols (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_v2_head_resources_fail_closed_on_missing_or_zero_facts (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_v2_head_resources_select_exact_worker_group_occupancy (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_v2_raster_resources_bind_sealed_candidate_and_query_snapshot (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_v2_raster_second_query_drift_is_rejected (tests.test_tacker_leaf_profile.ResourceAndInputBindingContractTest) ... ok
+test_admission_fields_share_the_same_full_call_p50 (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_c0_variant_keeps_v1_physical_timing_semantics (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_nonfinite_p50_cannot_enter_output_schema (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_optional_gptb_is_diagnostic_not_an_admission_replacement (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_phase31_variant_documents_bind_packed_and_whole_backends (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_phase31_variant_metadata_rejects_backend_abi_mismatch (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_variant_documents_bind_profile_resources_and_each_head (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_variant_documents_fail_closed_on_hash_resource_or_head_drift (tests.test_tacker_leaf_profile.SchemaContractTest) ... ok
+test_cli_has_fixed_workload_and_four_required_outputs (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_cli_snapshots_configs_before_their_actual_loaders (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_known_remote_dataset_basename_is_accepted (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_module_import_is_torch_free (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_no_per_iteration_device_synchronize_in_timer (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_no_shell_or_subprocess_and_parseable_source (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_source_profiles_real_split_head_and_public_mixed_calls (tests.test_tacker_leaf_profile.SourceAndCliContractTest) ... ok
+test_nan_infinity_zero_and_empty_fail_closed (tests.test_tacker_leaf_profile.StatisticsContractTest) ... ok
+test_single_sample_percentiles_are_defined (tests.test_tacker_leaf_profile.StatisticsContractTest) ... ok
+test_summary_preserves_samples_and_interpolates_p95 (tests.test_tacker_leaf_profile.StatisticsContractTest) ... ok
+
+----------------------------------------------------------------------
+Ran 42 tests in 0.219s
+
+OK

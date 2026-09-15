@@ -1,0 +1,51 @@
+{
+  "default_profile_replaced": false,
+  "deployment": {
+    "admission_generated_profile": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "size_bytes": 102428
+    },
+    "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "enabled_profile": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "size_bytes": 102428
+    },
+    "execution_mode": "tacker",
+    "profile_action": "publish_new_challenger_profile",
+    "selected_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "selection_sha256": "22e27f5ee9cf5f98b53cf4e790bb165163c1a61f9970775da4faabea0d9f22d6",
+    "validated_abi": {
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "head_abi_version": 2,
+      "head_gptb_kernel_symbol": "tacker_head_linear_multi_gptb_v2",
+      "head_solo_kernel_symbol": "tacker_head_linear_multi_solo_v2",
+      "mixed_abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "mixed_abi_version": 3,
+      "mixed_kernel_symbol": "tacker_mix_render_packed_heads_v3",
+      "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf"
+    }
+  },
+  "fallback_smoke": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/fallback-smoke.json",
+    "sha256": "d06626b28068e4fe6da5f7182d615223b33b39a32f361121099e2216dffabe20",
+    "size_bytes": 7861
+  },
+  "kind": "4dgaussians_tacker_phase4_canary",
+  "normal_10x50": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.json",
+    "sha256": "d12552a2ad198ae3cafc21747475164b0573644ca18cebebe6622356a5ae22c1",
+    "size_bytes": 145835
+  },
+  "passed": true,
+  "profile_action": "publish_new_challenger_profile",
+  "schema_version": 1,
+  "scope": "explicit_profile_only",
+  "sequence_regression": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-regression.json",
+    "sha256": "8a8ea33ab94206651e490822971506e8c407803e747b31bc0226f89d8078af36",
+    "size_bytes": 16301
+  },
+  "sha256": "c8a8d272a76550a833db707df98566abdf6ec27f4ccf76e35b577bc243b8941f"
+}

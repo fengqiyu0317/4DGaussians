@@ -2,10 +2,12 @@
 
 from contextlib import contextmanager
 from copy import deepcopy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
 import sys
+import tempfile
 import types
 import unittest
 from unittest import mock
@@ -746,6 +748,33 @@ class ProfileContractTest(unittest.TestCase):
             self.module.tacker_profile_admission_reason(profile),
             "Tacker profile deployment is disabled",
         )
+
+    def test_profile_file_uses_one_stable_regular_file_snapshot(self):
+        source = self.module.DEFAULT_PROFILE_PATH.read_bytes()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "profile.json"
+            path.write_bytes(source)
+            profile, digest, resolved = self.module.load_tacker_profile_snapshot(
+                path
+            )
+            self.assertEqual(digest, hashlib.sha256(source).hexdigest())
+            self.assertEqual(resolved, path.resolve())
+            self.assertEqual(profile["schema_version"], 2)
+
+            symlink = Path(directory) / "profile-link.json"
+            symlink.symlink_to(path)
+            with self.assertRaisesRegex(
+                self.module.TackerProfileError, "symbolic link"
+            ):
+                self.module.load_tacker_profile(symlink)
+
+    def test_missing_profile_has_visible_fail_closed_reason(self):
+        with tempfile.TemporaryDirectory() as directory:
+            missing = Path(directory) / "missing.json"
+            with self.assertRaisesRegex(
+                self.module.TackerProfileError, "cannot load Tacker profile"
+            ):
+                self.module.load_tacker_profile(missing)
 
     def test_hash_mismatch_and_weakened_correctness_gate_are_rejected(self):
         profile = _valid_profile(self.module)
@@ -1868,6 +1897,73 @@ class PipelineOrderingContractTest(unittest.TestCase):
         self.assertEqual(renderer.actual_execution_mode, "serial")
         renderer.synchronize()
         self.assertEqual(renderer._fallback_renderer.synchronize_calls, 1)
+
+    def test_missing_profile_delegates_with_a_visible_profile_reason(self):
+        module = _load_module(available=False, grad_enabled=False)
+        pc = _exact_model(training=False)
+        pipe = types.SimpleNamespace(
+            debug=False,
+            compute_cov3D_python=False,
+            convert_SHs_python=False,
+        )
+        with tempfile.TemporaryDirectory() as directory, mock.patch.object(
+            module,
+            "_cache_pos_head_parameters",
+            return_value=(FakeTensor(), FakeTensor()),
+        ):
+            missing = Path(directory) / "missing-profile.json"
+            renderer = module.TackerRenderer(
+                pc,
+                pipe,
+                bg_color=FakeTensor(),
+                cam_type="dynerf",
+                profile_path=missing,
+                workload_name="flame_steak",
+                iteration=14000,
+            )
+            outputs = list(renderer.render_sequence(iter(("0", "1"))))
+
+        self.assertEqual(outputs, [{"two_stream": "0"}, {"two_stream": "1"}])
+        self.assertIn("cannot load Tacker profile", renderer.last_fallback_reason)
+        self.assertEqual(renderer.actual_execution_mode, "two_stream")
+        self.assertIsNone(renderer.profile_file_sha256)
+        self.assertIsNone(renderer.profile_source_path)
+
+    def test_sealed_profile_error_never_reopens_the_profile_path(self):
+        module = _load_module(available=False, grad_enabled=False)
+        pc = _exact_model(training=False)
+        pipe = types.SimpleNamespace(
+            debug=False,
+            compute_cov3D_python=False,
+            convert_SHs_python=False,
+        )
+        sealed_error = (
+            "cannot load Tacker profile /sealed/missing.json: profile was "
+            "absent from the sealed pre-import snapshot"
+        )
+        with mock.patch.object(
+            module,
+            "load_tacker_profile_snapshot",
+            side_effect=AssertionError("profile path was reopened"),
+        ), mock.patch.object(
+            module,
+            "_cache_pos_head_parameters",
+            return_value=(FakeTensor(), FakeTensor()),
+        ):
+            renderer = module.TackerRenderer(
+                pc,
+                pipe,
+                bg_color=FakeTensor(),
+                cam_type="dynerf",
+                profile_snapshot_error=sealed_error,
+                workload_name="flame_steak",
+                iteration=14000,
+            )
+            outputs = list(renderer.render_sequence(iter(("0", "1"))))
+
+        self.assertEqual(outputs, [{"two_stream": "0"}, {"two_stream": "1"}])
+        self.assertIn(sealed_error, renderer.last_fallback_reason)
+        self.assertEqual(renderer.actual_execution_mode, "two_stream")
 
     def test_qualification_mode_requires_explicit_override(self):
         module = _load_module(available=False, grad_enabled=False)

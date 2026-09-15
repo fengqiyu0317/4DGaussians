@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -Dtacker_runtime_EXPORTS -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -isystem /usr/local/cuda-12.4/include -O3 -DNDEBUG -fPIC -std=c++11 -o CMakeFiles/tacker_runtime.dir/runtime/Kernel.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Kernel.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Kernel.cc"
+},
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -Dtacker_runtime_EXPORTS -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -isystem /usr/local/cuda-12.4/include -O3 -DNDEBUG -fPIC -std=c++11 -o CMakeFiles/tacker_runtime.dir/runtime/TaskGraph.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/TaskGraph.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/TaskGraph.cc"
+},
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -Dtacker_runtime_EXPORTS -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -isystem /usr/local/cuda-12.4/include -O3 -DNDEBUG -fPIC -std=c++11 -o CMakeFiles/tacker_runtime.dir/runtime/Registry.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Registry.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Registry.cc"
+},
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -Dtacker_runtime_EXPORTS -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -isystem /usr/local/cuda-12.4/include -O3 -DNDEBUG -fPIC -std=c++11 -o CMakeFiles/tacker_runtime.dir/runtime/Scheduler.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Scheduler.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Scheduler.cc"
+},
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -Dtacker_runtime_EXPORTS -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -isystem /usr/local/cuda-12.4/include -O3 -DNDEBUG -fPIC -std=c++11 -o CMakeFiles/tacker_runtime.dir/runtime/CudaExecutionBackend.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/CudaExecutionBackend.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/CudaExecutionBackend.cc"
+},
+{
+  "directory": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+  "command": "/usr/bin/c++ -DTACKER_RUNTIME_HAS_CUDA=1 -I/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src -O3 -DNDEBUG -std=c++11 -o CMakeFiles/tacker_runtime_tests.dir/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/tests/runtime/runtime_tests.cc.o -c /home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/tests/runtime/runtime_tests.cc",
+  "file": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/tests/runtime/runtime_tests.cc"
+}
+]

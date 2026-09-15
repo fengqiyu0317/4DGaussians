@@ -1,0 +1,52 @@
+{
+  "command": {
+    "argv": [
+      "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+      "--model_path",
+      "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+      "--source_path",
+      "/data/qyfeng/datasets/n3dv/flame_steak",
+      "--configs",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+      "--iteration",
+      "14000",
+      "--split",
+      "test",
+      "--warmup",
+      "10",
+      "--frames",
+      "50",
+      "--trials",
+      "10",
+      "--execution-mode",
+      "tacker",
+      "--workload-name",
+      "flame_steak",
+      "--metadata",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.json",
+      "--quiet",
+      "--tacker-profile",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+    ],
+    "argv_sha256": "b2557aa7906f6cb64a64cacc88efb27fcdebe51228fb7b9a80f3a48475a44922",
+    "log": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.log",
+      "sha256": "9b2042eea55a2100a31e299d0eec369f82cabe3d235e02d5a9dec91fe70a49b7",
+      "size_bytes": 243
+    },
+    "returncode": 0
+  },
+  "execution_mode": "tacker",
+  "loaded_rasterizer_sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+  "metadata": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.json",
+    "sha256": "d12552a2ad198ae3cafc21747475164b0573644ca18cebebe6622356a5ae22c1",
+    "size_bytes": 145835
+  },
+  "profile": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+    "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+    "size_bytes": 102428
+  }
+}

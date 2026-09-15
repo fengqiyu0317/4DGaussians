@@ -1,0 +1,68 @@
+test_compiled_capability_query_locks_kernel_symbols (test_contract.ExtensionContractTest) ... ok
+test_extension_does_not_link_libtacker_runtime (test_contract.ExtensionContractTest) ... ok
+test_extension_keeps_python_abi_suffix (test_contract.ExtensionContractTest) ... ok
+test_large_row_addressing_uses_size_t_and_safe_ceil_div (test_contract.ExtensionContractTest) ... ok
+test_native_alignment_grad_and_alias_guards_are_in_cpp (test_contract.ExtensionContractTest) ... ok
+test_out_api_argument_order_is_stable (test_contract.ExtensionContractTest) ... ok
+test_python_37_is_declared_and_sources_parse_with_37_grammar (test_contract.ExtensionContractTest) ... ok
+test_versioned_global_symbols_are_declared_and_defined (test_contract.ExtensionContractTest) ... ok
+test_empty_and_out_storage_identity (test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_exact_tile (test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.011623382568359375, "mean_abs": 0.002604022854939103, "relative_l2": 0.0002848707081284374, "rmse": 0.003252179129049182}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 16}
+ok
+test_grad_mode_is_rejected (test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_misaligned_contiguous_views_are_rejected (test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_non_tile_tail (test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.01462554931640625, "mean_abs": 0.002563143614679575, "relative_l2": 0.00028735719388350844, "rmse": 0.003238362492993474}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 37}
+ok
+test_out_storage_must_not_overlap_input (test_head_linear_cuda.HeadLinearCudaTest) ... ok
+test_real_row_count (test_head_linear_cuda.HeadLinearCudaTest) ... HEAD_LINEAR_NUMERICS {"fp16_quantization": {"max_abs": 0.022823333740234375, "mean_abs": 0.002668471075594425, "relative_l2": 0.0002920951519627124, "rmse": 0.003365814685821533}, "gates": {"max_abs_lte": 0.05, "relative_l2_lte": 0.001, "rmse_lte": 0.01}, "kernel_reference": "FP16 operands converted to FP32, TF32 disabled", "quality_reference": "original FP32 hidden/weight, TF32 disabled", "rows": 111525}
+ok
+test_dual_head_c2_serial_and_parallel_workers (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_five_parallel_workers_and_real_tail_count (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_invalid_counts_worker_groups_dtype_shape_and_alias_fail_closed (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_misaligned_multi_input_is_rejected (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_multi_out_storage_identity_and_repeat_overwrite (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_non_default_stream_lifetime_and_capability_resources (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_one_to_five_heads_serial_worker (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_packed_two_and_five_heads (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_whole_head_tail_widths_and_tail_rows (test_head_linear_v2_cuda.HeadLinearV2CudaTest) ... ok
+test_all_c1_roles_and_one_dual_head_c2_are_manifested (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_build_and_python_api_include_v2_without_breaking_python37 (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_descriptor_layout_is_frozen_in_manifest_and_static_asserts (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_global_symbols_are_declared_defined_and_capability_reported (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_multi_adapter_supports_one_to_five_and_worker_groups (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_packed_and_whole_head_adapters_have_explicit_sync_contracts (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_resource_query_exposes_launch_filter_inputs (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_v1_manifest_and_symbols_remain_independent (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_validation_and_native_guards_fail_closed (test_v2_contract.ExtensionV2ContractTest) ... ok
+test_capability_queries_are_independently_versioned (test_v2_python_api.PythonV2ApiTest) ... ok
+test_multi_sequence_argument_order_and_tuple_result (test_v2_python_api.PythonV2ApiTest) ... ok
+test_packed_and_whole_argument_order (test_v2_python_api.PythonV2ApiTest) ... ok
+test_validation_happens_before_extension_dispatch (test_v2_python_api.PythonV2ApiTest) ... ok
+test_accepts_empty_and_differing_row_tasks (test_v2_validation.MultiHeadValidationTest) ... ok
+test_accepts_every_supported_task_count (test_v2_validation.MultiHeadValidationTest) ... ok
+test_dual_head_c2_serial_and_parallel_metadata (test_v2_validation.MultiHeadValidationTest) ... ok
+test_rejects_cross_task_device_mismatch (test_v2_validation.MultiHeadValidationTest) ... ok
+test_rejects_empty_more_than_five_and_mismatched_sequences (test_v2_validation.MultiHeadValidationTest) ... ok
+test_rejects_invalid_worker_groups (test_v2_validation.MultiHeadValidationTest) ... ok
+test_validates_one_output_per_task (test_v2_validation.MultiHeadValidationTest) ... ok
+test_packed_accepts_one_to_five_heads (test_v2_validation.PackedAndWholeHeadValidationTest) ... ok
+test_packed_rejects_bad_count_shape_and_dtype (test_v2_validation.PackedAndWholeHeadValidationTest) ... ok
+test_whole_head_accepts_all_4dgs_tail_widths (test_v2_validation.PackedAndWholeHeadValidationTest) ... ok
+test_whole_head_rejects_invalid_tail (test_v2_validation.PackedAndWholeHeadValidationTest) ... ok
+test_accepts_caller_owned_output (test_validation.ValidationTest) ... ok
+test_accepts_real_shape_and_tail (test_validation.ValidationTest) ... ok
+test_accepts_zero_rows (test_validation.ValidationTest) ... ok
+test_launch_shape (test_validation.ValidationTest) ... ok
+test_rejects_cpu (test_validation.ValidationTest) ... ok
+test_rejects_mixed_devices (test_validation.ValidationTest) ... ok
+test_rejects_noncontiguous_weight (test_validation.ValidationTest) ... ok
+test_rejects_output_on_different_device (test_validation.ValidationTest) ... ok
+test_rejects_wrong_dtypes (test_validation.ValidationTest) ... ok
+test_rejects_wrong_input_width (test_validation.ValidationTest) ... ok
+test_rejects_wrong_output_dtype (test_validation.ValidationTest) ... ok
+test_rejects_wrong_output_shape (test_validation.ValidationTest) ... ok
+
+----------------------------------------------------------------------
+Ran 60 tests in 0.515s
+
+OK

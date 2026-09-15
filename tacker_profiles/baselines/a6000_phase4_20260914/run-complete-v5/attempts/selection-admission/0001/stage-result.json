@@ -1,0 +1,96 @@
+{
+  "command": {
+    "argv": [
+      "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/benchmark_tacker_admission.py",
+      "--device-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json",
+      "--quality-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/baseline-quality.json",
+      "--raster-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json",
+      "--leaf-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json",
+      "--fps-benchmark-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.json",
+      "--candidate-correctness-json",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/formal-correctness.json",
+      "--head-abi-json",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/abi/head_linear_v2.json",
+      "--template-profile",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_profiles/raster_head_sm86.json",
+      "--report",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/admission-report.json",
+      "--enabled-profile",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "--mixed-abi-json",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_head_v1.json",
+      "--mixed-abi-json",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_heads_v2.json",
+      "--mixed-abi-json",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_packed_heads_v3.json",
+      "--mixed-abi-json",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_whole_heads_v4.json",
+      "--candidate-profile",
+      "current_tacker=/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_profiles/incumbents/current-v1.json",
+      "--candidate-profile",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+      "--candidate-profile",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+      "--candidate-profile",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+      "--candidate-profile",
+      "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.json",
+      "--candidate-profile",
+      "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.json",
+      "--candidate-profile",
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+      "--candidate-profile",
+      "c0_legacy_pos_l1_pb5440=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c0_legacy_pos_l1_pb5440.json",
+      "--candidate-profile",
+      "c1_opacity_l1_wg1_pb13942=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c1_opacity_l1_wg1_pb13942.json",
+      "--candidate-profile",
+      "c4_whole_heads_opacity_wg1_pb5440=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c4_whole_heads_opacity_wg1_pb5440.json"
+    ],
+    "argv_sha256": "8d650160d57a35dd348d59eeaf0232c66c824747c917b76190ac700383bb1fc4",
+    "log": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/admission.log",
+      "sha256": "6e52f882e259bf324e155c222c56820ad2fad1b4d2fb3372416ae82b7ab5c392",
+      "size_bytes": 390
+    },
+    "returncode": 0
+  },
+  "deployment": {
+    "admission_generated_profile": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "size_bytes": 102428
+    },
+    "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "enabled_profile": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "size_bytes": 102428
+    },
+    "execution_mode": "tacker",
+    "profile_action": "publish_new_challenger_profile",
+    "selected_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "selection_sha256": "22e27f5ee9cf5f98b53cf4e790bb165163c1a61f9970775da4faabea0d9f22d6",
+    "validated_abi": {
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "head_abi_version": 2,
+      "head_gptb_kernel_symbol": "tacker_head_linear_multi_gptb_v2",
+      "head_solo_kernel_symbol": "tacker_head_linear_multi_solo_v2",
+      "mixed_abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "mixed_abi_version": 3,
+      "mixed_kernel_symbol": "tacker_mix_render_packed_heads_v3",
+      "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf"
+    }
+  },
+  "profiler_source_candidate": "current_tacker",
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/admission-report.json",
+    "sha256": "877d7a2af7983cc9bbbd2d0626693ca6e06766ff2ce7ac74df305cc6293289f6",
+    "size_bytes": 106701
+  }
+}

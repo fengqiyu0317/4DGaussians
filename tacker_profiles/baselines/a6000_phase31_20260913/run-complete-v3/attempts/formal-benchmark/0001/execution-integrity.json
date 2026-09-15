@@ -1,0 +1,1743 @@
+{
+  "claim_scope": "Each finalist child sequence executed Tacker without fallback and reported exactly one prefill, 49 mixed steps, one drain, 50 outputs, and 50 selected-head evaluations per head.",
+  "expected_pipeline_execution_counts": {
+    "full_deformation": 1,
+    "input_frames": 50,
+    "mixed_launches": 49,
+    "outputs": 50,
+    "prefix": 49,
+    "selected_head_evaluations_per_head": 50,
+    "solo_raster": 1,
+    "suffix": 49
+  },
+  "finalist_names": [
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+    "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+    "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+    "c0_legacy_pos_l1_pb5440",
+    "c1_opacity_l1_wg1_pb13942",
+    "c4_whole_heads_opacity_wg1_pb5440"
+  ],
+  "kind": "tacker_phase31_formal_execution_integrity",
+  "protocol": {
+    "frames_per_sequence": 50,
+    "schedule": "abba",
+    "trials_per_candidate": 10
+  },
+  "schema_version": 1,
+  "validated_runs": [
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0007-round000-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "5b563dc1422d86e28acebaaa6d4d7502c042b502d3eb1360df34dbb582ca8c29",
+        "size_bytes": 13862
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0016-round001-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "8c7d0312f83d002f3cf0e3f61e02b779d96e8cf02e76e4cecd23e45cdec43657",
+        "size_bytes": 13904
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0030-round002-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "fb486c7ba5546ab42d32efb7537e584224480de5ddf658b9b7aa47beec1f4314",
+        "size_bytes": 13839
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0041-round003-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "025e8639a1870b5094a3ca251f3e60f373c44d13ccd5d62e5fdacfe3e6ecf855",
+        "size_bytes": 13893
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0053-round004-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "bf6a71656075d823d2c1dccaa095095ffb22e23c7ee13f5413e5ab8c02232dc2",
+        "size_bytes": 13942
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0066-round005-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "fb41c78ed467bbc46b87db831886cbf9a0e71538cc61045d27446f7bf9ec40f3",
+        "size_bytes": 13880
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0076-round006-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "12b573a5807987fd3fff1c73966d75e74e690fe5b38c7d4837d93896750e9758",
+        "size_bytes": 13938
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0091-round007-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "fdd1ef151a29715aae6735d5418c22cab40bb9f42e5cb936f81b591445955495",
+        "size_bytes": 13921
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0099-round008-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "173f571443e5d367ce840896f4580b6718015ebdce8d904fe019a79077b06b99",
+        "size_bytes": 13899
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0116-round009-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.metadata.json",
+        "sha256": "66da775c2f1572e64a1c111d9f20b067ad38621caf8d73ce7b62837cd090d661",
+        "size_bytes": 13923
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0003-round000-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "4c83e295cebcc30f6205a21782a70b9eb5f915b110e26feb5e1674f7b21eb8d4",
+        "size_bytes": 13954
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0020-round001-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "3862e1044e7d885f1f8461a280f934289ebe4073a834f4e5fec231c8b1fe69db",
+        "size_bytes": 13904
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0026-round002-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "bbee5968715f187c5d56ff3292c0db628cf41916ee4bc9cb53584d0608d2335e",
+        "size_bytes": 13935
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0045-round003-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "a02a6b3b0455f530278bfcda6ad6e2908bddc7b088f827a8186ed9346d94c305",
+        "size_bytes": 13877
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0049-round004-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "dc783f23a2f9042e786f4c0fd77fe1b0d64e22e60f9bc019dab77eda6637ec95",
+        "size_bytes": 13901
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0070-round005-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "374cb716585bfcb1d97acd7ce945cf53494103c5aa86cedaa440de50138a145f",
+        "size_bytes": 13846
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0072-round006-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "ad857f5bfb80a3795ad4d599777552cf6809aa7c03cec04fa59f2b31d7d2ab9a",
+        "size_bytes": 13848
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0095-round007-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "7ccd9b8965d84ff4939eee4919fa50d583212b64303fd422308759d30ffcbe59",
+        "size_bytes": 13903
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0107-round008-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "f57de35dc98d6b26fc8b6416297e7fd270e8063141dc25002c7ccc2b39f2aa1e",
+        "size_bytes": 13935
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0108-round009-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.metadata.json",
+        "sha256": "e0e49b977db72d537b97720c02023d8cc98f604b8455740fca6e8e3b8ef652cb",
+        "size_bytes": 13904
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0011-round000-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "51eac6843471c2e550a09ed867e3326453a1cd2ba37aafe83541316429072741",
+        "size_bytes": 13959
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0012-round001-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "03b41b23125022e2283f963ee342085610a23076af31b8019e38cc25c770af27",
+        "size_bytes": 13891
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0034-round002-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "53401c025b823b8003a6b3059f4bd5b27497d085b81e323f5c3b25c4604a0814",
+        "size_bytes": 13970
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0037-round003-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "d8c0e0302982794a582cf5819ff9621d00734be4f291be3da53aa12c82e884b8",
+        "size_bytes": 13905
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0057-round004-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "e53febe01482fb813c59878762e2f6691ac95620b83a4006789d4e3b3dd48837",
+        "size_bytes": 13911
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0062-round005-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "2609ae7e32bd690aa6eaf930e04bf3ce74953603a28cd45b63568e3ffcace917",
+        "size_bytes": 13942
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0080-round006-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "510f9d7282e4fcd2162aca468126efe97f2e3a9e91f3627c37047c4b1f29c634",
+        "size_bytes": 13927
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0087-round007-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "7b627be2d837ad4ba87b36b866c623ac0b041609adea889b0f6085bc38f77942",
+        "size_bytes": 13874
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0103-round008-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "fff8a806c8847b6de18069ac78087e3d21cfe7350415223b1e3f6bcb90c8cf55",
+        "size_bytes": 13938
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0112-round009-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.metadata.json",
+        "sha256": "18a8890b9827c7144e56952e063627b3e658ae37c99d34901a1dce6ef89823b2",
+        "size_bytes": 13921
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0002-round000-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "616b7672d0338aa9779c3d8bd5e5fe740ca11f86a994f17819049a2fce82dc64",
+        "size_bytes": 13959
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0021-round001-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "0b9beb87e840a240db69aefa41ed8a06c8e54f2b0574a46396f34a79db43bb40",
+        "size_bytes": 13952
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0025-round002-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "abfe1023ed7cc183cb911da1e6b95583e1e257cc47de6bb3499248891cdfa756",
+        "size_bytes": 13934
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0046-round003-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "a83b3517ce097a2107f5b5f791c6610850ec52728b33733740a9a5cfb2fe5be6",
+        "size_bytes": 13908
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0048-round004-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "b6b05bba1ac082b33db74592d1fe4730ba6dee3b7f83791d6e09bb959501cbc3",
+        "size_bytes": 13953
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0071-round005-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "910c26f67c0f4ad34caecd5ac230da8673b535872c19dfc332325af8a57253a6",
+        "size_bytes": 13919
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0083-round006-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "a0d9c8375f9c358e3886d29bba8cf19e9f8f1ac0acd8f29d05ffab63c3e2c41d",
+        "size_bytes": 13934
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0084-round007-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "fbdbb3dee5ae43a96a34b481aba57ad480210bb2ef1f62f14f61cbb7ddc1014a",
+        "size_bytes": 13908
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0106-round008-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "3c7d8ab7f7cb5ac7d447bbab80d75dc690d3d4af8868c6b9592df3f7bc282be7",
+        "size_bytes": 13932
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0109-round009-c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.metadata.json",
+        "sha256": "6f0a4b0f7dfb3cb3d624969be79a8b25f3ab2be9b6c34fa6b257e1126039dbbf",
+        "size_bytes": 13964
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0006-round000-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "00b79d36ad4349d67c82f48775322900520fd56b32d53b684b83c4c5273dcbb3",
+        "size_bytes": 13974
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0017-round001-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "9f96106bb361e2a6dc55bb25753fb638cc439d2914fa45ce8a0a1104b008ca15",
+        "size_bytes": 13952
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0029-round002-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "dd151370dce5bbca3d526bfed9a0b028e8d9b9c8a0d1ed4037d9e88f94c362e2",
+        "size_bytes": 13959
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0042-round003-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "7cb8783fbf61c79142b2c1d6d75588eb8455f008e91aa31250b51ca330dab46b",
+        "size_bytes": 13977
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0052-round004-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "4141fa723f8e0552dd780168dad4f21355f0edded8986acede880108232f6df8",
+        "size_bytes": 13912
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0067-round005-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "edff13599412a207996a6042cbba82b8f9ff15f37d79fd1f474c2739d07615ad",
+        "size_bytes": 13956
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0075-round006-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "9c0f03d5de4490c852fbc1eefd805c8160413a2b4b098b8f459e1544f251797b",
+        "size_bytes": 13968
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0092-round007-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "f510bf36174cf06c7eced1079320efd31124ec2fe27e63c6aecfea58d9156e7b",
+        "size_bytes": 13921
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0098-round008-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "3d433f4cf57defe4c9fd51c2695f37a5fc14f4e6f6c5c143b434b12c9ebb2b5e",
+        "size_bytes": 13940
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0117-round009-c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.metadata.json",
+        "sha256": "7b06b0fdd33632d196b1c27e466590e05629bd9bd68319d978133e23bc97fdc3",
+        "size_bytes": 13962
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0000-round000-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "15d2b5db040cbdeabfecbb502f923c4a102d4ff61c987bf0ab777edbca9cbeee",
+        "size_bytes": 13916
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0023-round001-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "990cded57b9d1732095f97cde4f0a40f4290a15faca1f714b622ceb0c5096712",
+        "size_bytes": 13904
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0035-round002-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "113d924b83a2a99e714b36dc17c7e6435c14cf3cea9ece801cd5a3315fe645b8",
+        "size_bytes": 13961
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0036-round003-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "14585d700dc9d3be134f7b2e1711b9a62d4a96f207cbcbfb6606244e96dc2062",
+        "size_bytes": 13911
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0058-round004-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "208903ef0d0c06942109366b26003da3060a4d0a2e8ba08fb199d3bbbbf503e8",
+        "size_bytes": 13931
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0061-round005-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "57563ae0794f086e4fd7885ceeffaa472a08c280df3c5ec005e13aa4bf9ffbe5",
+        "size_bytes": 13977
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0081-round006-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "b632a7c561c999e698f20dbb8e60ad7aac3ad096bc7a1e8c7c7cd4d264341447",
+        "size_bytes": 13901
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0086-round007-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "b60f8065e73be60d0c9ccdb2261612ff030682a8c5626606e27b174514f24f96",
+        "size_bytes": 13875
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0104-round008-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "ce12234e9d4b0799d37b49429f3c9d61df0b548f6f217a2bcb9de171ea2f7088",
+        "size_bytes": 13938
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0111-round009-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.metadata.json",
+        "sha256": "9c0b35f29700757f07743868ae8006a5b666011d58c094adaacf8ad9f1dcf9b4",
+        "size_bytes": 13937
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0001-round000-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "e82d994fba277121306c9d7dc06d01c8a9b575b273ad815bf2ec1658fd759762",
+        "size_bytes": 13877
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0022-round001-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "63c8d9cc98432126fda5e5f3b361458dca398afd56c0eea85bdbbd6940444d9b",
+        "size_bytes": 13916
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0024-round002-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "60b3e1b2a12f97353db1120b6efecf65813f5ace8f78b834c007e7ed2045599f",
+        "size_bytes": 13862
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0047-round003-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "a07d4b6ace7ffff78cb2f45cd83a5cfa732e3b2fa5695c609204a35ebdd49c94",
+        "size_bytes": 13885
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0059-round004-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "32651696779275dd27d44758caa37d044866c755f4f33778a7b55f945d90df92",
+        "size_bytes": 13871
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0060-round005-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "aa4e3865c9e210cec719bd660b3c0b359c7389561b373a821aaf8c3bcd77af32",
+        "size_bytes": 13869
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0082-round006-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "8ea6a74e056b90e5445311a4e37f9d5c737fb4f092c365cd3fce50d283cb3abf",
+        "size_bytes": 13872
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0085-round007-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "1596a42608f0d9edf6c2f725f2db16c5776b84effc0912ca54ddcb942b4931b5",
+        "size_bytes": 13851
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0105-round008-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "d076723c8028eb4a3664be2db4f9d9b42f2c294fa6d03741aded5f0437d7e99b",
+        "size_bytes": 13860
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c0_legacy_pos_l1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0110-round009-c0_legacy_pos_l1_pb5440.metadata.json",
+        "sha256": "5c54332c6979d0e27351825a4a34413a4817bd7d1f8753acc1af75de329d5978",
+        "size_bytes": 13884
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0009-round000-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "438b352510447328bd4fabe3fec1111cba117768dee6acb39375565b8f763a4a",
+        "size_bytes": 13894
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0014-round001-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "3d51f48d618eb378be828961f576087d19dec5edcb600d0a4bda202745c1c688",
+        "size_bytes": 13872
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0032-round002-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "756ed4d963b160bd504067c9ac03dbecb187c1a1e7f04488ee63d4a7edb25797",
+        "size_bytes": 13904
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0039-round003-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "e42630619afa13f97a5eaf67c2a100725734a8e256e5ad5c6095822b434d7771",
+        "size_bytes": 13858
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0055-round004-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "fb90ee5cdb1821df2066b7881d916618732ac82bffd8f4956ca6c580b80b8929",
+        "size_bytes": 13870
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0064-round005-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "890682facb3f762202eccd1e5a66f61bfd518bdd57abccb823b9529d2a264543",
+        "size_bytes": 13895
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0078-round006-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "5a37fe9f0e7b87e1299d98050b337889c46d88e7b858fc36a1932fffddd7d83f",
+        "size_bytes": 13870
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0089-round007-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "a391b8e6ea3922ab64fe08747a140ebd582e71e2fabc1b3144090a0326830c8e",
+        "size_bytes": 13898
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0101-round008-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "87f46f1d187c8ff15ea00445f8d1e666a500f8f885e238a9677678d8ac4722ce",
+        "size_bytes": 13827
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0114-round009-c1_opacity_l1_wg1_pb13942.metadata.json",
+        "sha256": "e75f760af07f9148c8ed2fafe8d63ae8216eeb9d32fd7cd8fbbd8e86897ada5b",
+        "size_bytes": 13897
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0008-round000-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "754912eaa5a7ef32bdae188af9211cd78edfdd9b4cf2c154494cdc862f7d8024",
+        "size_bytes": 13782
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 0
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0015-round001-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "6ed4dd8d23eecb9d54dd6cf44b1a99ca70eb22565a4a340091bfd0901d435ece",
+        "size_bytes": 13779
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 1
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0031-round002-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "e4c2a4d07bb784f1e806c6ff12aa6b3f69912bd1ef2847dc0a60d5cec1b0c049",
+        "size_bytes": 13796
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 2
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0040-round003-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "87258a55e1b33877f147539589476ab957c15e98d551325dabf79180c424fd7f",
+        "size_bytes": 13829
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 3
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0054-round004-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "bb8f2769c1e60a177eb8882f7f08a59f37ed7e17b9dba5a345c3f59ca0b4a17d",
+        "size_bytes": 13786
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 4
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0065-round005-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "055cf60756ee8f9335d3da98d40272de118f1d3fb6ee7e33df315afa5154633d",
+        "size_bytes": 13845
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 5
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0077-round006-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "2c12fca6478b190652f8c36a59d9b0fa2952afb2ca74bb0ace63af27ce989f81",
+        "size_bytes": 13803
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 6
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0090-round007-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "8f37765725a33ae23eb8dd7257a573089a9b3391e98136a7d091584c0dc1604d",
+        "size_bytes": 13836
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 7
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0100-round008-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "a302be9b826d662a1bd2499cdf3a1627fb43b77f552cd535d2f128d5ebb012fa",
+        "size_bytes": 13834
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 8
+    },
+    {
+      "candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/runs/phase31-formal/0115-round009-c4_whole_heads_opacity_wg1_pb5440.metadata.json",
+        "sha256": "74c94f0be39d8ec8604adf8a7abde907b47ce864c671e353d44276ecf91903fc",
+        "size_bytes": 13804
+      },
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "round_index": 9
+    }
+  ]
+}

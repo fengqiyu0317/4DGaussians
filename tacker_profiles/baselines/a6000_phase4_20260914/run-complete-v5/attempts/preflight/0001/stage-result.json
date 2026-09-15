@@ -1,0 +1,25 @@
+{
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_smoke_sum": 136.0,
+    "kind": "4dgaussians_tacker_phase4_device_query",
+    "logical_device": 0,
+    "multiprocessor_count": 84,
+    "name": "NVIDIA RTX A6000",
+    "passed": true,
+    "python_version": "3.10",
+    "schema_version": 1,
+    "torch_cuda": "12.4",
+    "torch_version": "2.4.1+cu124",
+    "total_memory_bytes": 50908823552,
+    "visible_device_count": 1
+  },
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/preflight.json",
+    "sha256": "864c9fbb11bc7068b57e7b37c62f539024346c5c734e29f583b0fba08d12ac56",
+    "size_bytes": 2453
+  }
+}

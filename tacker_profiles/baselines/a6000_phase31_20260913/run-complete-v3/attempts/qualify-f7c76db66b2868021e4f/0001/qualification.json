@@ -1,0 +1,30 @@
+{
+  "candidate_sha256": "f7c76db66b2868021e4f1bc845581a7af39d3779702e0075e0ae1933330e64b6",
+  "errors": [],
+  "kind": "tacker_phase31_candidate_qualification",
+  "leaf_passed": true,
+  "leaf_report": {
+    "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/leaf-report.json",
+    "sha256": "a4fb8a01b3fd51b3b938dd5032d745c08a4a9bdf3c7a3bb4044d7f60e6877f04",
+    "size_bytes": 886521
+  },
+  "matrix_sha256": "aa45c9dce881a5a71c9d86130fcd6b12070ee2773b83b44a538f2147bbde8577",
+  "profile": {
+    "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c4_whole_heads_opacity_wg1_pb5440.json",
+    "sha256": "80439c008f4f2438e0051656313adcedba0083af0b82f80e50b28c5bb0b9f055",
+    "size_bytes": 6482
+  },
+  "quality_50_view_passed": true,
+  "quality_actual_tacker_without_fallback": true,
+  "quality_exact_per_view_records": true,
+  "quality_report": {
+    "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/quality.json",
+    "sha256": "bc676ba000c563d1c5fbb7dec96fe544184e7dc452235ebf980bc1caff593423",
+    "size_bytes": 19474
+  },
+  "quality_unique_requested_views": true,
+  "schema_version": 1,
+  "search_family": "c4",
+  "valid": true,
+  "variant_id": "c4_whole_heads_opacity_wg1_pb5440"
+}

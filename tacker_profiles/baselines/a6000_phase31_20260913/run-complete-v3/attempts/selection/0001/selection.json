@@ -1,0 +1,30 @@
+{
+  "baseline_winner_has_no_synthetic_profile": false,
+  "deployment_winner": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+  "disabled_winner_qualification_profile": {
+    "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/selection/0001/winner-qualification-profile.json",
+    "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+    "size_bytes": 6910
+  },
+  "formal_report_sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98",
+  "kind": "tacker_phase31_selection",
+  "matrix_sha256": "aa45c9dce881a5a71c9d86130fcd6b12070ee2773b83b44a538f2147bbde8577",
+  "portable_hash_input": {
+    "baseline_winner_has_no_synthetic_profile": false,
+    "deployment_winner": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "disabled_winner_qualification_profile": {
+      "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+      "size_bytes": 6910
+    },
+    "formal_report_sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98",
+    "kind": "tacker_phase31_selection",
+    "matrix_sha256": "aa45c9dce881a5a71c9d86130fcd6b12070ee2773b83b44a538f2147bbde8577",
+    "reused_incumbent_profile": null,
+    "schema_version": 1,
+    "winner_is_new_challenger": true
+  },
+  "reused_incumbent_profile": null,
+  "schema_version": 1,
+  "selection_sha256": "1a91a02c2605ae442817bb060b7956ead5d3b940146d274b94a85e00849ec126",
+  "winner_is_new_challenger": true
+}

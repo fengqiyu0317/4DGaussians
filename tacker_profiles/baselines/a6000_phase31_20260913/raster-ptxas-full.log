@@ -1,0 +1,33 @@
+running build_ext
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/utils/cpp_extension.py:424: UserWarning: There are no g++ version bounds defined for CUDA version 12.4
+  warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+building 'diff_gaussian_rasterization._C' extension
+Emitting ninja build file /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/build.ninja...
+Compiling objects...
+Using envvar MAX_JOBS (8) as the number of workers...
+[1/1] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o.d -I/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.cu -o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/auxiliary.h(151): warning #177-D: variable "p_proj" was declared but never referenced
+   float3 p_proj = { p_hom.x * p_w, p_hom.y * p_w, p_hom.z * p_w };
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+ptxas info    : 56 bytes gmem, 32 bytes cmem[4]
+ptxas info    : Compiling entry function 'tacker_mix_render_whole_heads_v4' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_whole_heads_v4
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 36 registers, 10016 bytes smem, 752 bytes cmem[0], 24 bytes cmem[2]
+ptxas info    : Compiling entry function 'tacker_mix_render_packed_heads_v3' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_packed_heads_v3
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 70 registers, 7168 bytes smem, 508 bytes cmem[0]
+ptxas info    : Compiling entry function 'tacker_mix_render_heads_v2' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_heads_v2
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 68 registers, 7376 bytes smem, 672 bytes cmem[0], 24 bytes cmem[2]
+ptxas info    : Compiling entry function 'tacker_mix_render_head_v1' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_head_v1
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 40 registers, 7168 bytes smem, 504 bytes cmem[0]
+g++ -pthread -B /data/qyfeng/conda-envs/4dgaussians-flame-steak/compiler_compat -shared -Wl,-rpath,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath-link,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath-link,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/backward.o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/forward.o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/rasterizer_impl.o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/ext.o /home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/build/temp.linux-x86_64-cpython-310/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/rasterize_points.o -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/lib -L/usr/local/cuda-12.4/lib64 -lc10 -ltorch -ltorch_cpu -ltorch_python -lcudart -lc10_cuda -ltorch_cuda -o build/lib.linux-x86_64-cpython-310/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so
+copying build/lib.linux-x86_64-cpython-310/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so -> diff_gaussian_rasterization

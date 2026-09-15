@@ -1,0 +1,163 @@
+{
+  "analysis_kind": "existing_nsight_capture_reanalysis",
+  "new_gpu_capture_performed": false,
+  "source_run": "Phase 3.1 run-complete-v3, rank01",
+  "capture_local_date": "2026-09-14",
+  "host": "4A6000",
+  "physical_gpu": 1,
+  "selected_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+  "verified_source_files": [
+    {
+      "file": "4dgs_render_tacker_stats.csv",
+      "sha256": "c7cae8e3194e133d00fc4af5fc5946b5d7b499caee4e06d2bb2468faa80407ba",
+      "archive_sha256_matched": true,
+      "source_local": "/home/huawei/大二春/实验室/4DGaussians/tacker_profiles/baselines/a6000_phase31_20260913/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker_stats.csv",
+      "source_remote": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker_stats.csv"
+    },
+    {
+      "file": "tacker_profile_metadata.json",
+      "sha256": "885735291aa41b834b505a0ea082d9ab654ae9959fe96b591a37f52e76f04ff3",
+      "archive_sha256_matched": true,
+      "source_local": "/home/huawei/大二春/实验室/4DGaussians/tacker_profiles/baselines/a6000_phase31_20260913/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_profile_metadata.json",
+      "source_remote": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_profile_metadata.json"
+    },
+    {
+      "file": "tacker_summary.json",
+      "sha256": "0dac5904daf75b9341263aebe35dc63dcc5f107ebc79086f7758b4ce35617cc5",
+      "archive_sha256_matched": true,
+      "source_local": "/home/huawei/大二春/实验室/4DGaussians/tacker_profiles/baselines/a6000_phase31_20260913/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json",
+      "source_remote": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json"
+    },
+    {
+      "file": "profile.stdout.txt",
+      "sha256": "27bd7a40911c2ad1696d4a338c267aeeb0592b03cabe292146c7e017b2f2d593",
+      "archive_sha256_matched": true,
+      "source_local": "/home/huawei/大二春/实验室/4DGaussians/tacker_profiles/baselines/a6000_phase31_20260913/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt",
+      "source_remote": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt"
+    }
+  ],
+  "workload": {
+    "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+    "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+    "iteration": 14000,
+    "split": "test",
+    "gaussian_count": 111525,
+    "image_width": 1352,
+    "image_height": 1014,
+    "warmup_frames": 10,
+    "profile_frames": 50,
+    "view_indices": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ]
+  },
+  "actual_execution_mode": "tacker",
+  "fallback": false,
+  "pipeline_execution_counts": {
+    "input_frames": 50,
+    "full_deformation": 1,
+    "prefix": 49,
+    "mixed_launches": 49,
+    "suffix": 49,
+    "solo_raster": 1,
+    "outputs": 50,
+    "selected_head_evaluations_per_head": 50
+  },
+  "gpu_kernels": {
+    "unique_symbols": 39,
+    "launches": 5658,
+    "launches_per_frame": 113.16,
+    "total_ms": 454.566573,
+    "ms_per_frame": 9.09133146
+  },
+  "application_timing_under_nsight": {
+    "total_render_ms": 571.6776996850967,
+    "mean_frame_ms": 11.433553993701935,
+    "throughput_fps": 87.46186885992235,
+    "timing_method": "perf_counter_with_cuda_synchronize",
+    "io_in_timed_region": false
+  },
+  "nvtx_render_loop": {
+    "total_ms": 568.003218,
+    "ms_per_frame": 11.360064359999999,
+    "fps": 88.02767029393837,
+    "gpu_projected_total_ms": 569.265034,
+    "gpu_projected_ms_per_frame": 11.38530068
+  },
+  "mixed_kernel": {
+    "rank": 1,
+    "kernel_short": "tacker_mix_render_packed_heads_v3",
+    "purpose": "跨帧融合 Raster 与下一帧五个 head 的第一层 Linear",
+    "kernel_full": "tacker_mix_render_packed_heads_v3",
+    "calls_50_frames": 49,
+    "calls_per_frame": 0.98,
+    "total_ms_50_frames": 178.679079,
+    "ms_per_frame": 3.57358158,
+    "mean_us_per_call": 3646.5118163265306,
+    "median_us_per_call": 3584.507,
+    "min_us_per_call": 3531.579,
+    "max_us_per_call": 3801.823,
+    "stddev_us_per_call": 98.5008,
+    "percent_kernel_time": 39.30757112666091
+  },
+  "serial_comparison": {
+    "serial_kernel_ms_per_frame": 11.25882512,
+    "c3_kernel_ms_per_frame": 9.09133146,
+    "kernel_duration_reduction_percent": 19.251508366976033,
+    "scope": "Historical captures on same host/GPU model/workload; serial physical GPU 2 vs C3 physical GPU 1, different source snapshots and dates; not an interleaved causal speedup measurement."
+  },
+  "interpretation_notes": [
+    "Durations are GPU kernel execution sums, not CPU launch API durations.",
+    "Mixed kernel duration covers fused Raster and head work together; no internal time split is established.",
+    "Archived summary.json places the C3 mixed symbol in other; this derived report lists it explicitly without modifying sealed input files.",
+    "Standalone SGEMM128 appears for the first full deformation (5 calls); standalone renderCUDA appears for pipeline drain (1 call)."
+  ]
+}

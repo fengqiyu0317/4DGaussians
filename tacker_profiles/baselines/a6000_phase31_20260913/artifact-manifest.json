@@ -1,0 +1,440 @@
+{
+  "canonical_remote_run_root": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3",
+  "compact_archive": {
+    "sha256": "06e20059514a325d7a68e5d00700ab58a37e80892d4b02aa8d363dbfd66a2d75",
+    "size_bytes": 1266947,
+    "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/phase31-v3-compact.tar.gz"
+  },
+  "files": [
+    {
+      "origin": "local_index",
+      "path": "README.md",
+      "sha256": "8d9c80bf3d0f0d297a0dae7daeb064c0ac48347922ba00dcff0641c4748feeac",
+      "size_bytes": 12200,
+      "source_path": null
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "c3-profiler-fix-tests.log",
+      "sha256": "42b7c0fc748cb18669ad2717dccf7e8133a808cefb2da292a337d93c3a73c615",
+      "size_bytes": 5248,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/c3-profiler-fix-tests.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "cuda-suite-final.json",
+      "sha256": "2ce7d8273bfaa97a3481fdfa3d963068076d87ad3b66b5d67881299974987893",
+      "size_bytes": 4072,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/cuda-suite-final.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "dry-run-v3.json",
+      "sha256": "abe477512c6c9f1c58822c32ed2bf767fbfe29c6ca95b32251c784818dd336e6",
+      "size_bytes": 9963,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/dry-run-v3.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "head-extension-cuda.log",
+      "sha256": "81e44586d93e33bcf314c4b079bd8736fc50ce6c299efd12ea531be49d543650",
+      "size_bytes": 6780,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/head-extension-cuda.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "phase31-cpu-contract.log",
+      "sha256": "a4ce707e575b880f51e5a7e58d98d17596355b6ed3a1199a70b2248e9bef7dc7",
+      "size_bytes": 754,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/phase31-cpu-contract.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "phase31-v3-driver.log",
+      "sha256": "9ee5c45c9d2d4e00ffe0d2c2063a22cb499682363eb9382f4c2e3ccb137c26ec",
+      "size_bytes": 247,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/phase31-v3-driver.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "postflight-v3.json",
+      "sha256": "4949cb3206df127e5c205cbcb1eb47aa32c942da636947680a698b0a424650eb",
+      "size_bytes": 5359,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/postflight-v3.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "ptxas-evidence.json",
+      "sha256": "d10f2340b0948e4019fad8b6c93281e28ef4f9ae8e9898d6575240d9143422de",
+      "size_bytes": 2709,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/ptxas-evidence.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "raster-abi1-4-cuda.log",
+      "sha256": "0bc4624f07464aecd3466eade7841a71b7e45e20d5ffe8eaec0911da8275859f",
+      "size_bytes": 5036,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-abi1-4-cuda.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "raster-ptxas-full.log",
+      "sha256": "973a3f9a66b5f69f1b85e62c3e94473c0221e3c0db83e7e7a9b8f435dc0cfdb7",
+      "size_bytes": 6605,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-ptxas-full.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/base-matrix/0001/matrix.json",
+      "sha256": "e0e518ab75fa3d008dd19aec2b0410cf85c1cbb4a95a06791b70ded243ccac44",
+      "size_bytes": 271739,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/base-matrix/0001/matrix.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/baseline-quality/0001/baseline-correctness.json",
+      "sha256": "d0bac59fac8d8dc173283fb2cf0098116818e15e92c334d164a503c0658e1478",
+      "size_bytes": 595,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/baseline-quality/0001/baseline-correctness.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/baseline-quality/0001/baseline-quality.json",
+      "sha256": "87354b12a2b675e15bc590bbb7b291a9b763f0b195e3299add02af4c1dfc744b",
+      "size_bytes": 28439,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/baseline-quality/0001/baseline-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/c3-matrix/0001/matrix.json",
+      "sha256": "6fca1c1783abebf6d6b464f863f9a18f3f80dbc5c18f142868f162544fa11263",
+      "size_bytes": 321575,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c3-matrix/0001/matrix.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/c4-matrix/0001/matrix.json",
+      "sha256": "0330f77ed995c81274b37bb2bd535d1d824f700967280139b822ffc7e31ed95c",
+      "size_bytes": 373547,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/formal-benchmark/0001/execution-integrity.json",
+      "sha256": "2a68085bf49ebd5b3c23cdb43c647ea99a23f83866d0039d59e10e701186f30e",
+      "size_bytes": 68157,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/formal-benchmark/0001/execution-integrity.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/formal-candidate-set/0001/formal-candidate-set.json",
+      "sha256": "cb7a34bee6bf35f5538a13fef88e8e975784f398d1f730918b2d17b5237721f9",
+      "size_bytes": 11090,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/formal-candidate-set/0001/formal-candidate-set.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/preflight/0001/nvidia-smi.json",
+      "sha256": "3f147809439dc0792738f87408b3e14c14bed30a59c8cafd24b8dfc5814f7ae9",
+      "size_bytes": 66,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/preflight/0001/nvidia-smi.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/preflight/0001/resources.json",
+      "sha256": "5c5f5b15ca7fb0d55ab76f2c417dd6ef8259fbda068f8d82a2e761561c317d7a",
+      "size_bytes": 25230,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/preflight/0001/resources.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+      "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+      "size_bytes": 6910,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/profiles-final/0001/profiles/qualification_profiles.json",
+      "sha256": "103b842ad271557f9a5c606a565645cd927be746265447f126534f435fc41706",
+      "size_bytes": 312749,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/qualification_profiles.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualification-plan/0001/qualification-plan.json",
+      "sha256": "21e647dd18c9a9e7db0e84f119d49cada66cb4cc9e27d77f6b5a1ef8b6cd59bd",
+      "size_bytes": 33350,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualification-plan/0001/qualification-plan.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/leaf-report.json",
+      "sha256": "357e4bbe1f5cdb819343b56cac25fd67fdf7d8db36835071ca353159bd2fdf38",
+      "size_bytes": 920971,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/leaf-report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/qualification.json",
+      "sha256": "675dd14b7c175b44549b1110c0d0945eb3d0b73bb1f2439d1d1ed6fb64b89d1a",
+      "size_bytes": 1484,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/qualification.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/quality.json",
+      "sha256": "4d4fd4f43afba5deacefffa8f58d80ec9def55309fcb0f1b0055c0294c3c02c5",
+      "size_bytes": 19496,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-615594b32a83cea9eab0/0001/quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/leaf-report.json",
+      "sha256": "a4fb8a01b3fd51b3b938dd5032d745c08a4a9bdf3c7a3bb4044d7f60e6877f04",
+      "size_bytes": 886521,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/leaf-report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/qualification.json",
+      "sha256": "d99248e50f7be0d103d5e23e33b4478ce273c297156f318aae8e0a4a26b9ed2d",
+      "size_bytes": 1418,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/qualification.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/quality.json",
+      "sha256": "bc676ba000c563d1c5fbb7dec96fe544184e7dc452235ebf980bc1caff593423",
+      "size_bytes": 19474,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualify-f7c76db66b2868021e4f/0001/quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/screening-ranking/0001/measurement-sources.json",
+      "sha256": "f6e592db0537a605d859f74820a1d2ab5a02a7cae85f93eb6a453cbb5eb5934e",
+      "size_bytes": 901788,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/screening-ranking/0001/measurement-sources.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/screening-ranking/0001/screening-ranking.json",
+      "sha256": "6f8e7693353f5ea5eea74dfcd7019b9a64a2a47f31e6851782d983376ae6b382",
+      "size_bytes": 429969,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/screening-ranking/0001/screening-ranking.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/selection/0001/selection.json",
+      "sha256": "6ff8dc692a2e3d2153caeaf214dda1ec25176477eb3a3e43e17c0b4f00b9311a",
+      "size_bytes": 1529,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/selection/0001/selection.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/selection/0001/winner-qualification-profile.json",
+      "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+      "size_bytes": 6910,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/selection/0001/winner-qualification-profile.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/attempts/top3-nsight/0002/raw-artifacts.json",
+      "sha256": "045a57e9024066f28158c00fb531f73fd543c2b77d039a711ca4efc9b5ada1a6",
+      "size_bytes": 7465,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/top3-nsight/0002/raw-artifacts.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/phase31-report.json",
+      "sha256": "b24699941748fff134830bf59e0a0001bc64ac419ed119d10481bb894b956ea9",
+      "size_bytes": 54139,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/phase31-report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/phase31-state.json",
+      "sha256": "da2fba8f33cb0938a40a57aa4af376e8c6cd9b1ad129b6ed4dc43c9337ef4758",
+      "size_bytes": 5213571,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/phase31-state.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/formal/formal-correctness.json",
+      "sha256": "7a38a3ca8b1360aea6fe0bbeff86f497ab5248d1eeb22ef6d9a842b63e060b2b",
+      "size_bytes": 3052,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/formal-correctness.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/formal/formal-fps.json",
+      "sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98",
+      "size_bytes": 1199502,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/formal-fps.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker_stats.csv",
+      "sha256": "c7cae8e3194e133d00fc4af5fc5946b5d7b499caee4e06d2bb2468faa80407ba",
+      "size_bytes": 26787,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/4dgs_render_tacker_stats.csv"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stderr.txt",
+      "sha256": "e3023b968aad25dc8fc4195d2a736d3719c08adbfab2abcfe345cbf30737493e",
+      "size_bytes": 166,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stderr.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt",
+      "sha256": "27bd7a40911c2ad1696d4a338c267aeeb0592b03cabe292146c7e017b2f2d593",
+      "size_bytes": 2999,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_profile_metadata.json",
+      "sha256": "885735291aa41b834b505a0ea082d9ab654ae9959fe96b591a37f52e76f04ff3",
+      "size_bytes": 13957,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_profile_metadata.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json",
+      "sha256": "0dac5904daf75b9341263aebe35dc63dcc5f107ebc79086f7758b4ce35617cc5",
+      "size_bytes": 29256,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/4dgs_render_tacker_stats.csv",
+      "sha256": "c6b887d3f59fca2e7b734b9b1587d0772c1ca7a4db0feb5377832df029a8d304",
+      "size_bytes": 26788,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/4dgs_render_tacker_stats.csv"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stderr.txt",
+      "sha256": "b6c9610f37cfc0807cdaf65d726169d1956752bb4471e5fa6edaa9b35c8ab930",
+      "size_bytes": 166,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stderr.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stdout.txt",
+      "sha256": "fbfc9191c895d254da1a617cb699bc1e26dcd03778d357dfd6fa9ba080bf738d",
+      "size_bytes": 2999,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stdout.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_profile_metadata.json",
+      "sha256": "c6e7e232bb8a89de9e679b4f37d5a9198fc81f835832be37524fd6765f60ac58",
+      "size_bytes": 13946,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_profile_metadata.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_summary.json",
+      "sha256": "9f22a2a020066fef5670e66e1d99d99d734457ad461336bee7bcc66164a8a09e",
+      "size_bytes": 29196,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_summary.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker_stats.csv",
+      "sha256": "122423348d93ef841f7fb96e161cb453e762da9fafbe7adf20792164d0bb9456",
+      "size_bytes": 26794,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker_stats.csv"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stderr.txt",
+      "sha256": "1d62368432d60a45564be66201cca347fae83b1332b8aef28c58adb28f9244ec",
+      "size_bytes": 166,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stderr.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stdout.txt",
+      "sha256": "54680f0a635b56d92152dfd41cdab44f7b1befb40da94b7ec1d2385a78eb3663",
+      "size_bytes": 2873,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stdout.txt"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_profile_metadata.json",
+      "sha256": "c3da8ca6be0206c8838e3776aa2ab11df0f9008d6c7e6089651b994499273951",
+      "size_bytes": 13943,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_profile_metadata.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_summary.json",
+      "sha256": "52110807a851767c26e9576a26e3652bd3058eff8027231249fb9239fe95de09",
+      "size_bytes": 29226,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_summary.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/profiles/top3.checkpoint.json",
+      "sha256": "b6e21b9883635287039eb5028ae66faf70c1e580636058afcebcf0b3999a5492",
+      "size_bytes": 32774,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/top3.checkpoint.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v3/sessions/nsight/top3-nsight.json",
+      "sha256": "6ccfe718480aa03e779928403efa9e7c35d21e7ec63f36e6f5cc868ea7ff659e",
+      "size_bytes": 25250,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/top3-nsight.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-phase31-v3.sh",
+      "sha256": "1ef8a3229c521f8d0f859c858a000ea103224ed5b62d05ebc3b106097c273aa8",
+      "size_bytes": 2331,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-phase31-v3.sh"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-postflight-v3.sh",
+      "sha256": "3711ddf5e9799d25f4424b8ec0481ab968f672a05c35cfece17c1f0e8d607a74",
+      "size_bytes": 1450,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-postflight-v3.sh"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "runtime-c3-c4-fallback.log",
+      "sha256": "449a8a341e4f1d23d1e790b2dc7f8864c2bbbcf79900e02a9aa528f29ac24186",
+      "size_bytes": 5625,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/runtime-c3-c4-fallback.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "validation-driver.log",
+      "sha256": "1fd38b8654ebc8594afe84df2267f94a3b2b4e66453c72aa022007579120e57d",
+      "size_bytes": 1176,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/validation-driver.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "verify_tacker_phase31.py",
+      "sha256": "d51ebd94a84819a802c0bb23eed564435e9c93355deb5e325122c5a5b23c53d7",
+      "size_bytes": 124304,
+      "source_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/verify_tacker_phase31.py"
+    }
+  ],
+  "generated_at_utc": "2026-09-14T02:09:07.190180+00:00",
+  "kind": "tacker_phase31_compact_evidence_manifest",
+  "run_identity_sha256": "0f16b7250611891db52cc59dada0f8bd77c40d735c26f98aed7c81047c14d8a2",
+  "schema_version": 1,
+  "scope": {
+    "listed_file_count": 60,
+    "local_index_file_count": 1,
+    "manifest_self_excluded": true,
+    "remote_archive_file_count": 59
+  }
+}

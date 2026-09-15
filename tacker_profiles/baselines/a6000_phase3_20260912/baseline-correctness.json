@@ -1,0 +1,14 @@
+{
+  "current_tacker": {
+    "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+    "valid": true
+  },
+  "serial": {
+    "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+    "valid": true
+  },
+  "two_stream": {
+    "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+    "valid": true
+  }
+}

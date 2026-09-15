@@ -1,0 +1,56 @@
+{
+  "c0_legacy_pos_l1_pb5440": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 40.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c1_opacity_l1_wg1_pb13942": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 68.0,
+    "shared_memory_bytes": 7376.0
+  },
+  "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 68.0,
+    "shared_memory_bytes": 7376.0
+  },
+  "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 70.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 70.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 70.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 70.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 70.0,
+    "shared_memory_bytes": 7168.0
+  },
+  "c4_whole_heads_opacity_wg1_pb5440": {
+    "abi_complexity": 2.0,
+    "registers_per_thread": 36.0,
+    "shared_memory_bytes": 10016.0
+  },
+  "current_tacker": {
+    "abi_complexity": 2.0
+  },
+  "serial": {
+    "abi_complexity": 0.0
+  },
+  "two_stream": {
+    "abi_complexity": 1.0
+  }
+}

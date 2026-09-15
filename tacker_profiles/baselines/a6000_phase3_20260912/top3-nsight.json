@@ -1,0 +1,517 @@
+{
+  "errors": [],
+  "fps_report_sha256": "00ddc81069821d2a59df8cc31ee0fbaff0622c4958f9a83193f42835c4a1964d",
+  "generated_at_utc": "2026-09-12T03:53:28.265704+00:00",
+  "identity": {
+    "payload": {
+      "candidates": [
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 89.77624050510208,
+          "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+          "profile_file_sha256": "8e0e0e7b0044dbbc79b4092311cceffbaf6c1c1d0252d8a5a88ea58fc9c3dd51",
+          "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 1
+        },
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 88.86389589625485,
+          "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+          "profile_file_sha256": "afb6f82155b5da3ac6473cd2277b806ae83ed180bdde2e5011d54ea843520922",
+          "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 2
+        },
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 88.45828662694849,
+          "name": "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+          "profile_file_sha256": "cdf375d181363df172f6a73eb171356a40f21b0bbbb4fb8ffcbfd3f6b357bd81",
+          "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 3
+        }
+      ],
+      "config": {
+        "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/arguments/dynerf/flame_steak.py",
+        "sha256": "f51ab4697a9c20704a460d11ccd6365fa51f42e8722873bd1f768f45425e4ab1"
+      },
+      "driver": {
+        "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/profile_tacker_top3.py",
+        "sha256": "cdc6fa3522cd323c5574c6460a7198b6d9f26ad55925828b399f8f57c7951c34"
+      },
+      "fps_report": {
+        "path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-fps.json",
+        "sha256": "00ddc81069821d2a59df8cc31ee0fbaff0622c4958f9a83193f42835c4a1964d"
+      },
+      "frames": 50,
+      "gpu": 1,
+      "iteration": 14000,
+      "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+      "orchestration_sources": {
+        "diff_gaussian_rasterization._C": [
+          {
+            "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+            "sha256": "db99687f613f2453ca2bd9339bb7078a98cfb7607d70ebf0847ca7e0a0338d54"
+          },
+          {
+            "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-37m-x86_64-linux-gnu.so",
+            "sha256": "081839a9a12d40e5e68c72ec00afe382ee22bce728cdd8d9681be444af643614"
+          }
+        ],
+        "diff_gaussian_rasterization/__init__.py": {
+          "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/__init__.py",
+          "sha256": "10987859a300d7addbf3ccd9a5adaae4ea6f42a97ed6e144cd400e47ead59a24"
+        },
+        "gaussian_renderer/__init__.py": {
+          "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/gaussian_renderer/__init__.py",
+          "sha256": "f866fb2bf90386c743a2afe3717ec1ce1965bb555df218c02ef0c88dc84da6a4"
+        },
+        "gaussian_renderer/tacker_pipeline.py": {
+          "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/gaussian_renderer/tacker_pipeline.py",
+          "sha256": "d47d8654716518cc00d98592b43cfcab49205c8708ebe78243eeffb19e2b04f5"
+        },
+        "profile_render.py": {
+          "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/profile_render.py",
+          "sha256": "db7d1fc5454a065676806510ff9a0aa1ad5e84102c29e79c8d54503456d3b611"
+        },
+        "summarize_nsight_stats.py": {
+          "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/summarize_nsight_stats.py",
+          "sha256": "7aaa25ed1b32b56df479a086fb296b336b7a1aeaed542c49724b2921dd96fcea"
+        }
+      },
+      "profile_script": {
+        "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/profile_nsight.sh",
+        "sha256": "fd81fe8fb0fd323344935b5953458979f706151d461a8386c9de4fb5e3e77c6b"
+      },
+      "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+      "workload_files": {
+        "cfg_args": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args",
+          "sha256": "03a3492ae21bb2ae540f2956a6c45f8e0b39d9a98ff4922836d1753fbf4a2771"
+        },
+        "deformation.pth": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation.pth",
+          "sha256": "c345492b76e8796906605091cff1a9fb8a0bf498fa17b1370f1ad1370b5904e9"
+        },
+        "deformation_table.pth": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation_table.pth",
+          "sha256": "8a6046623bc26c937e451a97f93708c64f39792c2e9c7e63bb85f9375019b259"
+        },
+        "point_cloud.ply": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/point_cloud.ply",
+          "sha256": "542a50d4548de1744382706cabbe00b7bf04534ac9dabe552a9740f572bc4e0c"
+        },
+        "poses_bounds.npy": {
+          "path": "/data/qyfeng/datasets/n3dv/flame_steak/poses_bounds.npy",
+          "sha256": "42e7e6d8d44f27f6ee3fb2b472ee0051a73c3a3387003ccd453c80567bb766a8"
+        }
+      },
+      "workload_name": "flame_steak"
+    },
+    "sha256": "ae09a0560042fe72d41e5e7b20f8edbf216cb2cfad4090172a1a4316fd027074"
+  },
+  "kind": "4dgaussians_tacker_top3_nsight",
+  "passed": true,
+  "profiles": [
+    {
+      "candidate": {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 89.77624050510208,
+        "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+        "profile_file_sha256": "8e0e0e7b0044dbbc79b4092311cceffbaf6c1c1d0252d8a5a88ea58fc9c3dd51",
+        "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 1
+      },
+      "command": [
+        "/bin/bash",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/profile_nsight.sh",
+        "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/arguments/dynerf/flame_steak.py",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank01-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+        "1",
+        "50",
+        "14000",
+        "/data/qyfeng/datasets/n3dv/flame_steak",
+        "tacker",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+        "1",
+        "flame_steak"
+      ],
+      "diagnostics": {
+        "benchmark_median_fps": 89.77624050510208,
+        "critical_path_proxy": {
+          "gpu_projected_ms_per_frame": 0.31107102000000003,
+          "method": "largest NVTX GPU-projected main-stage time per frame",
+          "stage": "renderer/setup"
+        },
+        "dominant_kernel_categories": [
+          {
+            "ms_per_frame": 3.5707961999999998,
+            "name": "tacker_mixed_render_head"
+          },
+          {
+            "ms_per_frame": 1.67619142,
+            "name": "activation"
+          },
+          {
+            "ms_per_frame": 1.5589679,
+            "name": "elementwise"
+          },
+          {
+            "ms_per_frame": 1.08735724,
+            "name": "gemm"
+          },
+          {
+            "ms_per_frame": 1.0329340999999999,
+            "name": "radix_sort"
+          }
+        ],
+        "frame_count": 50,
+        "idle_or_gap_proxy": {
+          "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+          "ms_per_frame": 1.8775340600000003
+        },
+        "kernel_launches": {
+          "cuda_api_calls": 6000,
+          "per_frame": 121.0,
+          "total": 6050
+        },
+        "nsight_render_fps": 82.67413306242321,
+        "straggler": {
+          "max_frame_ms": 28.071464,
+          "max_to_median_ratio": 2.3670637932162664,
+          "median_frame_ms": 11.859192,
+          "stddev_frame_ms": 2.4187633899731638
+        },
+        "synchronization": {
+          "calls_per_frame": 17.0,
+          "stream_synchronize_calls": 850,
+          "total_ms": 309.88636
+        }
+      },
+      "error": null,
+      "output_dir": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank01-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "passed": true,
+      "profile_metadata_sha256": "96808303a3a78ee887dd82ee5aff4d46dfd90c34cb01ce2c6dadcf321b4cd7dd",
+      "raw_artifacts": {
+        "4dgs_render_tacker.nsys-rep": {
+          "sha256": "4d8102ac1df97f2aee17bcaa05147bae53f7b6cf8944677231ac56171e7de2cf",
+          "size_bytes": 1857354
+        },
+        "4dgs_render_tacker.sqlite": {
+          "sha256": "7aa3f7efeafef4b487439a5e793f71c406e16446df4b6a83c94cc3a05584f73e",
+          "size_bytes": 4059136
+        },
+        "4dgs_render_tacker_stats.csv": {
+          "sha256": "a89a370090cd43c85d5ac3c3d41010227ba44b6b4dc5e4c4417f5f4e75a9cf21",
+          "size_bytes": 26635
+        },
+        "tacker_profile_metadata.json": {
+          "sha256": "96808303a3a78ee887dd82ee5aff4d46dfd90c34cb01ce2c6dadcf321b4cd7dd",
+          "size_bytes": 13476
+        },
+        "tacker_summary.json": {
+          "sha256": "5e52c6da13bf95baf9274476438db748129d76b03ff53f064c6080ce8ecbd71e",
+          "size_bytes": 28920
+        }
+      },
+      "returncode": 0,
+      "stderr_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank01-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/profile.stderr.txt",
+      "stderr_sha256": "f00ab59552f430abfa124d3f3beb5c89757cf142da7b81be55b2b4bec3133f65",
+      "stdout_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank01-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/profile.stdout.txt",
+      "stdout_sha256": "6f459e7268c13ac1408efe7f971c76d20daf523d02c87343d10beac760f3a7f1",
+      "summary_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank01-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/tacker_summary.json",
+      "summary_sha256": "5e52c6da13bf95baf9274476438db748129d76b03ff53f064c6080ce8ecbd71e"
+    },
+    {
+      "candidate": {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 88.86389589625485,
+        "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+        "profile_file_sha256": "afb6f82155b5da3ac6473cd2277b806ae83ed180bdde2e5011d54ea843520922",
+        "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 2
+      },
+      "command": [
+        "/bin/bash",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/profile_nsight.sh",
+        "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/arguments/dynerf/flame_steak.py",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank02-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+        "1",
+        "50",
+        "14000",
+        "/data/qyfeng/datasets/n3dv/flame_steak",
+        "tacker",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+        "1",
+        "flame_steak"
+      ],
+      "diagnostics": {
+        "benchmark_median_fps": 88.86389589625485,
+        "critical_path_proxy": {
+          "gpu_projected_ms_per_frame": 0.35615894,
+          "method": "largest NVTX GPU-projected main-stage time per frame",
+          "stage": "renderer/setup"
+        },
+        "dominant_kernel_categories": [
+          {
+            "ms_per_frame": 3.74811712,
+            "name": "tacker_mixed_render_head"
+          },
+          {
+            "ms_per_frame": 1.67755696,
+            "name": "activation"
+          },
+          {
+            "ms_per_frame": 1.56044276,
+            "name": "elementwise"
+          },
+          {
+            "ms_per_frame": 1.0976947400000001,
+            "name": "gemm"
+          },
+          {
+            "ms_per_frame": 1.0337839,
+            "name": "radix_sort"
+          }
+        ],
+        "frame_count": 50,
+        "idle_or_gap_proxy": {
+          "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+          "ms_per_frame": 1.9640260400000003
+        },
+        "kernel_launches": {
+          "cuda_api_calls": 6000,
+          "per_frame": 121.0,
+          "total": 6050
+        },
+        "nsight_render_fps": 80.7881644201627,
+        "straggler": {
+          "max_frame_ms": 28.417895,
+          "max_to_median_ratio": 2.3571214810388628,
+          "median_frame_ms": 12.056186,
+          "stddev_frame_ms": 2.4575989062668815
+        },
+        "synchronization": {
+          "calls_per_frame": 17.0,
+          "stream_synchronize_calls": 850,
+          "total_ms": 317.538924
+        }
+      },
+      "error": null,
+      "output_dir": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank02-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+      "passed": true,
+      "profile_metadata_sha256": "740ab742d26e321d5c619c1378bb928d563b5a7e9ef580e7eb54f673d9e015ad",
+      "raw_artifacts": {
+        "4dgs_render_tacker.nsys-rep": {
+          "sha256": "d16031f9cc8abaac2a238e0a37131f3df3d592652484e51a55c0a53592be4bf0",
+          "size_bytes": 1859360
+        },
+        "4dgs_render_tacker.sqlite": {
+          "sha256": "23874dd5e70f75b4deadaf088a37424543f7c0c648971812161ae09f64f71bb1",
+          "size_bytes": 4059136
+        },
+        "4dgs_render_tacker_stats.csv": {
+          "sha256": "15b7e9c043d9ef408c66794b3f3b36bb2c587221b179d24e787aa79a8d0b1557",
+          "size_bytes": 26647
+        },
+        "tacker_profile_metadata.json": {
+          "sha256": "740ab742d26e321d5c619c1378bb928d563b5a7e9ef580e7eb54f673d9e015ad",
+          "size_bytes": 13476
+        },
+        "tacker_summary.json": {
+          "sha256": "282cc9cbdef8cfaca55d0c60056a02095e10d484c77d440f9a28d55cdc46077a",
+          "size_bytes": 28925
+        }
+      },
+      "returncode": 0,
+      "stderr_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank02-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000/profile.stderr.txt",
+      "stderr_sha256": "b1ed8ad125c45aa2a47192aa3b2dc0d1a496774b5d847db26d89307152959971",
+      "stdout_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank02-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000/profile.stdout.txt",
+      "stdout_sha256": "8a7bc5a00c61f9dbab6ed67311e62b8a0a732f50579bd84dd31840d0bbcce015",
+      "summary_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank02-c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000/tacker_summary.json",
+      "summary_sha256": "282cc9cbdef8cfaca55d0c60056a02095e10d484c77d440f9a28d55cdc46077a"
+    },
+    {
+      "candidate": {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 88.45828662694849,
+        "name": "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+        "profile_file_sha256": "cdf375d181363df172f6a73eb171356a40f21b0bbbb4fb8ffcbfd3f6b357bd81",
+        "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 3
+      },
+      "command": [
+        "/bin/bash",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/profile_nsight.sh",
+        "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+        "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/arguments/dynerf/flame_steak.py",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank03-c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+        "1",
+        "50",
+        "14000",
+        "/data/qyfeng/datasets/n3dv/flame_steak",
+        "tacker",
+        "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+        "1",
+        "flame_steak"
+      ],
+      "diagnostics": {
+        "benchmark_median_fps": 88.45828662694849,
+        "critical_path_proxy": {
+          "gpu_projected_ms_per_frame": 0.38303282000000005,
+          "method": "largest NVTX GPU-projected main-stage time per frame",
+          "stage": "renderer/deformation"
+        },
+        "dominant_kernel_categories": [
+          {
+            "ms_per_frame": 3.17476968,
+            "name": "tacker_mixed_render_head"
+          },
+          {
+            "ms_per_frame": 2.36152104,
+            "name": "gemm"
+          },
+          {
+            "ms_per_frame": 1.8305353,
+            "name": "activation"
+          },
+          {
+            "ms_per_frame": 1.3290551,
+            "name": "elementwise"
+          },
+          {
+            "ms_per_frame": 1.3135496800000002,
+            "name": "duplicate_with_keys"
+          }
+        ],
+        "frame_count": 50,
+        "idle_or_gap_proxy": {
+          "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+          "ms_per_frame": 0.49077399999999827
+        },
+        "kernel_launches": {
+          "cuda_api_calls": 6000,
+          "per_frame": 121.0,
+          "total": 6050
+        },
+        "nsight_render_fps": 80.50980794150227,
+        "straggler": {
+          "max_frame_ms": 34.543802,
+          "max_to_median_ratio": 2.856310250122893,
+          "median_frame_ms": 12.093855,
+          "stddev_frame_ms": 3.270506513743447
+        },
+        "synchronization": {
+          "calls_per_frame": 17.0,
+          "stream_synchronize_calls": 850,
+          "total_ms": 315.103312
+        }
+      },
+      "error": null,
+      "output_dir": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank03-c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+      "passed": true,
+      "profile_metadata_sha256": "41b36479493bbe973098c4f8aca39ba332532ed6667d645583f1b61b293b1b72",
+      "raw_artifacts": {
+        "4dgs_render_tacker.nsys-rep": {
+          "sha256": "7fbd6b50e23bce430f0f5ee88b78913525edb5414530e1bfa12b03794d536e78",
+          "size_bytes": 1870747
+        },
+        "4dgs_render_tacker.sqlite": {
+          "sha256": "f6b20476ce454c4112a5a2488698b29b684b9cb14e5f2021b80b281c312d62a4",
+          "size_bytes": 4063232
+        },
+        "4dgs_render_tacker_stats.csv": {
+          "sha256": "2a87e087a962f586fa893d29092765e7257a1bba0faae50ba3a39bb2eeb2ea63",
+          "size_bytes": 26620
+        },
+        "tacker_profile_metadata.json": {
+          "sha256": "41b36479493bbe973098c4f8aca39ba332532ed6667d645583f1b61b293b1b72",
+          "size_bytes": 13497
+        },
+        "tacker_summary.json": {
+          "sha256": "c1f40f116c5eb73572a0be948492b34b4bbbe98a6e26ddb36ce82326f20c8ed1",
+          "size_bytes": 28939
+        }
+      },
+      "returncode": 0,
+      "stderr_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank03-c2h3_scales_rotations_opacity_l1_wg1_pb7000/profile.stderr.txt",
+      "stderr_sha256": "89b062fc4a11537c1bbb919ea95070300144c345a3d7463a5d703c6781ef6baf",
+      "stdout_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank03-c2h3_scales_rotations_opacity_l1_wg1_pb7000/profile.stdout.txt",
+      "stdout_sha256": "cc135c01982bb9170d68ed531cf6086242b01bf616f63c3f0ab54c4975295391",
+      "summary_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/profiles/rank03-c2h3_scales_rotations_opacity_l1_wg1_pb7000/tacker_summary.json",
+      "summary_sha256": "c1f40f116c5eb73572a0be948492b34b4bbbe98a6e26ddb36ce82326f20c8ed1"
+    }
+  ],
+  "rank1_comparisons": [
+    {
+      "candidate": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "kernel_launches_per_frame_delta": 0.0,
+      "nsight_fps_ratio": 1.0,
+      "rank1_candidate": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+      "kernel_launches_per_frame_delta": 0.0,
+      "nsight_fps_ratio": 0.9771879235693164,
+      "rank1_candidate": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate": "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+      "kernel_launches_per_frame_delta": 0.0,
+      "nsight_fps_ratio": 0.9738210121987398,
+      "rank1_candidate": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    }
+  ],
+  "requested_limit": 3,
+  "resume": {
+    "enabled": true,
+    "recovered_count": 0
+  },
+  "schema_version": 1,
+  "selected_candidates": [
+    {
+      "execution_mode": "tacker",
+      "median_throughput_fps": 89.77624050510208,
+      "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "profile_file_sha256": "8e0e0e7b0044dbbc79b4092311cceffbaf6c1c1d0252d8a5a88ea58fc9c3dd51",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+      "profile_schema_version": 2,
+      "qualification_mode": true,
+      "rank": 1
+    },
+    {
+      "execution_mode": "tacker",
+      "median_throughput_fps": 88.86389589625485,
+      "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000",
+      "profile_file_sha256": "afb6f82155b5da3ac6473cd2277b806ae83ed180bdde2e5011d54ea843520922",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+      "profile_schema_version": 2,
+      "qualification_mode": true,
+      "rank": 2
+    },
+    {
+      "execution_mode": "tacker",
+      "median_throughput_fps": 88.45828662694849,
+      "name": "c2h3_scales_rotations_opacity_l1_wg1_pb7000",
+      "profile_file_sha256": "cdf375d181363df172f6a73eb171356a40f21b0bbbb4fb8ffcbfd3f6b357bd81",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+      "profile_schema_version": 2,
+      "qualification_mode": true,
+      "rank": 3
+    }
+  ],
+  "selection_policy": "first N candidates in formal eligible_ranking, including baselines"
+}

@@ -1,0 +1,634 @@
+{
+  "identity": {
+    "payload": {
+      "candidates": [
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 100.9417269037555,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+          "profile_file_sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 1
+        },
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 99.85785493626219,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+          "profile_file_sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 2
+        },
+        {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 99.30504823174024,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+          "profile_file_sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 3
+        }
+      ],
+      "config": {
+        "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/arguments/dynerf/flame_steak.py",
+        "sha256": "f51ab4697a9c20704a460d11ccd6365fa51f42e8722873bd1f768f45425e4ab1"
+      },
+      "driver": {
+        "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_tacker_top3.py",
+        "sha256": "e95a625baed41a21d11dda056370cd0058b4452c3ca90d5c6a00ea813791f2d5"
+      },
+      "fps_report": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/formal-fps.json",
+        "sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98"
+      },
+      "frames": 50,
+      "gpu": 1,
+      "iteration": 14000,
+      "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+      "orchestration_sources": {
+        "diff_gaussian_rasterization._C": [
+          {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+            "sha256": "ef1478ffd323df4d9707044f01af4249d2f940d54b37b01600c354155fce9fa7"
+          },
+          {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-37m-x86_64-linux-gnu.so",
+            "sha256": "081839a9a12d40e5e68c72ec00afe382ee22bce728cdd8d9681be444af643614"
+          }
+        ],
+        "diff_gaussian_rasterization/__init__.py": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/__init__.py",
+          "sha256": "42c7035f64d189399c7ae90d830de63050c3f8c153852048a2f921eca9eb662f"
+        },
+        "gaussian_renderer/__init__.py": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/gaussian_renderer/__init__.py",
+          "sha256": "f866fb2bf90386c743a2afe3717ec1ce1965bb555df218c02ef0c88dc84da6a4"
+        },
+        "gaussian_renderer/tacker_pipeline.py": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/gaussian_renderer/tacker_pipeline.py",
+          "sha256": "90fe9e8117805959bdaa7e5c02171092ce80bbb7aa5a7207a8cae01c6c1917c5"
+        },
+        "profile_render.py": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/profile_render.py",
+          "sha256": "db7d1fc5454a065676806510ff9a0aa1ad5e84102c29e79c8d54503456d3b611"
+        },
+        "summarize_nsight_stats.py": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/summarize_nsight_stats.py",
+          "sha256": "7aaa25ed1b32b56df479a086fb296b336b7a1aeaed542c49724b2921dd96fcea"
+        }
+      },
+      "profile_script": {
+        "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_nsight.sh",
+        "sha256": "fd81fe8fb0fd323344935b5953458979f706151d461a8386c9de4fb5e3e77c6b"
+      },
+      "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+      "workload_files": {
+        "cfg_args": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args",
+          "sha256": "03a3492ae21bb2ae540f2956a6c45f8e0b39d9a98ff4922836d1753fbf4a2771"
+        },
+        "deformation.pth": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation.pth",
+          "sha256": "c345492b76e8796906605091cff1a9fb8a0bf498fa17b1370f1ad1370b5904e9"
+        },
+        "deformation_table.pth": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation_table.pth",
+          "sha256": "8a6046623bc26c937e451a97f93708c64f39792c2e9c7e63bb85f9375019b259"
+        },
+        "point_cloud.ply": {
+          "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/point_cloud.ply",
+          "sha256": "542a50d4548de1744382706cabbe00b7bf04534ac9dabe552a9740f572bc4e0c"
+        },
+        "poses_bounds.npy": {
+          "path": "/data/qyfeng/datasets/n3dv/flame_steak/poses_bounds.npy",
+          "sha256": "42e7e6d8d44f27f6ee3fb2b472ee0051a73c3a3387003ccd453c80567bb766a8"
+        }
+      },
+      "workload_name": "flame_steak"
+    },
+    "sha256": "5d547ce373a01e91fa3247660b3bffb645565780eb2f9c04d3f2aa610cbd929b"
+  },
+  "kind": "4dgaussians_tacker_top3_nsight_checkpoint",
+  "report": {
+    "errors": [],
+    "fps_report_sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98",
+    "generated_at_utc": "2026-09-14T01:18:07.267394+00:00",
+    "identity": {
+      "payload": {
+        "candidates": [
+          {
+            "execution_mode": "tacker",
+            "median_throughput_fps": 100.9417269037555,
+            "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+            "profile_file_sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+            "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+            "profile_schema_version": 2,
+            "qualification_mode": true,
+            "rank": 1
+          },
+          {
+            "execution_mode": "tacker",
+            "median_throughput_fps": 99.85785493626219,
+            "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+            "profile_file_sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+            "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+            "profile_schema_version": 2,
+            "qualification_mode": true,
+            "rank": 2
+          },
+          {
+            "execution_mode": "tacker",
+            "median_throughput_fps": 99.30504823174024,
+            "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+            "profile_file_sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+            "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+            "profile_schema_version": 2,
+            "qualification_mode": true,
+            "rank": 3
+          }
+        ],
+        "config": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/arguments/dynerf/flame_steak.py",
+          "sha256": "f51ab4697a9c20704a460d11ccd6365fa51f42e8722873bd1f768f45425e4ab1"
+        },
+        "driver": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_tacker_top3.py",
+          "sha256": "e95a625baed41a21d11dda056370cd0058b4452c3ca90d5c6a00ea813791f2d5"
+        },
+        "fps_report": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/formal/formal-fps.json",
+          "sha256": "d56c0385f8e86a3e8aa2927fad449d950c83073025a55f37d1e8e1831b545d98"
+        },
+        "frames": 50,
+        "gpu": 1,
+        "iteration": 14000,
+        "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+        "orchestration_sources": {
+          "diff_gaussian_rasterization._C": [
+            {
+              "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+              "sha256": "ef1478ffd323df4d9707044f01af4249d2f940d54b37b01600c354155fce9fa7"
+            },
+            {
+              "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-37m-x86_64-linux-gnu.so",
+              "sha256": "081839a9a12d40e5e68c72ec00afe382ee22bce728cdd8d9681be444af643614"
+            }
+          ],
+          "diff_gaussian_rasterization/__init__.py": {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/__init__.py",
+            "sha256": "42c7035f64d189399c7ae90d830de63050c3f8c153852048a2f921eca9eb662f"
+          },
+          "gaussian_renderer/__init__.py": {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/gaussian_renderer/__init__.py",
+            "sha256": "f866fb2bf90386c743a2afe3717ec1ce1965bb555df218c02ef0c88dc84da6a4"
+          },
+          "gaussian_renderer/tacker_pipeline.py": {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/gaussian_renderer/tacker_pipeline.py",
+            "sha256": "90fe9e8117805959bdaa7e5c02171092ce80bbb7aa5a7207a8cae01c6c1917c5"
+          },
+          "profile_render.py": {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/profile_render.py",
+            "sha256": "db7d1fc5454a065676806510ff9a0aa1ad5e84102c29e79c8d54503456d3b611"
+          },
+          "summarize_nsight_stats.py": {
+            "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/summarize_nsight_stats.py",
+            "sha256": "7aaa25ed1b32b56df479a086fb296b336b7a1aeaed542c49724b2921dd96fcea"
+          }
+        },
+        "profile_script": {
+          "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_nsight.sh",
+          "sha256": "fd81fe8fb0fd323344935b5953458979f706151d461a8386c9de4fb5e3e77c6b"
+        },
+        "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+        "workload_files": {
+          "cfg_args": {
+            "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args",
+            "sha256": "03a3492ae21bb2ae540f2956a6c45f8e0b39d9a98ff4922836d1753fbf4a2771"
+          },
+          "deformation.pth": {
+            "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation.pth",
+            "sha256": "c345492b76e8796906605091cff1a9fb8a0bf498fa17b1370f1ad1370b5904e9"
+          },
+          "deformation_table.pth": {
+            "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/deformation_table.pth",
+            "sha256": "8a6046623bc26c937e451a97f93708c64f39792c2e9c7e63bb85f9375019b259"
+          },
+          "point_cloud.ply": {
+            "path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000/point_cloud.ply",
+            "sha256": "542a50d4548de1744382706cabbe00b7bf04534ac9dabe552a9740f572bc4e0c"
+          },
+          "poses_bounds.npy": {
+            "path": "/data/qyfeng/datasets/n3dv/flame_steak/poses_bounds.npy",
+            "sha256": "42e7e6d8d44f27f6ee3fb2b472ee0051a73c3a3387003ccd453c80567bb766a8"
+          }
+        },
+        "workload_name": "flame_steak"
+      },
+      "sha256": "5d547ce373a01e91fa3247660b3bffb645565780eb2f9c04d3f2aa610cbd929b"
+    },
+    "kind": "4dgaussians_tacker_top3_nsight",
+    "passed": true,
+    "profiles": [
+      {
+        "candidate": {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 100.9417269037555,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+          "profile_file_sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 1
+        },
+        "command": [
+          "/bin/bash",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_nsight.sh",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/arguments/dynerf/flame_steak.py",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+          "1",
+          "50",
+          "14000",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "tacker",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+          "1",
+          "flame_steak"
+        ],
+        "diagnostics": {
+          "benchmark_median_fps": 100.9417269037555,
+          "critical_path_proxy": {
+            "gpu_projected_ms_per_frame": 0.32888164000000003,
+            "method": "largest NVTX GPU-projected main-stage time per frame",
+            "stage": "renderer/deformation"
+          },
+          "dominant_kernel_categories": [
+            {
+              "ms_per_frame": 3.72608564,
+              "name": "other"
+            },
+            {
+              "ms_per_frame": 1.10478568,
+              "name": "gemm"
+            },
+            {
+              "ms_per_frame": 1.0639456,
+              "name": "elementwise"
+            },
+            {
+              "ms_per_frame": 1.03337304,
+              "name": "radix_sort"
+            },
+            {
+              "ms_per_frame": 1.01450986,
+              "name": "activation"
+            }
+          ],
+          "frame_count": 50,
+          "idle_or_gap_proxy": {
+            "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+            "ms_per_frame": 2.2687329
+          },
+          "kernel_launches": {
+            "cuda_api_calls": 5608,
+            "per_frame": 113.16,
+            "total": 5658
+          },
+          "nsight_render_fps": 88.02767029393837,
+          "straggler": {
+            "max_frame_ms": 30.377064,
+            "max_to_median_ratio": 2.791023850262442,
+            "median_frame_ms": 10.8838425,
+            "stddev_frame_ms": 2.8832474252292815
+          },
+          "synchronization": {
+            "calls_per_frame": 17.0,
+            "stream_synchronize_calls": 850,
+            "total_ms": 276.427193
+          }
+        },
+        "error": null,
+        "output_dir": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+        "passed": true,
+        "profile_metadata_sha256": "885735291aa41b834b505a0ea082d9ab654ae9959fe96b591a37f52e76f04ff3",
+        "raw_artifacts": {
+          "4dgs_render_tacker.nsys-rep": {
+            "sha256": "395870a5b9acadee9a30ead63531c41e7eef2e41eb3e0b5516214218e7c959c2",
+            "size_bytes": 1753171
+          },
+          "4dgs_render_tacker.sqlite": {
+            "sha256": "a06f82d83b196ce721f70998451ba95c2afde687e67a01475c99f8795e7ac19e",
+            "size_bytes": 3813376
+          },
+          "4dgs_render_tacker_stats.csv": {
+            "sha256": "c7cae8e3194e133d00fc4af5fc5946b5d7b499caee4e06d2bb2468faa80407ba",
+            "size_bytes": 26787
+          },
+          "tacker_profile_metadata.json": {
+            "sha256": "885735291aa41b834b505a0ea082d9ab654ae9959fe96b591a37f52e76f04ff3",
+            "size_bytes": 13957
+          },
+          "tacker_summary.json": {
+            "sha256": "0dac5904daf75b9341263aebe35dc63dcc5f107ebc79086f7758b4ce35617cc5",
+            "size_bytes": 29256
+          }
+        },
+        "returncode": 0,
+        "stderr_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stderr.txt",
+        "stderr_sha256": "e3023b968aad25dc8fc4195d2a736d3719c08adbfab2abcfe345cbf30737493e",
+        "stdout_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.stdout.txt",
+        "stdout_sha256": "27bd7a40911c2ad1696d4a338c267aeeb0592b03cabe292146c7e017b2f2d593",
+        "summary_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank01-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/tacker_summary.json",
+        "summary_sha256": "0dac5904daf75b9341263aebe35dc63dcc5f107ebc79086f7758b4ce35617cc5"
+      },
+      {
+        "candidate": {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 99.85785493626219,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+          "profile_file_sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 2
+        },
+        "command": [
+          "/bin/bash",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_nsight.sh",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/arguments/dynerf/flame_steak.py",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+          "1",
+          "50",
+          "14000",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "tacker",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+          "1",
+          "flame_steak"
+        ],
+        "diagnostics": {
+          "benchmark_median_fps": 99.85785493626219,
+          "critical_path_proxy": {
+            "gpu_projected_ms_per_frame": 0.31982462,
+            "method": "largest NVTX GPU-projected main-stage time per frame",
+            "stage": "renderer/deformation"
+          },
+          "dominant_kernel_categories": [
+            {
+              "ms_per_frame": 3.8346628,
+              "name": "other"
+            },
+            {
+              "ms_per_frame": 1.10582244,
+              "name": "gemm"
+            },
+            {
+              "ms_per_frame": 1.0641287400000001,
+              "name": "elementwise"
+            },
+            {
+              "ms_per_frame": 1.03311246,
+              "name": "radix_sort"
+            },
+            {
+              "ms_per_frame": 1.01457412,
+              "name": "activation"
+            }
+          ],
+          "frame_count": 50,
+          "idle_or_gap_proxy": {
+            "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+            "ms_per_frame": 2.250557820000001
+          },
+          "kernel_launches": {
+            "cuda_api_calls": 5608,
+            "per_frame": 113.16,
+            "total": 5658
+          },
+          "nsight_render_fps": 87.31608055130563,
+          "straggler": {
+            "max_frame_ms": 29.871977,
+            "max_to_median_ratio": 2.7114906220584727,
+            "median_frame_ms": 11.01681,
+            "stddev_frame_ms": 2.8050215524974496
+          },
+          "synchronization": {
+            "calls_per_frame": 17.0,
+            "stream_synchronize_calls": 850,
+            "total_ms": 281.846477
+          }
+        },
+        "error": null,
+        "output_dir": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+        "passed": true,
+        "profile_metadata_sha256": "c6e7e232bb8a89de9e679b4f37d5a9198fc81f835832be37524fd6765f60ac58",
+        "raw_artifacts": {
+          "4dgs_render_tacker.nsys-rep": {
+            "sha256": "fcf8f4cdcbcce3cadf00eba7a9edb5820cf39a1eeb180e725f0d86803abed2b2",
+            "size_bytes": 1751533
+          },
+          "4dgs_render_tacker.sqlite": {
+            "sha256": "5d54a838bded434cb7750d4edab56207e7c4e08d1d30f6cf95d56533c1d22c34",
+            "size_bytes": 3817472
+          },
+          "4dgs_render_tacker_stats.csv": {
+            "sha256": "c6b887d3f59fca2e7b734b9b1587d0772c1ca7a4db0feb5377832df029a8d304",
+            "size_bytes": 26788
+          },
+          "tacker_profile_metadata.json": {
+            "sha256": "c6e7e232bb8a89de9e679b4f37d5a9198fc81f835832be37524fd6765f60ac58",
+            "size_bytes": 13946
+          },
+          "tacker_summary.json": {
+            "sha256": "9f22a2a020066fef5670e66e1d99d99d734457ad461336bee7bcc66164a8a09e",
+            "size_bytes": 29196
+          }
+        },
+        "returncode": 0,
+        "stderr_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stderr.txt",
+        "stderr_sha256": "b6c9610f37cfc0807cdaf65d726169d1956752bb4471e5fa6edaa9b35c8ab930",
+        "stdout_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.stdout.txt",
+        "stdout_sha256": "fbfc9191c895d254da1a617cb699bc1e26dcd03778d357dfd6fa9ba080bf738d",
+        "summary_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank02-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/tacker_summary.json",
+        "summary_sha256": "9f22a2a020066fef5670e66e1d99d99d734457ad461336bee7bcc66164a8a09e"
+      },
+      {
+        "candidate": {
+          "execution_mode": "tacker",
+          "median_throughput_fps": 99.30504823174024,
+          "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+          "profile_file_sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+          "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+          "profile_schema_version": 2,
+          "qualification_mode": true,
+          "rank": 3
+        },
+        "command": [
+          "/bin/bash",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/scripts/profile_nsight.sh",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/arguments/dynerf/flame_steak.py",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+          "1",
+          "50",
+          "14000",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "tacker",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+          "1",
+          "flame_steak"
+        ],
+        "diagnostics": {
+          "benchmark_median_fps": 99.30504823174024,
+          "critical_path_proxy": {
+            "gpu_projected_ms_per_frame": 0.32812820000000004,
+            "method": "largest NVTX GPU-projected main-stage time per frame",
+            "stage": "renderer/deformation"
+          },
+          "dominant_kernel_categories": [
+            {
+              "ms_per_frame": 3.8254234,
+              "name": "other"
+            },
+            {
+              "ms_per_frame": 1.09544874,
+              "name": "gemm"
+            },
+            {
+              "ms_per_frame": 1.06239424,
+              "name": "elementwise"
+            },
+            {
+              "ms_per_frame": 1.03262824,
+              "name": "radix_sort"
+            },
+            {
+              "ms_per_frame": 1.0144654,
+              "name": "activation"
+            }
+          ],
+          "frame_count": 50,
+          "idle_or_gap_proxy": {
+            "method": "render-loop wall time minus summed CUDA kernel time; overlap can make this only diagnostic",
+            "ms_per_frame": 2.23088628
+          },
+          "kernel_launches": {
+            "cuda_api_calls": 5608,
+            "per_frame": 113.16,
+            "total": 5658
+          },
+          "nsight_render_fps": 87.70222231520216,
+          "straggler": {
+            "max_frame_ms": 30.22571,
+            "max_to_median_ratio": 2.7418691315967387,
+            "median_frame_ms": 11.023761,
+            "stddev_frame_ms": 2.780872982571498
+          },
+          "synchronization": {
+            "calls_per_frame": 17.0,
+            "stream_synchronize_calls": 850,
+            "total_ms": 280.44449
+          }
+        },
+        "error": null,
+        "output_dir": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+        "passed": true,
+        "profile_metadata_sha256": "c3da8ca6be0206c8838e3776aa2ab11df0f9008d6c7e6089651b994499273951",
+        "raw_artifacts": {
+          "4dgs_render_tacker.nsys-rep": {
+            "sha256": "64ceed3dbba5d188ceb5d54e652dafee92190c0a5a6af46c07c6b1de9fd13e58",
+            "size_bytes": 1751026
+          },
+          "4dgs_render_tacker.sqlite": {
+            "sha256": "69c00442b4abd5302d09c454c74c142696a17c56622867d0ad590e77bfd42353",
+            "size_bytes": 3813376
+          },
+          "4dgs_render_tacker_stats.csv": {
+            "sha256": "122423348d93ef841f7fb96e161cb453e762da9fafbe7adf20792164d0bb9456",
+            "size_bytes": 26794
+          },
+          "tacker_profile_metadata.json": {
+            "sha256": "c3da8ca6be0206c8838e3776aa2ab11df0f9008d6c7e6089651b994499273951",
+            "size_bytes": 13943
+          },
+          "tacker_summary.json": {
+            "sha256": "52110807a851767c26e9576a26e3652bd3058eff8027231249fb9239fe95de09",
+            "size_bytes": 29226
+          }
+        },
+        "returncode": 0,
+        "stderr_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stderr.txt",
+        "stderr_sha256": "1d62368432d60a45564be66201cca347fae83b1332b8aef28c58adb28f9244ec",
+        "stdout_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.stdout.txt",
+        "stdout_sha256": "54680f0a635b56d92152dfd41cdab44f7b1befb40da94b7ec1d2385a78eb3663",
+        "summary_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_summary.json",
+        "summary_sha256": "52110807a851767c26e9576a26e3652bd3058eff8027231249fb9239fe95de09"
+      }
+    ],
+    "rank1_comparisons": [
+      {
+        "candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+        "kernel_launches_per_frame_delta": 0.0,
+        "nsight_fps_ratio": 1.0,
+        "rank1_candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+      },
+      {
+        "candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+        "kernel_launches_per_frame_delta": 0.0,
+        "nsight_fps_ratio": 0.9919162947257762,
+        "rank1_candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+      },
+      {
+        "candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+        "kernel_launches_per_frame_delta": 0.0,
+        "nsight_fps_ratio": 0.9963028900157248,
+        "rank1_candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+      }
+    ],
+    "requested_limit": 3,
+    "resume": {
+      "enabled": true,
+      "recovered_count": 2
+    },
+    "schema_version": 1,
+    "selected_candidates": [
+      {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 100.9417269037555,
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+        "profile_file_sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+        "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 1
+      },
+      {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 99.85785493626219,
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+        "profile_file_sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+        "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 2
+      },
+      {
+        "execution_mode": "tacker",
+        "median_throughput_fps": 99.30504823174024,
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+        "profile_file_sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+        "profile_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+        "profile_schema_version": 2,
+        "qualification_mode": true,
+        "rank": 3
+      }
+    ],
+    "selection_policy": "first N candidates in formal eligible_ranking, including baselines"
+  },
+  "schema_version": 1
+}

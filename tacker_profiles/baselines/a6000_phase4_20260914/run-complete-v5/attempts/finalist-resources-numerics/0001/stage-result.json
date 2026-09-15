@@ -1,0 +1,2551 @@
+{
+  "records": {
+    "c0_legacy_pos_l1_pb5440": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c0_legacy_pos_l1_pb5440.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "1da86699501b9a946eb572425a439e4906384c6c1be7a652fdd8b310078c754f",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/profile.log",
+          "sha256": "fa2de3dae05e029b4366f162dd9289f4d352ca6f81b7b49a8fbe265939a17e3f",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 1,
+          "capabilities": {
+            "abi_version": 1,
+            "accumulation_dtype": "float32",
+            "bias_dtype": "float32",
+            "block_threads": 128,
+            "gptb_symbol": "tacker_head_linear_gptb_v1",
+            "head_features": 128,
+            "input_dtype": "float16",
+            "output_dtype": "float32",
+            "sm_target": "sm_86",
+            "solo_symbol": "tacker_head_linear_solo_v1",
+            "weight_dtype": "float16"
+          },
+          "physical_threads": 128,
+          "resource_query_available": false
+        },
+        "profile_candidate": {
+          "abi_version": 1,
+          "active_blocks_per_multiprocessor": 4,
+          "active_blocks_per_sm": 4,
+          "active_warps_per_multiprocessor": 48,
+          "backend_abi_version": 1,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 384,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 384,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 1.0,
+          "physical_threads": 384,
+          "registers_per_thread": 40,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 1,
+          "active_blocks_per_multiprocessor": 4,
+          "active_blocks_per_sm": 4,
+          "active_warps_per_multiprocessor": 48,
+          "backend_abi_version": 1,
+          "backend_family": "first_linear_head_v1",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "first_linear_head_v1",
+          "kernel_max_threads_per_block": 384,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 384,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 1.0,
+          "physical_threads": 384,
+          "registers_per_thread": 40,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.06553617119789124,
+        "multi_head_solo_source": "legacy_abi1_solo_head_p50_ms_alias",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.04673350069946047,
+        "unfused_leaf_sum_p50_ms": 4.446208149194717
+      },
+      "measurements": {
+        "mixed_p50_ms": 4.380671977996826,
+        "mixed_raster_p50_ms": 4.380671977996826,
+        "multi_head_solo_p50_ms": 0.2611199915409088,
+        "solo_head_p50_ms": 0.2611199915409088,
+        "solo_raster_p50_ms": 4.185088157653809
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/device.json",
+          "sha256": "78511a6efe60a70ea60d16b985eaeadaca5ca9df4d4d1a7ff506c6dddeb29795",
+          "size_bytes": 862493
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/leaf.json",
+          "sha256": "68f3b61ed6fe8baa317f4cd93b60b9ca900ffeae9cf3001972cf4b19c093e13a",
+          "size_bytes": 898470
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/raster.json",
+          "sha256": "a41ac734d5e8ef6701458344a5dd2efb63c9b4ac65782a8ded9adfc76bccfa40",
+          "size_bytes": 890169
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/report.json",
+          "sha256": "c151cb13f828e5a5a3fa75f5a5b8fde0aafb4752ef8c62fc1a9525a155ef504e",
+          "size_bytes": 874075
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 4,
+        "local_bytes_per_thread": 0,
+        "occupancy": 1.0,
+        "physical_threads": 384,
+        "registers_per_thread": 40,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c1_opacity_l1_wg1_pb13942": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c1_opacity_l1_wg1_pb13942.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "a0970964ce8649c002b50d579a5c7f1aa5638304135840862ccd6f9769ad696d",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/profile.log",
+          "sha256": "2f767f6ad885103397498a72a9f51eb8b51a09914802f69c513d7a6aede7e4ed",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_multi_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 200,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            },
+            "tacker_head_linear_multi_solo_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 200,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 2,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "static_shared_memory_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 2,
+          "backend_family": "first_linear_heads_v2",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "first_linear_heads_v2",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "static_shared_memory_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.31283193826675415,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.1174820227299751,
+        "unfused_leaf_sum_p50_ms": 5.002751886844635
+      },
+      "measurements": {
+        "mixed_p50_ms": 4.689919948577881,
+        "mixed_raster_p50_ms": 4.689919948577881,
+        "multi_head_solo_p50_ms": 0.8058879971504211,
+        "solo_head_p50_ms": 0.8058879971504211,
+        "solo_raster_p50_ms": 4.196863889694214
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/device.json",
+          "sha256": "f39fc87b1550751867a61790d2bbceef95d2c87a64d6f6621432760598a1022f",
+          "size_bytes": 878295
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/leaf.json",
+          "sha256": "d0734c6cf6186706c5a1c55333ccc92abe6d0754c32a34afed7d4362602b9924",
+          "size_bytes": 926317
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/raster.json",
+          "sha256": "f1406470fc7a13adcd38dd7473999a0002ae886dded32cf077b9ed2bc88efdd5",
+          "size_bytes": 912477
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/report.json",
+          "sha256": "c635d470265922089538fcf499c507eee10452e3bc8ad8741d2c04132b5c6a3d",
+          "size_bytes": 890067
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 68,
+        "static_shared_bytes": 7376,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "3ee29a6d1bed79720ae491b2dcec0868e9e8cbc7e7b2c634420e9b940d75b51c",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/profile.log",
+          "sha256": "c589675f14351d3d5a8e04513cd772134f4e688a61b1525c9d3a35e36a44e372",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_multi_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 200,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            },
+            "tacker_head_linear_multi_solo_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 200,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 2,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "static_shared_memory_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 2,
+          "backend_family": "first_linear_heads_v2",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "first_linear_heads_v2",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "static_shared_memory_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.6604800224304199,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.34269662474046836,
+        "unfused_leaf_sum_p50_ms": 6.289407968521118
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.628927946090698,
+        "mixed_raster_p50_ms": 5.628927946090698,
+        "multi_head_solo_p50_ms": 2.0971519947052,
+        "solo_head_p50_ms": 2.0971519947052,
+        "solo_raster_p50_ms": 4.192255973815918
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/device.json",
+          "sha256": "18c8c6b45752c270e67b6ff17b0cec1d40c1ef7d54b80d71f2938ff52d03686c",
+          "size_bytes": 879337
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/leaf.json",
+          "sha256": "c4af9fafa1520d3f0a8d0d995b84772ee6ce5306b04688be5a59937b65eb25d3",
+          "size_bytes": 959819
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/raster.json",
+          "sha256": "9b9e8dbce1e033f0361c5a1a881df9c219568df7dc9705f886541f88434308fb",
+          "size_bytes": 935367
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/report.json",
+          "sha256": "d71bb8245c5b506741db7e8436813c7e02ea69a0ea436268be278acca0ddda64",
+          "size_bytes": 923777
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 68,
+        "static_shared_bytes": 7376,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "e9928eb9c120e8e44b832e7544ff93aa56c71cfe889830fc93ab0ed0808d68c6",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/profile.log",
+          "sha256": "0ca165243674ef904b8950fc105472a157e9dc438834a7eaef7e102958cb51e7",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "packed_first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_packed_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "backend_family": "packed_first_linear_v3",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "packed_first_linear_v3",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": 0.08959990739822388,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.20645790657681662,
+        "unfused_leaf_sum_p50_ms": 4.960767924785614
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.050367832183838,
+        "mixed_raster_p50_ms": 5.050367832183838,
+        "multi_head_solo_p50_ms": 0.7746559977531433,
+        "solo_head_p50_ms": 0.7746559977531433,
+        "solo_raster_p50_ms": 4.186111927032471
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/device.json",
+          "sha256": "12b9c1c9d1bf07f8f7167a6fc8113be64a4973e89eb3681dd6cef1aeee1e2b85",
+          "size_bytes": 876040
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/leaf.json",
+          "sha256": "5dbbe9296eaa95b4edc5acfe49746e250ca88865b3e260a09917bf72eb37ecc5",
+          "size_bytes": 941568
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/raster.json",
+          "sha256": "9cb87d072f1d20816f7c31638943710217e67c3f8fdd6043e4869e140f65bfb2",
+          "size_bytes": 922328
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/report.json",
+          "sha256": "d4860a0df8bf3a0ff719149047df4438ed51c22afeade7e7581efdf0322adb33",
+          "size_bytes": 904311
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "51df77d0e236ba53cc520c80621c9f6756cec2d12b5ddaf0d1361e404450e39a",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/profile.log",
+          "sha256": "2394f781fcd476059cd02ccc863ea3f56a873172835ae21d2d64195673b185ff",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "packed_first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_packed_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "backend_family": "packed_first_linear_v3",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "packed_first_linear_v3",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": 0.1464318037033081,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.34351234013809484,
+        "unfused_leaf_sum_p50_ms": 5.462528109550476
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.608959913253784,
+        "mixed_raster_p50_ms": 5.608959913253784,
+        "multi_head_solo_p50_ms": 1.2876800298690796,
+        "solo_head_p50_ms": 1.2876800298690796,
+        "solo_raster_p50_ms": 4.1748480796813965
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/device.json",
+          "sha256": "6e243d150f1df0289fe6cadef4d04bbe60285bfbeacc807ce7a5cf42f1613f23",
+          "size_bytes": 876593
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/leaf.json",
+          "sha256": "9c3832c84c3612bd35e42e74ded09e65255df7dae33b13acdfb03652797d2eb1",
+          "size_bytes": 958425
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/raster.json",
+          "sha256": "a8290a249d5eb0a80957d239df8b4721d527d320504295262c17d5315aafc491",
+          "size_bytes": 933841
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/report.json",
+          "sha256": "c11b1ca0ed10e4bd210550cd9eaaee242fe6afe31ba151e17f27045f47cf3226",
+          "size_bytes": 921261
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "160a1da085d8661bfd2fd559de25de205401a5d0578c96b2d9ce25bd71dcc379",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.log",
+          "sha256": "aba2a9a91ccfbf15411df19fef31ad58ba8f17c5f3e3c81754058cfaf0a284d6",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "packed_first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_packed_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "backend_family": "packed_first_linear_v3",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "packed_first_linear_v3",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.13516783714294434,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.31154179751313005,
+        "unfused_leaf_sum_p50_ms": 5.609983921051025
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.474816083908081,
+        "mixed_raster_p50_ms": 5.474816083908081,
+        "multi_head_solo_p50_ms": 1.435647964477539,
+        "solo_head_p50_ms": 1.435647964477539,
+        "solo_raster_p50_ms": 4.174335956573486
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/device.json",
+          "sha256": "f0247c526dc976ed68644973446f8de0656afb3cbdfb7d644e745e682d02b573",
+          "size_bytes": 876578
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/leaf.json",
+          "sha256": "c1eb52396aaef678a4dd8eb52c6e8f0425e3ab412daca3f34147bd8df537eece",
+          "size_bytes": 958391
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/raster.json",
+          "sha256": "b2be1c77a9cb8c050fa3852581441d4277fcb8065059a1d417a3f4f6088de576",
+          "size_bytes": 933819
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json",
+          "sha256": "cd68537d8b04e48f21402b8bb0d3bd1058790d1e4ddbb0165d63c3319998401c",
+          "size_bytes": 921239
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "17de60851ac1499c435bdbadcd8a7ab791eba90d8c607bd483b03c082d3dcd68",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/profile.log",
+          "sha256": "73f94cee7b8be24f502d8c3eeac189ecf9362b37a13ae4683902c7a9d8430b77",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "packed_first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_packed_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "backend_family": "packed_first_linear_v3",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "packed_first_linear_v3",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": 0.04899197816848755,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.33107251730010434,
+        "unfused_leaf_sum_p50_ms": 5.502623975276947
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.551615953445435,
+        "mixed_raster_p50_ms": 5.551615953445435,
+        "multi_head_solo_p50_ms": 1.3318399786949158,
+        "solo_head_p50_ms": 1.3318399786949158,
+        "solo_raster_p50_ms": 4.170783996582031
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/device.json",
+          "sha256": "91c7bdfa77c27d535b3cc8513ee7d250337159ff3a9bf146946675b71a708b5b",
+          "size_bytes": 876578
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/leaf.json",
+          "sha256": "ced877ce54b17f7ca73377a33beed7e2742bc310b0c764bb39035aeaeadd8546",
+          "size_bytes": 958419
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/raster.json",
+          "sha256": "5f0f5d93303de2653060e3763699269662018c47bad417f9a698273bff7babfd",
+          "size_bytes": 933845
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/report.json",
+          "sha256": "0e32c1a66a15fadbdd469c9a8d6155d5afbed2dfc2211855b3a486a57b3944a6",
+          "size_bytes": 921241
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "9ecf0204be11643ec19382ad170bb794f90798ab63ed5dbad59ed1be6b2e16e9",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/profile.log",
+          "sha256": "c19ddd8cd06523c8941cf68c1120041cebcaf91c96e629ab0055610da0dbf8dc",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "packed_first_linear",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_head_linear_packed_gptb_v2": {
+              "active_blocks_per_sm": 10,
+              "active_blocks_per_sm_by_worker_group": [
+                10,
+                5,
+                3,
+                2,
+                2
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 640,
+              "occupancy": 0.8333333333333334,
+              "occupancy_by_worker_group": [
+                0.8333333333333334,
+                0.8333333333333334,
+                0.75,
+                0.6666666666666666,
+                0.8333333333333334
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 48,
+              "static_shared_memory_bytes": 0,
+              "worker_group_threads": [
+                128,
+                256,
+                384,
+                512,
+                640
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 3,
+          "active_blocks_per_multiprocessor": 2,
+          "active_blocks_per_sm": 2,
+          "active_warps_per_multiprocessor": 24,
+          "backend_abi_version": 3,
+          "backend_family": "packed_first_linear_v3",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "packed_first_linear_v3",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 70,
+          "static_shared_bytes": 7168,
+          "static_shared_memory_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": 0.13260811567306519,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.21709320734915805,
+        "unfused_leaf_sum_p50_ms": 4.956672012805939
+      },
+      "measurements": {
+        "mixed_p50_ms": 5.089280128479004,
+        "mixed_raster_p50_ms": 5.089280128479004,
+        "multi_head_solo_p50_ms": 0.7751680016517639,
+        "solo_head_p50_ms": 0.7751680016517639,
+        "solo_raster_p50_ms": 4.181504011154175
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/device.json",
+          "sha256": "987f26a6294cfbf4cbff8707a298f366186fe4b5a91916606f4aaccc918897ca",
+          "size_bytes": 876124
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/leaf.json",
+          "sha256": "ea05dc482cb5650e4e074ba0d6906444fcfd3cb31938d2edd04519f693ef36ad",
+          "size_bytes": 941625
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/raster.json",
+          "sha256": "ba0df5f776c719f2306be0af21452e16adbf3ce72cd90529d4d61dd0dd2ec618",
+          "size_bytes": 922411
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/report.json",
+          "sha256": "64e4bcf18d60330dc91e886a114c70c58f1db177e6cb8b66996e196c835c358e",
+          "size_bytes": 904419
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 2,
+        "local_bytes_per_thread": 0,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "c4_whole_heads_opacity_wg1_pb5440": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json",
+          "--quiet",
+          "--candidate-profile",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c4_whole_heads_opacity_wg1_pb5440.json",
+          "--candidate-matrix",
+          "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json"
+        ],
+        "argv_sha256": "6fe3773ac06dbdf80c7895412d6d80d18f0dcd47d913b4e24a915734556429cb",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/profile.log",
+          "sha256": "360179b107876f770470cac965ea9bf15977924fec1ae6860a189265d832853a",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": {
+        "head_runtime": {
+          "abi_version": 2,
+          "backend": "whole_head",
+          "device_max_threads_per_multiprocessor": 1536,
+          "kernels": {
+            "tacker_whole_head_gptb_v2": {
+              "active_blocks_per_sm": 12,
+              "active_blocks_per_sm_by_worker_group": [
+                12
+              ],
+              "binary_version": 86,
+              "local_memory_bytes": 0,
+              "max_threads_per_block": 128,
+              "occupancy": 1.0,
+              "occupancy_by_worker_group": [
+                1.0
+              ],
+              "physical_threads": 128,
+              "ptx_version": 86,
+              "registers_per_thread": 32,
+              "static_shared_memory_bytes": 512,
+              "worker_group_threads": [
+                128
+              ]
+            }
+          },
+          "raw_query": {
+            "abi_version": 2,
+            "kernels": {
+              "tacker_head_linear_multi_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_multi_solo_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 200,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_head_linear_packed_gptb_v2": {
+                "active_blocks_per_sm": [
+                  10,
+                  5,
+                  3,
+                  2,
+                  2
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 640,
+                "ptx_version": 86,
+                "registers_per_thread": 48,
+                "static_shared_memory_bytes": 0,
+                "worker_group_threads": [
+                  128,
+                  256,
+                  384,
+                  512,
+                  640
+                ]
+              },
+              "tacker_whole_head_gptb_v2": {
+                "active_blocks_per_sm": [
+                  12
+                ],
+                "binary_version": 86,
+                "local_memory_bytes": 0,
+                "max_threads_per_block": 128,
+                "ptx_version": 86,
+                "registers_per_thread": 32,
+                "static_shared_memory_bytes": 512,
+                "worker_group_threads": [
+                  128
+                ]
+              }
+            }
+          },
+          "selected_physical_threads": 128,
+          "selected_worker_groups": 1
+        },
+        "profile_candidate": {
+          "abi_version": 4,
+          "active_blocks_per_multiprocessor": 4,
+          "active_blocks_per_sm": 4,
+          "active_warps_per_multiprocessor": 48,
+          "backend_abi_version": 4,
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 39136,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 1.0,
+          "physical_threads": 384,
+          "registers_per_thread": 36,
+          "static_shared_bytes": 10016,
+          "static_shared_memory_bytes": 10016,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "rasterizer_runtime": {
+          "abi_version": 4,
+          "active_blocks_per_multiprocessor": 4,
+          "active_blocks_per_sm": 4,
+          "active_warps_per_multiprocessor": 48,
+          "backend_abi_version": 4,
+          "backend_family": "whole_heads_v4",
+          "block_threads": 384,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "family": "whole_heads_v4",
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 39136,
+          "max_threads_per_block": 896,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 1.0,
+          "physical_threads": 384,
+          "registers_per_thread": 36,
+          "static_shared_bytes": 10016,
+          "static_shared_memory_bytes": 10016,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      },
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.7669763565063477,
+        "multi_head_solo_source": "reported_multi_head_measurement",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 2.753294286570092,
+        "unfused_leaf_sum_p50_ms": 16.517120361328125
+      },
+      "measurements": {
+        "mixed_p50_ms": 15.750144004821777,
+        "mixed_raster_p50_ms": 15.750144004821777,
+        "multi_head_solo_p50_ms": 12.320768356323242,
+        "solo_head_p50_ms": 12.320768356323242,
+        "solo_raster_p50_ms": 4.196352005004883
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/device.json",
+          "sha256": "15eaa8030f8af161192c81f96a1104dbf206de85d2ffe2c73da3fa4d530cc523",
+          "size_bytes": 874726
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/leaf.json",
+          "sha256": "f3c2c7b4e1c36664b2cbbd351bb5a7bbc97f1bc97169a54835d702badbd1452b",
+          "size_bytes": 924572
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/raster.json",
+          "sha256": "11113ee3f7503cb7aa9c7b789c3406ba195304301aa8aa3cc1d1e5e237e2717d",
+          "size_bytes": 910694
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json",
+          "sha256": "6ea8c6b4a0dea68f31de0e8dfdaaefd339cdb48fe73961071e1056a0627878dc",
+          "size_bytes": 886659
+        }
+      },
+      "resources": {
+        "active_blocks_per_multiprocessor": 4,
+        "local_bytes_per_thread": 0,
+        "occupancy": 1.0,
+        "physical_threads": 384,
+        "registers_per_thread": 36,
+        "static_shared_bytes": 10016,
+        "worker_groups": 1
+      },
+      "valid": true
+    },
+    "current_tacker": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/profile_tacker_leaves.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--views",
+          "2",
+          "--warmup",
+          "5",
+          "--repetitions",
+          "50",
+          "--gpu",
+          "0",
+          "--device-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json",
+          "--raster-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json",
+          "--leaf-output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json",
+          "--report",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json",
+          "--quiet",
+          "--persistent-blocks",
+          "7000"
+        ],
+        "argv_sha256": "3216770ed397d8dde3b544eb729870fec44cfee389353fae90633ce4c1b40ded",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/profile.log",
+          "sha256": "281af89ad3ba36be366c8a3778db4c2ab3745400e0850ffeea9a734499c5d91c",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      },
+      "complete_resources": null,
+      "diagnostics": {
+        "interpretation": "diagnostic_only_not_an_admission_objective",
+        "mixed_minus_unfused_leaf_sum_p50_ms": -0.07014384865760803,
+        "multi_head_solo_source": "legacy_solo_head_p50_ms_alias",
+        "qos_gate": false,
+        "raster_slowdown_fraction": 0.04599263715419055,
+        "unfused_leaf_sum_p50_ms": 4.413439899682999
+      },
+      "measurements": {
+        "mixed_p50_ms": 4.343296051025391,
+        "mixed_raster_p50_ms": 4.343296051025391,
+        "multi_head_solo_p50_ms": 0.2611199915409088,
+        "solo_head_p50_ms": 0.2611199915409088,
+        "solo_raster_p50_ms": 4.15231990814209
+      },
+      "numerics_passed": true,
+      "outputs": {
+        "device": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json",
+          "sha256": "8e3fffb4d81fb1ed8e7252d14acc73318fbffef125938c41a67385186a0eaac9",
+          "size_bytes": 5703
+        },
+        "leaf": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json",
+          "sha256": "c7df01f248d8200cf17b63e40ca2c1791f0e068813cacd5a3fcfbb44841f0de8",
+          "size_bytes": 30541
+        },
+        "raster": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json",
+          "sha256": "667109168bb69eba8ea5034964aa84ba38e1074787095ad3ef49460df89a3fa6",
+          "size_bytes": 25045
+        },
+        "report": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json",
+          "sha256": "5bf329e85300ba74e7019bf44fc9f0e1dad8530406be66b583219aa9c0a0a1f9",
+          "size_bytes": 11157
+        }
+      },
+      "resources": {},
+      "valid": true
+    }
+  },
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/resources-numerics.json",
+    "sha256": "771540f45cba4ec4eb1a4fe5bde108254520565070b3bbfa84622dde528dca74",
+    "size_bytes": 102614
+  }
+}

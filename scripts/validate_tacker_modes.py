@@ -152,17 +152,23 @@ def _renderer(
             cam_type=cam_type,
         )
     if mode == "tacker":
+        from gaussian_renderer.tacker_pipeline import (
+            TackerRenderer,
+            load_tacker_profile_snapshot,
+        )
+
+        qualification_profile_sha256 = None
+        qualification_profile_source = None
         if qualification_mode:
             if qualification_profile is None:
                 raise ValueError(
                     "qualification mode requires --qualification-profile"
                 )
-            with Path(qualification_profile).expanduser().open(
-                "r", encoding="utf-8"
-            ) as handle:
-                profile_override = json.load(handle)
-            if not isinstance(profile_override, dict):
-                raise ValueError("qualification profile must be a JSON object")
+            (
+                profile_override,
+                qualification_profile_sha256,
+                qualification_profile_source,
+            ) = load_tacker_profile_snapshot(profile_path=qualification_profile)
         else:
             profile_override = None
         if profile_path is None and not qualification_mode:
@@ -170,9 +176,7 @@ def _renderer(
                 "tacker mode requires an explicit --tacker-profile; no profile "
                 "is enabled by default"
             )
-        from gaussian_renderer.tacker_pipeline import TackerRenderer
-
-        return TackerRenderer(
+        renderer = TackerRenderer(
             gaussians,
             pipeline,
             background,
@@ -184,6 +188,14 @@ def _renderer(
             iteration=EXPECTED_ITERATION,
             qualification_mode=qualification_mode,
         )
+        if qualification_mode:
+            renderer.qualification_profile_file_sha256 = (
+                qualification_profile_sha256
+            )
+            renderer.qualification_profile_source_path = (
+                qualification_profile_source
+            )
+        return renderer
     raise ValueError("unknown render mode: {}".format(mode))
 
 
@@ -249,6 +261,22 @@ def _actual_mode(mode, renderer):
     return "serial_fallback", "{}; two_stream fallback: {}".format(
         reason, nested_reason
     )
+
+
+def _expected_tacker_execution_counts(frame_count):
+    """Return the exact prefill/steady/drain contract for one sequence."""
+
+    steady = max(0, int(frame_count) - 1)
+    return {
+        "input_frames": int(frame_count),
+        "full_deformation": 1,
+        "prefix": steady,
+        "mixed_launches": steady,
+        "suffix": steady,
+        "solo_raster": 1,
+        "outputs": int(frame_count),
+        "selected_head_evaluations_per_head": int(frame_count),
+    }
 
 
 def _evaluate_mode(
@@ -329,6 +357,11 @@ def _evaluate_mode(
         renderer.synchronize()
     torch.cuda.synchronize()
     actual_mode, fallback_reason = _actual_mode(mode, renderer)
+    execution_counts = (
+        getattr(renderer, "last_execution_counts", None)
+        if renderer is not None
+        else None
+    )
     means = {
         key: sum(item[key] for item in per_view) / float(len(per_view))
         for key in ("psnr_db", "ssim", "lpips")
@@ -337,6 +370,23 @@ def _evaluate_mode(
         "requested_mode": mode,
         "actual_mode": actual_mode,
         "fallback_reason": fallback_reason,
+        "profile_file_sha256": (
+            getattr(renderer, "qualification_profile_file_sha256", None)
+            if qualification_mode
+            else getattr(renderer, "profile_file_sha256", None)
+        ),
+        "profile_source_path": str(
+            getattr(renderer, "qualification_profile_source_path", None)
+            if qualification_mode
+            else getattr(renderer, "profile_source_path", None)
+        ) if (
+            (
+                getattr(renderer, "qualification_profile_source_path", None)
+                if qualification_mode
+                else getattr(renderer, "profile_source_path", None)
+            ) is not None
+        ) else None,
+        "pipeline_execution_counts": execution_counts,
         "qualification_requested": bool(
             mode == "tacker" and qualification_mode
         ),
@@ -454,9 +504,14 @@ def run_validation(args, dataset, hyperparam, pipeline):
                 args.qualification_profile,
                 torch,
             )
+            for view_index, record in zip(
+                indices, mode_results[mode]["per_view"]
+            ):
+                record["view_index"] = view_index
 
     serial = mode_results["serial"]["means"]
     deltas = {}
+    per_view_deltas = {}
     gates = []
     errors = []
     for mode in modes:
@@ -469,6 +524,30 @@ def run_validation(args, dataset, hyperparam, pipeline):
             "lpips_increase": means["lpips"] - serial["lpips"],
         }
         deltas[mode] = delta
+        serial_per_view = mode_results["serial"]["per_view"]
+        mode_per_view = mode_results[mode]["per_view"]
+        per_view_deltas[mode] = [
+            {
+                "batch_index": reference["batch_index"],
+                "view_index": reference["view_index"],
+                "psnr_drop_db": reference["psnr_db"] - measured["psnr_db"],
+                "ssim_drop": reference["ssim"] - measured["ssim"],
+                "lpips_increase": measured["lpips"] - reference["lpips"],
+            }
+            for reference, measured in zip(serial_per_view, mode_per_view)
+        ]
+        output_order_ok = bool(
+            len(mode_per_view) == len(indices)
+            and [item.get("batch_index") for item in mode_per_view]
+            == list(range(len(indices)))
+            and [item.get("view_index") for item in mode_per_view] == indices
+        )
+        expected_counts = None
+        execution_counts = mode_results[mode].get("pipeline_execution_counts")
+        execution_counts_ok = True
+        if mode == "tacker" and mode_results[mode]["actual_mode"] == "tacker":
+            expected_counts = _expected_tacker_execution_counts(len(indices))
+            execution_counts_ok = execution_counts == expected_counts
         expected_actual = mode
         qualification_ok = bool(
             not (mode == "tacker" and args.qualification_mode)
@@ -490,8 +569,16 @@ def run_validation(args, dataset, hyperparam, pipeline):
                 "actual_mode": mode_results[mode]["actual_mode"],
                 "actual_mode_passed": actual_ok,
                 "qualification_passed": qualification_ok,
+                "output_order_passed": output_order_ok,
+                "execution_counts_passed": execution_counts_ok,
+                "expected_pipeline_execution_counts": expected_counts,
                 "quality_passed": quality_ok,
-                "passed": actual_ok and quality_ok,
+                "passed": (
+                    actual_ok
+                    and quality_ok
+                    and output_order_ok
+                    and execution_counts_ok
+                ),
             }
         )
         if not actual_ok:
@@ -504,6 +591,12 @@ def run_validation(args, dataset, hyperparam, pipeline):
             )
         if not quality_ok:
             errors.append("{} exceeded at least one quality threshold".format(mode))
+        if not output_order_ok:
+            errors.append("{} outputs are not in legacy input order".format(mode))
+        if not execution_counts_ok:
+            errors.append(
+                "{} prefill/steady/drain execution counts changed".format(mode)
+            )
 
     passed = bool(gates) and all(gate["passed"] for gate in gates)
     return {
@@ -533,6 +626,7 @@ def run_validation(args, dataset, hyperparam, pipeline):
         "thresholds": dict(QUALITY_THRESHOLDS),
         "modes": mode_results,
         "deltas": deltas,
+        "per_view_deltas": per_view_deltas,
         "gates": gates,
         "errors": errors,
         "qualification": {

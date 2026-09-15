@@ -1,0 +1,216 @@
+{
+  "candidates": [
+    {
+      "correctness": {
+        "valid": false
+      },
+      "diagnostics": null,
+      "execution_mode": "serial",
+      "performance": null,
+      "variant_id": "serial"
+    },
+    {
+      "correctness": {
+        "valid": false
+      },
+      "diagnostics": null,
+      "execution_mode": "two_stream",
+      "performance": null,
+      "variant_id": "two_stream"
+    },
+    {
+      "abi_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+      "backend_named_barriers": [
+        {
+          "id": 2,
+          "participants": 128,
+          "purpose": "head_descriptor_broadcast"
+        }
+      ],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [
+            2
+          ],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_heads_abi": 2
+      },
+      "correctness": {
+        "valid": false
+      },
+      "cuda_symbol": "tacker_mix_render_heads_v2",
+      "diagnostics": null,
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [],
+      "partition": {
+        "kind": "first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": null,
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 2,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41776,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 68,
+        "static_shared_bytes": 7376,
+        "static_shared_memory_bytes": 7376,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "stream_lifetimes": [
+        "head_inputs:deform_prefix->mixed_done",
+        "head_parameters:cache_ready->mixed_done",
+        "head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.shs_deform[2]",
+        "deformation.shs_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    }
+  ],
+  "correctness_thresholds": {
+    "lpips_increase_max": 0.0001,
+    "psnr_drop_db_max": 0.05,
+    "ssim_drop_max": 0.0001
+  },
+  "deployment": {
+    "enabled": false,
+    "valid": false
+  },
+  "manifest": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "gaussian_count": 111525,
+    "gpu_name": "NVIDIA RTX A6000",
+    "iteration": 14000,
+    "persistent_blocks": 5440,
+    "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+    "resolution": [
+      1352,
+      1014
+    ],
+    "workload": "flame_steak",
+    "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+  },
+  "manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+  "note": "Disabled Phase-3 qualification profile; it is not deployable until correctness and formal whole-run selection evidence are sealed.",
+  "profile_sha256": "52a6af1d97ab28e50822a5f9f4aa21b43afadb1437d1dd858c71ad1bb05d36c6",
+  "provenance": {
+    "abi_family": "first_linear_heads_v2",
+    "candidate_sha256": "7637989f0bd0db26846b9f7deaf59cf380c6c3f786181fad8b44fc10c2946248",
+    "effective_persistent_blocks": 5440,
+    "generated_by": "scripts/tacker_autotune.py",
+    "launch_geometry": {
+      "backend_logical_blocks": 13942,
+      "raster_tile_count": 5440,
+      "sm_count": 84
+    },
+    "matrix_sha256": "8956a212b0ee99d9cf17fb2de3a43e793745eadfcc0651924fb135e2603c4295",
+    "phase": 3,
+    "requested_persistent_blocks": [
+      5440
+    ],
+    "template": true
+  },
+  "schema_version": 2,
+  "selected_variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+  "selection": null,
+  "selection_objective": "median_throughput_fps",
+  "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+}

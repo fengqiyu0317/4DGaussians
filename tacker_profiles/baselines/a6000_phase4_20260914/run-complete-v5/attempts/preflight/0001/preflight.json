@@ -1,0 +1,73 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "nvidia-smi",
+        "--id=1",
+        "--query-gpu=index,name,compute_cap,driver_version,memory.total",
+        "--format=csv,noheader,nounits"
+      ],
+      "argv_sha256": "7da0328587f35adb64779b53da895589f1b3f6760c03a95c32e2c055067d4dd5",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/nvidia-smi.log",
+        "sha256": "ab2366ef15708452744308196b6d52b44ae659a81092aaa9a33d439947ee79e6",
+        "size_bytes": 121
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/usr/local/cuda-12.4/bin/nvcc",
+        "--version"
+      ],
+      "argv_sha256": "7f1304b4834718fd71de145bee500dcd5832066e0452cdc32ab85f0eb7e3d539",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/nvcc-version.log",
+        "sha256": "21e1bb8bfbc2e24b3df508de7ca855dff63f5a2141277d3456aff83a03f39fc0",
+        "size_bytes": 285
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_tacker_phase4.py",
+        "_device-query",
+        "--gpu",
+        "0",
+        "--output",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/device-query.json"
+      ],
+      "argv_sha256": "439a8ca04b6034e7c2eb068ce98a41332c03cc9c91471a74d54710bfabb857bc",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/device-query.log",
+        "sha256": "013dacfd7bfa2b4a9195f2832f92adeb16135fb35a08484ed95c504ea2203abf",
+        "size_bytes": 439
+      },
+      "returncode": 0
+    }
+  ],
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_smoke_sum": 136.0,
+    "kind": "4dgaussians_tacker_phase4_device_query",
+    "logical_device": 0,
+    "multiprocessor_count": 84,
+    "name": "NVIDIA RTX A6000",
+    "passed": true,
+    "python_version": "3.10",
+    "schema_version": 1,
+    "torch_cuda": "12.4",
+    "torch_version": "2.4.1+cu124",
+    "total_memory_bytes": 50908823552,
+    "visible_device_count": 1
+  },
+  "kind": "4dgaussians_tacker_phase4_preflight",
+  "logical_gpu": 0,
+  "passed": true,
+  "physical_gpu": 1,
+  "schema_version": 1
+}

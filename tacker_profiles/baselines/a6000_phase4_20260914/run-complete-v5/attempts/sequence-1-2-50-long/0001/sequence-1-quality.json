@@ -1,0 +1,146 @@
+{
+  "deltas": {
+    "tacker": {
+      "lpips_increase": 0.0,
+      "psnr_drop_db": 0.0,
+      "ssim_drop": 0.0
+    }
+  },
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "cuda_runtime": "12.4",
+    "index": 0,
+    "name": "NVIDIA RTX A6000",
+    "pytorch_version": "2.4.1+cu124"
+  },
+  "errors": [],
+  "gates": [
+    {
+      "actual_mode": "tacker",
+      "actual_mode_passed": true,
+      "execution_counts_passed": true,
+      "expected_pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 1,
+        "mixed_launches": 0,
+        "outputs": 1,
+        "prefix": 0,
+        "selected_head_evaluations_per_head": 1,
+        "solo_raster": 1,
+        "suffix": 0
+      },
+      "mode": "tacker",
+      "output_order_passed": true,
+      "passed": true,
+      "qualification_passed": true,
+      "quality_passed": true
+    }
+  ],
+  "generated_at_utc": "2026-09-15T03:25:09.740212+00:00",
+  "kind": "4dgaussians_tacker_quality_validation",
+  "modes": {
+    "serial": {
+      "actual_mode": "serial",
+      "fallback_reason": null,
+      "lpips_net": "vgg",
+      "means": {
+        "lpips": 0.14261005818843842,
+        "psnr_db": 32.40931701660156,
+        "ssim": 0.9565222263336182
+      },
+      "per_view": [
+        {
+          "batch_index": 0,
+          "lpips": 0.14261005818843842,
+          "psnr_db": 32.40931701660156,
+          "ssim": 0.9565222263336182,
+          "view_index": 0
+        }
+      ],
+      "pipeline_execution_counts": null,
+      "profile_file_sha256": null,
+      "profile_source_path": null,
+      "qualification_executed": false,
+      "qualification_requested": false,
+      "requested_mode": "serial"
+    },
+    "tacker": {
+      "actual_mode": "tacker",
+      "fallback_reason": null,
+      "lpips_net": "vgg",
+      "means": {
+        "lpips": 0.14261005818843842,
+        "psnr_db": 32.40931701660156,
+        "ssim": 0.9565222263336182
+      },
+      "per_view": [
+        {
+          "batch_index": 0,
+          "lpips": 0.14261005818843842,
+          "psnr_db": 32.40931701660156,
+          "ssim": 0.9565222263336182,
+          "view_index": 0
+        }
+      ],
+      "pipeline_execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 1,
+        "mixed_launches": 0,
+        "outputs": 1,
+        "prefix": 0,
+        "selected_head_evaluations_per_head": 1,
+        "solo_raster": 1,
+        "suffix": 0
+      },
+      "profile_file_sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "profile_source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "qualification_executed": false,
+      "qualification_requested": false,
+      "requested_mode": "tacker"
+    }
+  },
+  "passed": true,
+  "per_view_deltas": {
+    "tacker": [
+      {
+        "batch_index": 0,
+        "lpips_increase": 0.0,
+        "psnr_drop_db": 0.0,
+        "ssim_drop": 0.0,
+        "view_index": 0
+      }
+    ]
+  },
+  "qualification": {
+    "admission_claimed": true,
+    "enabled": false,
+    "profile_override": null
+  },
+  "schema_version": 1,
+  "tacker_profile": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+  "thresholds": {
+    "lpips_increase_max": 0.0001,
+    "psnr_drop_db_max": 0.05,
+    "ssim_drop_max": 0.0001
+  },
+  "workload": {
+    "frames": 1,
+    "gaussian_count": 111525,
+    "iteration": 14000,
+    "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+    "resolution": [
+      1352,
+      1014
+    ],
+    "scene": "flame_steak",
+    "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+    "split": "test",
+    "view_indices": [
+      0
+    ]
+  }
+}

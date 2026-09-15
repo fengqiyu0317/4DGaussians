@@ -1,15 +1,37 @@
 """CPU-only source contracts for render profiling mode integration."""
 
 import ast
+import importlib.util
 import os
 from pathlib import Path
 import statistics
 import tempfile
 import unittest
+import sys
+from types import SimpleNamespace
 from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_profile_render_helpers():
+    spec = importlib.util.spec_from_file_location(
+        "profile_render_cpu_contract", ROOT / "profile_render.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _load_bootstrap_helpers():
+    spec = importlib.util.spec_from_file_location(
+        "profile_render_bootstrap_cpu_contract",
+        ROOT / "scripts" / "run_profile_render_sealed.py",
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 class ProfileRenderModeContractTest(unittest.TestCase):
@@ -118,6 +140,18 @@ class ProfileRenderModeContractTest(unittest.TestCase):
             '"gaussian_renderer/tacker_pipeline.py"',
             '"diff_gaussian_rasterization/__init__.py"',
             '"diff_gaussian_rasterization._C"',
+            '"cuda_peak_allocated_bytes"',
+            '"cuda_peak_reserved_bytes"',
+            '"max_cuda_peak_allocated_bytes_across_trials"',
+            '"max_cuda_peak_reserved_bytes_across_trials"',
+            '"pre_import": pre_import_snapshot',
+            'metadata["post_run"]',
+            '"byte_stability": post_run_byte_stability',
+            '"profile_resolution_argument"',
+            '"profile_resolution_scale"',
+            '"original_resolution"',
+            '"effective_resolution"',
+            '"profile_resolution_contract"',
         ):
             self.assertIn(field, self.source)
         self.assertIn("statistics.median(frame_completion_ms)", self.source)
@@ -168,7 +202,256 @@ class ProfileRenderModeContractTest(unittest.TestCase):
         self.assertIn("tacker_profile_sha256_snapshot=", self.source)
         self.assertIn("qualification_profile_sha256_snapshot=", self.source)
         self.assertIn("profile_override=(", self.source)
-        self.assertIn("profile_path=None", self.source)
+        self.assertIn("tacker_profile_snapshot_error = None", self.source)
+        self.assertIn(
+            '"sealed pre-import snapshot".format(tacker_record["path"])',
+            self.source,
+        )
+        self.assertIn("profile_snapshot_error=(", self.source)
+
+    def test_production_cli_requires_stable_fd_bootstrap(self):
+        profiler = _load_profile_render_helpers()
+        with self.assertRaisesRegex(
+            profiler.ProvenanceError, "run_profile_render_sealed.py"
+        ):
+            profiler._cli_main([])
+
+        bootstrap_source = (
+            ROOT / "scripts" / "run_profile_render_sealed.py"
+        ).read_text(encoding="utf-8")
+        tree = ast.parse(
+            bootstrap_source,
+            "run_profile_render_sealed.py",
+            feature_version=7,
+        )
+        imported = set()
+        for node in tree.body:
+            if isinstance(node, ast.Import):
+                imported.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom):
+                imported.add((node.module or "").split(".")[0])
+        self.assertEqual(imported, {"hashlib", "os", "stat", "sys"})
+        self.assertIn("code = compile(raw, source_path", bootstrap_source)
+        self.assertIn('"_PROFILE_RENDER_BOOTSTRAP"', bootstrap_source)
+
+    def test_bootstrap_execution_bytes_are_consumed_and_reverified(self):
+        bootstrap = _load_bootstrap_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            source_path = Path(directory) / "profile_render.py"
+            source_path.write_bytes((ROOT / "profile_render.py").read_bytes())
+            record, raw = bootstrap._read_stable_source(str(source_path))
+            spec = importlib.util.spec_from_file_location(
+                "sealed_profile_render_contract", source_path
+            )
+            profiler = importlib.util.module_from_spec(spec)
+            profiler._PROFILE_RENDER_BOOTSTRAP = {
+                "protocol": 1,
+                "record": record,
+                "bytes": raw,
+                "execution": {
+                    "compiled_sha256": record["sha256"],
+                    "compile_mode": "exec",
+                    "dont_inherit": True,
+                },
+            }
+            spec.loader.exec_module(profiler)
+            consumed, consumed_raw, execution = (
+                profiler._consume_profile_render_bootstrap()
+            )
+            self.assertEqual(consumed_raw, raw)
+            self.assertEqual(consumed["sha256"], record["sha256"])
+            self.assertEqual(
+                execution["compiled_sha256"], record["sha256"]
+            )
+
+            source_path.write_bytes(raw + b"\n# swapped\n")
+            with self.assertRaisesRegex(
+                profiler.ProvenanceError, "changed after bootstrap"
+            ):
+                profiler._consume_profile_render_bootstrap()
+
+    def test_symlinks_and_atomic_replacement_fail_the_file_seal(self):
+        profiler = _load_profile_render_helpers()
+        bootstrap = _load_bootstrap_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.py"
+            source.write_bytes(b"value = 1\n")
+            link = root / "link.py"
+            link.symlink_to(source)
+            with self.assertRaisesRegex(
+                profiler.ProvenanceError, "symbolic link"
+            ):
+                profiler._snapshot_file_bytes(link, "source.test")
+            with self.assertRaisesRegex(RuntimeError, "symbolic link"):
+                bootstrap._read_stable_source(str(link))
+
+            replacement = root / "replacement.py"
+            replacement.write_bytes(b"value = 2\n")
+            real_read = os.read
+            replaced = []
+
+            def replacing_read(descriptor, size):
+                if not replaced:
+                    os.replace(str(replacement), str(source))
+                    replaced.append(True)
+                return real_read(descriptor, size)
+
+            with mock.patch.object(
+                profiler.os, "read", side_effect=replacing_read
+            ):
+                with self.assertRaisesRegex(
+                    profiler.ProvenanceError, "changed while being snapshotted"
+                ):
+                    profiler._snapshot_file_bytes(source, "source.test")
+
+    def test_snapshot_and_internal_are_an_indivisible_pair(self):
+        profiler = _load_profile_render_helpers()
+        args = SimpleNamespace()
+        with self.assertRaisesRegex(
+            profiler.ProvenanceError, "must both be set or both be None"
+        ):
+            profiler.main(
+                args,
+                None,
+                None,
+                None,
+                pre_import_snapshot={},
+                pre_import_internal=None,
+            )
+
+    def test_capture_seals_raster_head_and_simple_knn_artifacts(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            packages = {}
+            for component, package, wrapper_exists in (
+                ("rasterizer", "diff_gaussian_rasterization", True),
+                ("head", "tacker_4dgs_head", True),
+                ("simple_knn", "simple_knn", False),
+            ):
+                package_root = root / package
+                package_root.mkdir()
+                wrapper = package_root / "__init__.py"
+                if wrapper_exists:
+                    wrapper.write_text("value = 1\n", encoding="utf-8")
+                binary = package_root / "_C.test.so"
+                binary.write_bytes(component.encode("ascii"))
+                packages[component] = {
+                    "package": package,
+                    "wrapper": wrapper,
+                    "wrapper_exists": wrapper_exists,
+                    "binary": binary,
+                    "wrapper_role": "{}.wrapper".format(component),
+                    "binary_role": "{}.binary".format(component),
+                }
+            args = profiler.Namespace(
+                configs=None,
+                model_path=None,
+                qualification_profile=None,
+                tacker_profile=None,
+            )
+            snapshot, internal = profiler._capture_pre_import_snapshot(
+                args,
+                source_paths={"source.test": source},
+                rasterizer_paths=(
+                    packages["rasterizer"]["wrapper"],
+                    packages["rasterizer"]["binary"],
+                ),
+                binary_package_paths=packages,
+            )
+            roles = {record["role"] for record in snapshot["files"]}
+            for component in packages:
+                self.assertIn("{}.wrapper".format(component), roles)
+                self.assertIn("{}.binary".format(component), roles)
+                self.assertIn(component, internal["binary_packages"])
+            self.assertTrue(
+                internal["python_modules"]["simple_knn"]["synthetic"]
+            )
+            self.assertTrue(
+                profiler._verify_pre_import_snapshot(snapshot)["verified"]
+            )
+
+    def test_first_party_source_enumeration_covers_transitive_packages(self):
+        profiler = _load_profile_render_helpers()
+        modules = {}
+        for package_name in ("arguments", "gaussian_renderer", "scene", "utils"):
+            modules.update(
+                profiler._python_modules_under(
+                    package_name, ROOT / package_name
+                )
+            )
+        for required in (
+            "arguments",
+            "gaussian_renderer",
+            "gaussian_renderer.tacker_pipeline",
+            "scene",
+            "scene.gaussian_model",
+            "scene.deformation",
+            "utils.general_utils",
+            "utils.profiling_utils",
+            "utils.sh_utils",
+        ):
+            self.assertIn(required, modules)
+        expected_count = sum(
+            1
+            for package_name in ("arguments", "gaussian_renderer", "scene", "utils")
+            for _path in (ROOT / package_name).rglob("*.py")
+        )
+        self.assertEqual(len(modules), expected_count)
+
+    def test_snapshot_pair_rejects_internal_byte_tampering(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "source.py"
+            source.write_bytes(b"value = 1\n")
+            record, raw = profiler._snapshot_file_bytes(
+                source, "source.test"
+            )
+            snapshot = {"files": [record]}
+            profiler._validate_snapshot_pair(
+                snapshot, {"bytes_by_path": {record["path"]: raw}}
+            )
+            with self.assertRaisesRegex(
+                profiler.ProvenanceError, "disagree with record"
+            ):
+                profiler._validate_snapshot_pair(
+                    snapshot,
+                    {"bytes_by_path": {record["path"]: raw + b"tamper"}},
+                )
+
+    def test_post_run_verifier_includes_loaded_private_binaries(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "private.so"
+            path.write_bytes(b"sealed extension")
+            record, _raw = profiler._snapshot_file_bytes(
+                path, "runtime.head.binary"
+            )
+            snapshot = {
+                "files": [],
+                "binary_bindings": [
+                    {
+                        "component": "head",
+                        "module": "tacker_4dgs_head._C",
+                        "loaded_path": record["path"],
+                        "loaded_stat": record["stat"],
+                        "size_bytes": record["size_bytes"],
+                        "sha256": record["sha256"],
+                    }
+                ],
+            }
+            verified = profiler._verify_pre_import_snapshot(snapshot)
+            self.assertEqual(verified["loaded_binary_count"], 1)
+            self.assertTrue(verified["loaded_binaries"][0]["unchanged"])
+            path.write_bytes(b"replacement")
+            with self.assertRaisesRegex(
+                profiler.ProvenanceError,
+                "loaded private head binary changed",
+            ):
+                profiler._verify_pre_import_snapshot(snapshot)
 
     def test_provenance_is_snapshotted_before_warmup_and_timed_trials(self):
         provenance_offset = self.source.index(
@@ -192,7 +475,12 @@ class ProfileRenderModeContractTest(unittest.TestCase):
             if isinstance(node, ast.FunctionDef) and node.name in wanted
         ]
         namespace = {"statistics": statistics}
-        exec(compile(ast.Module(body=functions), "helpers", "exec"), namespace)
+        exec(
+            compile(
+                ast.Module(body=functions, type_ignores=[]), "helpers", "exec"
+            ),
+            namespace,
+        )
 
         self.assertAlmostEqual(namespace["_percentile"]([1, 2, 3, 4], 95), 3.85)
         self.assertEqual(namespace["_percentile"]([7], 95), 7.0)
@@ -206,12 +494,233 @@ class ProfileRenderModeContractTest(unittest.TestCase):
             "p50_frame_ms",
             "p95_frame_ms",
             "max_frame_ms",
+            "cuda_peak_allocated_bytes",
+            "cuda_peak_reserved_bytes",
         )
         first = {name: 10.0 for name in metric_names}
         second = {name: 20.0 for name in metric_names}
         aggregate = namespace["_aggregate_trials"]([first, second])
         for name in metric_names:
             self.assertEqual(aggregate["median_{}".format(name)], 15.0)
+        self.assertEqual(
+            aggregate["max_cuda_peak_allocated_bytes_across_trials"], 20.0
+        )
+        self.assertEqual(
+            aggregate["max_cuda_peak_reserved_bytes_across_trials"], 20.0
+        )
+
+    def test_cli_seals_inputs_before_heavy_import_and_config_execution(self):
+        cli_source = self.source[self.source.index("def _cli_main(") :]
+        capture = cli_source.index(
+            "_capture_pre_import_snapshot(bootstrap_args)"
+        )
+        activate = cli_source.index(
+            "_activate_runtime_imports(pre_import_snapshot, pre_import_internal)"
+        )
+        config = cli_source.index("_load_config_snapshot(")
+        self.assertLess(capture, activate)
+        self.assertLess(activate, config)
+        import_prefix = self.source[: self.source.index("def _percentile(")]
+        self.assertNotIn("\nimport torch\n", import_prefix)
+        self.assertNotIn("from gaussian_renderer import", import_prefix)
+
+    def test_recursive_config_executes_snapshot_bytes_and_drift_fails_closed(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.py"
+            wrapper = root / "__init__.py"
+            binary = root / "_C.test.so"
+            base = root / "base.py"
+            config = root / "config.py"
+            source.write_text("value = 1\n", encoding="utf-8")
+            wrapper.write_text("value = 2\n", encoding="utf-8")
+            binary.write_bytes(b"raster")
+            base.write_text(
+                "ModelParams = {'sh_degree': 3}\n", encoding="utf-8"
+            )
+            config.write_text(
+                "_base_ = 'base.py'\n"
+                "ModelParams = {'model_path': 'sealed'}\n",
+                encoding="utf-8",
+            )
+            args = profiler.Namespace(
+                configs=str(config),
+                model_path=None,
+                qualification_profile=None,
+                tacker_profile=None,
+            )
+            pre_import, internal = profiler._capture_pre_import_snapshot(
+                args,
+                source_paths={"source.test": source},
+                rasterizer_paths=(wrapper, binary),
+            )
+            base.write_text(
+                "ModelParams = {'sh_degree': 9}\n", encoding="utf-8"
+            )
+            loaded = profiler._load_config_snapshot(
+                config, pre_import, internal
+            )
+            self.assertEqual(loaded["ModelParams"]["sh_degree"], 3)
+            self.assertEqual(loaded["ModelParams"]["model_path"], "sealed")
+            with self.assertRaisesRegex(
+                profiler.ProvenanceError, "changed during profiling"
+            ):
+                profiler._verify_pre_import_snapshot(pre_import)
+
+    def test_missing_profile_absence_is_sealed_and_reverified(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source.py"
+            wrapper = root / "__init__.py"
+            binary = root / "_C.test.so"
+            missing = root / "missing.json"
+            source.write_text("value = 1\n", encoding="utf-8")
+            wrapper.write_text("value = 2\n", encoding="utf-8")
+            binary.write_bytes(b"raster")
+            args = profiler.Namespace(
+                configs=None,
+                model_path=None,
+                qualification_profile=None,
+                tacker_profile=str(missing),
+            )
+            pre_import, _internal = profiler._capture_pre_import_snapshot(
+                args,
+                source_paths={"source.test": source},
+                rasterizer_paths=(wrapper, binary),
+            )
+            profile_record = next(
+                record
+                for record in pre_import["files"]
+                if record["role"] == "profile.tacker"
+            )
+            self.assertFalse(profile_record["exists"])
+            verified = profiler._verify_pre_import_snapshot(pre_import)
+            self.assertTrue(verified["verified"])
+            missing.write_text("{}\n", encoding="utf-8")
+            real_open = os.open
+
+            def reject_missing_open(path, *open_args):
+                if os.path.abspath(str(path)) == os.path.abspath(str(missing)):
+                    raise AssertionError(
+                        "a path whose absence was sealed must not be opened"
+                    )
+                return real_open(path, *open_args)
+
+            with mock.patch.object(
+                profiler.os,
+                "open",
+                side_effect=reject_missing_open,
+            ):
+                with self.assertRaisesRegex(
+                    profiler.ProvenanceError, "changed during profiling"
+                ):
+                    profiler._verify_pre_import_snapshot(pre_import)
+
+    def test_sealed_source_loader_retains_original_file_location(self):
+        profiler = _load_profile_render_helpers()
+        module_name = "profile_render_sealed_source_contract"
+        with tempfile.TemporaryDirectory() as directory:
+            origin = Path(directory) / "sealed.py"
+            raw = b"observed_file = __file__\n"
+            finder = profiler._SnapshotImportFinder(
+                {module_name: (str(origin), raw, False)},
+                Path(directory) / "unused.so",
+            )
+            sys.meta_path.insert(0, finder)
+            try:
+                module = importlib.import_module(module_name)
+                self.assertEqual(module.observed_file, str(origin))
+                self.assertEqual(module.__file__, str(origin))
+            finally:
+                sys.modules.pop(module_name, None)
+                sys.meta_path.remove(finder)
+
+    def test_snapshot_finder_blocks_unsealed_first_party_lazy_imports(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            finder = profiler._SnapshotImportFinder(
+                {
+                    "sealed_family": (
+                        str(Path(directory) / "__init__.py"),
+                        b"",
+                        True,
+                    )
+                },
+                {},
+            )
+            with self.assertRaisesRegex(
+                ImportError, "not present in pre-import snapshot"
+            ):
+                finder.find_spec("sealed_family.created_after_snapshot")
+
+    def test_profile_resolution_scale_contract_and_rounding(self):
+        profiler = _load_profile_render_helpers()
+        self.assertEqual(profiler._profile_resolution_scale(-1), 1)
+        for scale in (1, 2, 4, 8):
+            self.assertEqual(profiler._profile_resolution_scale(scale), scale)
+        self.assertEqual(
+            profiler._scaled_profile_resolution(1352, 1014, 4),
+            (338, 254),
+        )
+        with self.assertRaisesRegex(ValueError, "--resolution"):
+            profiler._profile_resolution_scale(3)
+        with self.assertRaisesRegex(ValueError, "--resolution"):
+            profiler._profile_resolution_scale([2])
+
+    def test_resolution_one_is_zero_copy_and_scaled_view_preserves_camera(self):
+        profiler = _load_profile_render_helpers()
+        geometry = {
+            name: object()
+            for name in (
+                "FoVx",
+                "FoVy",
+                "world_view_transform",
+                "projection_matrix",
+                "full_proj_transform",
+                "camera_center",
+            )
+        }
+
+        class FakeImage:
+            shape = (3, 1014, 1352)
+
+            def unsqueeze(self, dimension):
+                self.unsqueeze_dimension = dimension
+                return self
+
+            def squeeze(self, dimension):
+                self.squeeze_dimension = dimension
+                return self
+
+        image = FakeImage()
+        view = SimpleNamespace(
+            original_image=image,
+            image_width=1352,
+            image_height=1014,
+            **geometry
+        )
+        self.assertIs(profiler._scale_profile_view(view, 1), view)
+
+        calls = []
+
+        def interpolate(value, **kwargs):
+            calls.append((value, kwargs))
+            return value
+
+        profiler.torch = SimpleNamespace(
+            nn=SimpleNamespace(
+                functional=SimpleNamespace(interpolate=interpolate)
+            )
+        )
+        scaled = profiler._scale_profile_view(view, 4)
+        self.assertIsNot(scaled, view)
+        self.assertEqual((scaled.image_width, scaled.image_height), (338, 254))
+        self.assertEqual(calls[0][1]["size"], (254, 338))
+        self.assertEqual(calls[0][1]["mode"], "bilinear")
+        for name, value in geometry.items():
+            self.assertIs(getattr(scaled, name), value)
 
     def test_source_commit_environment_fallback_without_git_tree(self):
         tree = ast.parse(self.source, "profile_render.py", feature_version=7)
@@ -225,7 +734,12 @@ class ProfileRenderModeContractTest(unittest.TestCase):
             if isinstance(node, ast.FunctionDef) and node.name in wanted
         ]
         namespace = {"os": os}
-        exec(compile(ast.Module(body=functions), "helpers", "exec"), namespace)
+        exec(
+            compile(
+                ast.Module(body=functions, type_ignores=[]), "helpers", "exec"
+            ),
+            namespace,
+        )
 
         with tempfile.TemporaryDirectory() as directory:
             with mock.patch.dict(
@@ -234,7 +748,7 @@ class ProfileRenderModeContractTest(unittest.TestCase):
                     "FOURDGS_SOURCE_COMMIT": "a" * 40,
                     "FOURDGS_RASTERIZER_COMMIT": "b" * 40,
                 },
-                clear=False,
+                clear=True,
             ):
                 errors = []
                 metadata = namespace["_collect_repository_metadata"](
@@ -261,7 +775,12 @@ class ProfileRenderModeContractTest(unittest.TestCase):
             and node.name == "_parse_submodule_status"
         )
         namespace = {}
-        exec(compile(ast.Module(body=[function]), "helper", "exec"), namespace)
+        exec(
+            compile(
+                ast.Module(body=[function], type_ignores=[]), "helper", "exec"
+            ),
+            namespace,
+        )
         commit = "c" * 40
         parsed = namespace["_parse_submodule_status"](
             " {} submodules/example (heads/main)".format(commit)

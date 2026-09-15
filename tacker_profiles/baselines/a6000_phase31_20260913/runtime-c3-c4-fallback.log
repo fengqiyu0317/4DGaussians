@@ -1,0 +1,53 @@
+test_admission_failure_delegates_and_reports_reason (tests.test_tacker_pipeline.PipelineOrderingContractTest) ... ok
+test_qualification_mode_requires_explicit_override (tests.test_tacker_pipeline.PipelineOrderingContractTest) ... ok
+test_two_frame_submission_is_d0_prefix1_mixed_suffix1_r1 (tests.test_tacker_pipeline.PipelineOrderingContractTest) ... ok
+test_hash_mismatch_and_weakened_correctness_gate_are_rejected (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_invalid_incumbent_does_not_waive_two_stream_fps_floor (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_oversized_json_integer_fails_closed_without_overflowing (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_qos_diagnostics_are_not_runtime_gates_but_quality_is (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_repository_profile_is_hashed_and_fail_closed (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_runtime_recomputes_bootstrap_and_rejects_forged_ci (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_runtime_recomputes_promotion_and_rejects_forged_incumbent_retention (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_runtime_rejects_nonformal_bootstrap_configuration (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_runtime_uses_benchmark_name_for_exact_and_equivalence_ties (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_schema_v1_is_read_only_compatible_without_old_performance_vetoes (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_selection_and_measurement_tampering_breaks_profile_hash (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_v2_incumbent_variant_is_not_hard_coded_to_legacy_id (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_v2_requires_tile_resource_and_equivalence_contracts (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_v2_selects_one_of_multiple_current_abi_candidates (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_valid_incumbent_retention_cannot_waive_two_stream_floor (tests.test_tacker_pipeline.ProfileContractTest) ... ok
+test_physical_binding_adapter_uses_the_fixed_keyword_abi (tests.test_tacker_pipeline.SplitHeadContractTest) ... ok
+test_selected_linear_is_not_repeated_and_physical_output_enters_suffix (tests.test_tacker_pipeline.SplitHeadContractTest) ... ok
+test_camera_resolution_is_bound_to_profile (tests.test_tacker_pipeline.SupportGateContractTest) ... ok
+test_exact_contract_admits_and_specific_changes_explain_fallback (tests.test_tacker_pipeline.SupportGateContractTest) ... ok
+test_legacy_capability_identity_and_resources_fail_closed (tests.test_tacker_pipeline.SupportGateContractTest) ... ok
+test_qualification_skips_only_measured_admission (tests.test_tacker_pipeline.SupportGateContractTest) ... ok
+test_all_c1_heads_and_one_parallel_c2_are_structurally_runnable (tests.test_tacker_phase2.CandidateContractTest) ... ok
+test_frozen_v2_manifests_match_runtime_constants_and_dependency (tests.test_tacker_phase2.CandidateContractTest) ... ok
+test_partition_graph_thread_ranges_and_abi_hash_are_fail_closed (tests.test_tacker_phase2.CandidateContractTest) ... ok
+test_selected_head_order_and_worker_count_are_canonical (tests.test_tacker_phase2.CandidateContractTest) ... ok
+test_valid_candidate_requires_measured_resource_filter_inputs (tests.test_tacker_phase2.CandidateContractTest) ... ok
+test_output_count_dtype_shape_and_duplicate_execution_fail_closed (tests.test_tacker_phase2.GenericTaskTest) ... ok
+test_sequence_binding_uses_candidate_worker_group_abi (tests.test_tacker_phase2.GenericTaskTest) ... ok
+test_two_selected_linears_are_skipped_once_and_outputs_feed_suffixes (tests.test_tacker_phase2.GenericTaskTest) ... ok
+test_first_launch_failure_replays_whole_sequence_on_fallback (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_multi_head_capability_resource_and_disabled_head_gates (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_three_frame_slot_reuse_preserves_dependency_order (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_v2_binary_capability_contract_is_fail_closed (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_v2_one_and_two_frame_drain_counts_and_order (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_v2_resource_identity_occupancy_and_limits_fail_closed (tests.test_tacker_phase2.RuntimeGateAndOrderingTest) ... ok
+test_contract_tampering_fails_closed (tests.test_tacker_phase3_1.CandidateContractTest) ... ok
+test_frozen_phase31_manifests_match_runtime_constants (tests.test_tacker_phase3_1.CandidateContractTest) ... ok
+test_registry_builders_and_selected_variant_dispatch (tests.test_tacker_phase3_1.CandidateContractTest) ... ok
+test_single_and_multi_head_width_and_barrier_contracts (tests.test_tacker_phase3_1.CandidateContractTest) ... ok
+test_c3_uses_one_shared_input_and_stacked_cache (tests.test_tacker_phase3_1.PartitionExecutionTest) ... ok
+test_c4_returns_exact_widths_without_python_tail_recompute (tests.test_tacker_phase3_1.PartitionExecutionTest) ... ok
+test_family_specific_public_binding_keywords (tests.test_tacker_phase3_1.PartitionExecutionTest) ... ok
+test_c3_c4_first_launch_failure_replays_complete_sequence (tests.test_tacker_phase3_1.RuntimeFailClosedTest) ... ok
+test_family_capability_manifest_and_resources_fail_closed (tests.test_tacker_phase3_1.RuntimeFailClosedTest) ... ok
+test_one_two_and_n_frame_counts_hold_for_new_families (tests.test_tacker_phase3_1.RuntimeFailClosedTest) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 2.537s
+
+OK

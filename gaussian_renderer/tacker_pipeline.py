@@ -22,7 +22,9 @@ from dataclasses import dataclass, fields
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
+import stat
 import statistics
 
 import torch
@@ -58,6 +60,7 @@ LEGACY_PROFILE_SCHEMA_VERSION = 1
 RASTERIZER_COMMIT = "e49506654e8e11ed8a62d22bcb693e943fdecacf"
 PAIR_KEY = "raster.render_leaf+deformation.pos_deform[1].linear_128x128"
 LEGACY_VARIANT_ID = "legacy_pos_l1"
+LEGACY_ABI_FAMILY = "legacy_pos_l1_v1"
 SELECTION_OBJECTIVE = "median_throughput_fps"
 WORKLOAD_KEY = "flame_steak:14000:111525:1352x1014:sm_86"
 EQUIVALENCE_FRACTION = 0.005
@@ -83,6 +86,25 @@ HEAD_MULTI_ABI_SHA256 = (
 )
 MIXED_MULTI_ABI_VERSION = 2
 FIRST_LINEAR_PARTITION_KIND = "first_linear_heads"
+PACKED_FIRST_LINEAR_PARTITION_KIND = "packed_first_linear_heads"
+WHOLE_HEAD_PARTITION_KIND = "whole_heads"
+FIRST_LINEAR_ABI_FAMILY = "first_linear_heads_v2"
+PACKED_FIRST_LINEAR_ABI_FAMILY = "packed_first_linear_v3"
+WHOLE_HEAD_ABI_FAMILY = "whole_heads_v4"
+FIRST_LINEAR_BACKEND = "first_linear"
+PACKED_FIRST_LINEAR_BACKEND = "packed_first_linear"
+WHOLE_HEAD_BACKEND = "whole_head"
+PACKED_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_packed_heads_v3.json"
+WHOLE_HEAD_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_whole_heads_v4.json"
+PACKED_MIXED_ABI_SHA256 = (
+    "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40"
+)
+WHOLE_HEAD_MIXED_ABI_SHA256 = (
+    "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1"
+)
+PACKED_MIXED_ABI_VERSION = 3
+WHOLE_HEAD_MIXED_ABI_VERSION = 4
+PARTITION_KIND_REGISTRY = {}
 HEAD_ORDER = ("pos", "scales", "rotations", "opacity", "shs")
 HEAD_MODULES = {
     "pos": "pos_deform",
@@ -104,6 +126,13 @@ HEAD_DELTA_OUTPUTS = {
     "rotations": "deformation.rotations_delta",
     "opacity": "deformation.opacity_delta",
     "shs": "deformation.shs_delta",
+}
+HEAD_OUTPUT_WIDTHS = {
+    "pos": 3,
+    "scales": 3,
+    "rotations": 4,
+    "opacity": 1,
+    "shs": 48,
 }
 DEFAULT_PROFILE_PATH = (
     Path(__file__).resolve().parents[1]
@@ -727,6 +756,325 @@ def first_linear_candidate_contract(
     }
 
 
+def _phase31_worker_subgroups(worker_groups, whole_head=False):
+    subgroups = []
+    for worker_index in range(worker_groups):
+        begin = 256 + 128 * worker_index
+        barrier_ids = []
+        if whole_head:
+            barrier_ids = [2 + worker_index, 7]
+        subgroups.append(
+            {
+                "name": "head_worker_{}".format(worker_index),
+                "thread_range_inclusive": [begin, begin + 127],
+                "threads": 128,
+                "named_barrier_ids": barrier_ids,
+            }
+        )
+    return subgroups
+
+
+def _validate_phase31_builder_arguments(
+    variant_id, selected_heads, worker_groups, persistent_blocks
+):
+    if not isinstance(variant_id, str) or not variant_id:
+        raise ValueError("variant_id must be a non-empty string")
+    names = _canonical_head_names(list(selected_heads), "candidate.partition")
+    if (
+        type(worker_groups) is not int
+        or worker_groups < 1
+        or worker_groups > len(names)
+    ):
+        raise ValueError("worker_groups must be in [1, selected head count]")
+    if type(persistent_blocks) is not int or persistent_blocks < 0:
+        raise ValueError("persistent_blocks must be an int >= 0")
+    return names
+
+
+def packed_first_linear_candidate_contract(
+    variant_id,
+    selected_heads,
+    worker_groups=1,
+    persistent_blocks=0,
+    resources=None,
+    backend=PACKED_FIRST_LINEAR_BACKEND,
+):
+    """Build the deterministic C3 shared-input packed-head contract."""
+
+    names = _validate_phase31_builder_arguments(
+        variant_id, selected_heads, worker_groups, persistent_blocks
+    )
+    if backend != PACKED_FIRST_LINEAR_BACKEND:
+        raise ValueError("packed first-linear backend must be {!r}".format(
+            PACKED_FIRST_LINEAR_BACKEND
+        ))
+    return {
+        "variant_id": variant_id,
+        "execution_mode": "tacker",
+        "abi_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+        "partition": {
+            "kind": PACKED_FIRST_LINEAR_PARTITION_KIND,
+            "selected_heads": list(names),
+            "worker_groups": worker_groups,
+            "backend": backend,
+        },
+        "fused_nodes": ["raster.render_leaf"]
+        + [_first_linear_node(name) for name in names],
+        "parallel_nodes": [
+            _full_head_node(name) for name in HEAD_ORDER if name not in names
+        ],
+        "suffix_nodes": sum((_suffix_head_nodes(name) for name in names), [])
+        + ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_first_linear_node(name) for name in names],
+        "required_outputs": [
+            "raster.color",
+            "raster.depth",
+            "raster.radii",
+        ]
+        + [HEAD_DELTA_OUTPUTS[name] for name in HEAD_ORDER],
+        "stream_lifetimes": [
+            "shared_head_input:deform_prefix->mixed_done",
+            "packed_head_parameters:cache_ready->mixed_done",
+            "packed_head_outputs:mixed_done->suffix_ready",
+            "render_state:suffix_ready->raster_done",
+        ],
+        "backend_named_barriers": [],
+        "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+        "abi_manifest": PACKED_MIXED_ABI_MANIFEST,
+        "abi_manifest_sha256": PACKED_MIXED_ABI_SHA256,
+        "head_abi_manifest_sha256": HEAD_MULTI_ABI_SHA256,
+        "tensor_contract": {
+            "input_dtype": "float16",
+            "weight_dtype": "float16",
+            "bias_dtype": "float32",
+            "accumulation_dtype": "float32",
+            "output_dtype": "float32",
+            "features": 128,
+            "max_heads": 5,
+            "shared_input": True,
+            "weight_layout": "packed_head_out_in",
+            "bias_layout": "packed_head",
+            "output_layout": "packed_head_row_major",
+        },
+        "physical_cta_threads": 256 + 128 * worker_groups,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "backend_subgroups": _phase31_worker_subgroups(worker_groups),
+        "persistent_blocks": persistent_blocks,
+        "tile_shape": [16, 16],
+        "resources": deepcopy(resources),
+        "capability_requirements": {
+            "cuda_arch": "sm_86",
+            "compute_capability": [8, 6],
+            "mixed_render_packed_heads_abi": PACKED_MIXED_ABI_VERSION,
+            "backend_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+        },
+        "correctness": {"valid": False},
+        "performance": None,
+        "diagnostics": None,
+    }
+
+
+def whole_head_candidate_contract(
+    variant_id,
+    selected_heads,
+    worker_groups=1,
+    persistent_blocks=0,
+    resources=None,
+    backend=WHOLE_HEAD_BACKEND,
+):
+    """Build the deterministic C4 complete-head mixed contract."""
+
+    names = _validate_phase31_builder_arguments(
+        variant_id, selected_heads, worker_groups, persistent_blocks
+    )
+    if backend != WHOLE_HEAD_BACKEND:
+        raise ValueError(
+            "whole-head backend must be {!r}".format(WHOLE_HEAD_BACKEND)
+        )
+    backend_barriers = [
+        {
+            "id": 2 + worker_index,
+            "participants": 128,
+            "purpose": "whole_head_hidden_{}".format(worker_index),
+        }
+        for worker_index in range(worker_groups)
+    ]
+    backend_barriers.append(
+        {
+            "id": 7,
+            "participants": 128 * worker_groups,
+            "purpose": "whole_head_descriptor_broadcast",
+        }
+    )
+    return {
+        "variant_id": variant_id,
+        "execution_mode": "tacker",
+        "abi_family": WHOLE_HEAD_ABI_FAMILY,
+        "partition": {
+            "kind": WHOLE_HEAD_PARTITION_KIND,
+            "selected_heads": list(names),
+            "worker_groups": worker_groups,
+            "backend": backend,
+        },
+        "fused_nodes": ["raster.render_leaf"]
+        + [_full_head_node(name) for name in names],
+        "parallel_nodes": [
+            _full_head_node(name) for name in HEAD_ORDER if name not in names
+        ],
+        "suffix_nodes": ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_full_head_node(name) for name in names],
+        "required_outputs": [
+            "raster.color",
+            "raster.depth",
+            "raster.radii",
+        ]
+        + [HEAD_DELTA_OUTPUTS[name] for name in HEAD_ORDER],
+        "stream_lifetimes": [
+            "shared_head_input:deform_prefix->mixed_done",
+            "whole_head_parameters:cache_ready->mixed_done",
+            "whole_head_outputs:mixed_done->residual_ready",
+            "render_state:residual_ready->raster_done",
+        ],
+        "backend_named_barriers": backend_barriers,
+        "backend_shared_scratch_bytes": 512 * worker_groups,
+        "cuda_symbol": "tacker_mix_render_whole_heads_v4",
+        "abi_manifest": WHOLE_HEAD_MIXED_ABI_MANIFEST,
+        "abi_manifest_sha256": WHOLE_HEAD_MIXED_ABI_SHA256,
+        "head_abi_manifest_sha256": HEAD_MULTI_ABI_SHA256,
+        "tensor_contract": {
+            "input_dtype": "float16",
+            "first_weight_dtype": "float16",
+            "first_bias_dtype": "float32",
+            "accumulation_dtype": "float32",
+            "tail_weight_dtype": "float32",
+            "tail_bias_dtype": "float32",
+            "output_dtype": "float32",
+            "features": 128,
+            "max_heads": 5,
+            "shared_input": True,
+            "output_widths": [HEAD_OUTPUT_WIDTHS[name] for name in names],
+        },
+        "physical_cta_threads": 256 + 128 * worker_groups,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "backend_subgroups": _phase31_worker_subgroups(
+            worker_groups, whole_head=True
+        ),
+        "persistent_blocks": persistent_blocks,
+        "tile_shape": [16, 16],
+        "resources": deepcopy(resources),
+        "capability_requirements": {
+            "cuda_arch": "sm_86",
+            "compute_capability": [8, 6],
+            "mixed_render_whole_heads_abi": WHOLE_HEAD_MIXED_ABI_VERSION,
+            "backend_family": WHOLE_HEAD_ABI_FAMILY,
+            "shared_scratch_bytes_per_worker_group": 512,
+            "named_barriers_per_worker_group": 1,
+            "descriptor_named_barrier_id": 7,
+        },
+        "correctness": {"valid": False},
+        "performance": None,
+        "diagnostics": None,
+    }
+
+
+_CANDIDATE_MEASUREMENT_KEYS = ("correctness", "performance", "diagnostics")
+
+
+def _validate_deterministic_candidate_contract(candidate, expected, section):
+    for key, value in expected.items():
+        if key in _CANDIDATE_MEASUREMENT_KEYS:
+            continue
+        _require_exact(candidate, key, value, section)
+
+
+def _validate_packed_first_linear_v2_candidate(candidate):
+    section = "candidate {}".format(candidate.get("variant_id", "<unknown>"))
+    partition = candidate.get("partition")
+    if not isinstance(partition, dict):
+        raise TackerProfileError("{}.partition must be an object".format(section))
+    _require_exact(
+        partition,
+        "kind",
+        PACKED_FIRST_LINEAR_PARTITION_KIND,
+        "{}.partition".format(section),
+    )
+    selected_heads = _canonical_head_names(
+        partition.get("selected_heads"), "{}.partition".format(section)
+    )
+    expected = packed_first_linear_candidate_contract(
+        candidate["variant_id"],
+        selected_heads,
+        worker_groups=partition.get("worker_groups"),
+        persistent_blocks=candidate.get("persistent_blocks"),
+        resources=candidate.get("resources"),
+        backend=partition.get("backend"),
+    )
+    _validate_deterministic_candidate_contract(candidate, expected, section)
+    _validate_candidate_resources(
+        candidate,
+        section,
+        require_measured=bool(candidate.get("correctness", {}).get("valid")),
+    )
+
+
+def _validate_whole_head_v2_candidate(candidate):
+    section = "candidate {}".format(candidate.get("variant_id", "<unknown>"))
+    partition = candidate.get("partition")
+    if not isinstance(partition, dict):
+        raise TackerProfileError("{}.partition must be an object".format(section))
+    _require_exact(
+        partition, "kind", WHOLE_HEAD_PARTITION_KIND, "{}.partition".format(section)
+    )
+    selected_heads = _canonical_head_names(
+        partition.get("selected_heads"), "{}.partition".format(section)
+    )
+    expected = whole_head_candidate_contract(
+        candidate["variant_id"],
+        selected_heads,
+        worker_groups=partition.get("worker_groups"),
+        persistent_blocks=candidate.get("persistent_blocks"),
+        resources=candidate.get("resources"),
+        backend=partition.get("backend"),
+    )
+    _validate_deterministic_candidate_contract(candidate, expected, section)
+    _validate_candidate_resources(
+        candidate,
+        section,
+        require_measured=bool(candidate.get("correctness", {}).get("valid")),
+    )
+
+
+PARTITION_KIND_REGISTRY.update(
+    {
+        FIRST_LINEAR_PARTITION_KIND: {
+            "abi_family": FIRST_LINEAR_ABI_FAMILY,
+            "backend": FIRST_LINEAR_BACKEND,
+            "abi_version": MIXED_MULTI_ABI_VERSION,
+            "validator": _validate_first_linear_v2_candidate,
+            "partition_class": None,
+        },
+        PACKED_FIRST_LINEAR_PARTITION_KIND: {
+            "abi_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+            "backend": PACKED_FIRST_LINEAR_BACKEND,
+            "abi_version": PACKED_MIXED_ABI_VERSION,
+            "validator": _validate_packed_first_linear_v2_candidate,
+            "partition_class": None,
+        },
+        WHOLE_HEAD_PARTITION_KIND: {
+            "abi_family": WHOLE_HEAD_ABI_FAMILY,
+            "backend": WHOLE_HEAD_BACKEND,
+            "abi_version": WHOLE_HEAD_MIXED_ABI_VERSION,
+            "validator": _validate_whole_head_v2_candidate,
+            "partition_class": None,
+        },
+    }
+)
+
+
 def _validate_v2_candidate(candidate, correctness_limits):
     if not isinstance(candidate, dict):
         raise TackerProfileError("profile.candidates entries must be objects")
@@ -814,7 +1162,16 @@ def _validate_v2_candidate(candidate, correctness_limits):
         if candidate.get("partition") is None:
             _validate_pos_l1_v2_candidate(candidate)
         else:
-            _validate_first_linear_v2_candidate(candidate)
+            partition = candidate.get("partition")
+            kind = partition.get("kind") if isinstance(partition, dict) else None
+            registration = PARTITION_KIND_REGISTRY.get(kind)
+            if registration is None:
+                raise TackerProfileError(
+                    "candidate {} has an unsupported partition kind {!r}".format(
+                        variant_id, kind
+                    )
+                )
+            registration["validator"](candidate)
     return candidate
 
 
@@ -1605,6 +1962,89 @@ def selected_tacker_candidate(profile):
     raise TackerProfileError("selected candidate disappeared after validation")
 
 
+def _file_stat_identity(value):
+    return (
+        value.st_dev,
+        value.st_ino,
+        value.st_mode,
+        value.st_size,
+        getattr(value, "st_mtime_ns", int(value.st_mtime * 1000000000)),
+        getattr(value, "st_ctime_ns", int(value.st_ctime * 1000000000)),
+    )
+
+
+def _stable_profile_bytes(path):
+    """Read one regular profile through a single fd and reject path races."""
+
+    unresolved = Path(path).expanduser()
+    target = Path(os.path.abspath(str(unresolved)))
+    descriptor = None
+    try:
+        resolved = target.resolve(strict=True)
+        before_path = os.lstat(str(target))
+        if resolved != target or stat.S_ISLNK(before_path.st_mode):
+            raise OSError("profile path contains a symbolic link")
+        if not stat.S_ISREG(before_path.st_mode):
+            raise OSError("profile is not a regular file")
+        flags = os.O_RDONLY
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        descriptor = os.open(str(target), flags)
+        before_fd = os.fstat(descriptor)
+        chunks = []
+        while True:
+            chunk = os.read(descriptor, 1024 * 1024)
+            if not chunk:
+                break
+            chunks.append(chunk)
+        after_fd = os.fstat(descriptor)
+        after_path = os.lstat(str(target))
+    except OSError as error:
+        raise TackerProfileError(
+            "cannot load Tacker profile {}: {}".format(target, error)
+        )
+    finally:
+        if descriptor is not None:
+            os.close(descriptor)
+    identities = {
+        _file_stat_identity(before_path),
+        _file_stat_identity(before_fd),
+        _file_stat_identity(after_fd),
+        _file_stat_identity(after_path),
+    }
+    if len(identities) != 1:
+        raise TackerProfileError(
+            "cannot load Tacker profile {}: bytes changed during snapshot".format(
+                target
+            )
+        )
+    return b"".join(chunks), target
+
+
+def load_tacker_profile_snapshot(profile_path=None, profile_override=None):
+    """Load one validated profile plus the exact file-byte SHA when present."""
+
+    if profile_path is not None and profile_override is not None:
+        raise TackerProfileError(
+            "profile_path and profile_override are mutually exclusive"
+        )
+    file_sha256 = None
+    resolved_path = None
+    if profile_override is not None:
+        profile = deepcopy(profile_override)
+    else:
+        path = DEFAULT_PROFILE_PATH if profile_path is None else Path(profile_path)
+        raw, resolved_path = _stable_profile_bytes(path)
+        try:
+            profile = json.loads(raw.decode("utf-8"))
+        except (UnicodeError, ValueError) as error:
+            raise TackerProfileError(
+                "cannot load Tacker profile {}: {}".format(resolved_path, error)
+            )
+        file_sha256 = hashlib.sha256(raw).hexdigest()
+    return validate_tacker_profile(profile), file_sha256, resolved_path
+
+
 def load_tacker_profile(profile_path=None, profile_override=None):
     """Load and structurally validate one profile.
 
@@ -1613,22 +2053,10 @@ def load_tacker_profile(profile_path=None, profile_override=None):
     manifest/profile hashes or correctness qualification.
     """
 
-    if profile_path is not None and profile_override is not None:
-        raise TackerProfileError(
-            "profile_path and profile_override are mutually exclusive"
-        )
-    if profile_override is not None:
-        profile = deepcopy(profile_override)
-    else:
-        path = DEFAULT_PROFILE_PATH if profile_path is None else Path(profile_path)
-        try:
-            with path.open("r", encoding="utf-8") as handle:
-                profile = json.load(handle)
-        except (OSError, ValueError) as error:
-            raise TackerProfileError(
-                "cannot load Tacker profile {}: {}".format(path, error)
-            )
-    return validate_tacker_profile(profile)
+    profile, _file_sha256, _resolved_path = load_tacker_profile_snapshot(
+        profile_path=profile_path, profile_override=profile_override
+    )
+    return profile
 
 
 def tacker_profile_admission_reason(profile):
@@ -1731,7 +2159,7 @@ def _runtime_resource_mapping(value):
     return resources
 
 
-def _query_rasterizer_variant_resources(worker_groups, abi_version=2):
+def _query_rasterizer_variant_resources(worker_groups, abi_version=2, family=None):
     """Return one normalized active-device resource report.
 
     The compiled extension's raw query supports both the legacy ABI and the
@@ -1745,6 +2173,13 @@ def _query_rasterizer_variant_resources(worker_groups, abi_version=2):
         backend = getattr(_rasterizer_module, "_C", None)
         provider = getattr(backend, "tacker_resource_requirements", None)
     if callable(provider):
+        if family in (
+            PACKED_FIRST_LINEAR_ABI_FAMILY,
+            WHOLE_HEAD_ABI_FAMILY,
+        ):
+            return _runtime_resource_mapping(
+                provider(abi_version, worker_groups, family)
+            )
         return _runtime_resource_mapping(provider(abi_version, worker_groups))
 
     if abi_version == MIXED_MULTI_ABI_VERSION:
@@ -1806,6 +2241,8 @@ def _head_structure_reason(network):
             return "{} must contain exactly four modules".format(name)
         if _module_name(modules[0]) != "ReLU" or _module_name(modules[2]) != "ReLU":
             return "{} must be ReLU/Linear/ReLU/Linear".format(name)
+        if bool(getattr(modules[0], "inplace", False)):
+            return "{}[0] must be a non-inplace ReLU".format(name)
         reason = _linear_shape_reason(modules[1], 128, 128, "{}[1]".format(name))
         if reason is not None:
             return reason
@@ -1890,25 +2327,90 @@ def _rasterizer_capability_contract_reason(
     tensor_contract = selected_candidate["tensor_contract"]
     max_heads = tensor_contract["max_heads"]
     worker_threads = selected_candidate["backend_subgroups"][0]["threads"]
-    barriers = selected_candidate["backend_named_barriers"]
-    barrier = barriers[0]
     expected = {
-        "mixed_render_heads_abi": MIXED_MULTI_ABI_VERSION,
-        "mixed_render_heads": True,
-        "mixed_multi_symbol": variant.cuda_symbol,
-        "mixed_multi_manifest_sha256": expected_mixed_hash,
-        "head_multi_manifest_sha256": selected_candidate[
-            "head_abi_manifest_sha256"
-        ],
         "head_features": tensor_contract["features"],
         "max_head_tasks": max_heads,
         "max_mixed_heads": max_heads,
         "min_worker_groups": 1,
         "max_worker_groups": max_heads,
         "worker_group_threads": worker_threads,
-        "head_descriptor_named_barrier_id": barrier["id"],
         "resource_query": "tacker_resource_requirements",
     }
+    if variant.backend == FIRST_LINEAR_BACKEND:
+        barriers = selected_candidate["backend_named_barriers"]
+        barrier = barriers[0]
+        expected.update(
+            {
+                "mixed_render_heads_abi": MIXED_MULTI_ABI_VERSION,
+                "mixed_render_heads": True,
+                "mixed_multi_symbol": variant.cuda_symbol,
+                "mixed_multi_manifest_sha256": expected_mixed_hash,
+                "head_multi_manifest_sha256": selected_candidate[
+                    "head_abi_manifest_sha256"
+                ],
+                "head_descriptor_named_barrier_id": barrier["id"],
+            }
+        )
+        required_method = "forward_with_heads"
+    elif variant.backend == PACKED_FIRST_LINEAR_BACKEND:
+        expected.update(
+            {
+                "mixed_render_packed_heads_abi": PACKED_MIXED_ABI_VERSION,
+                "mixed_render_packed_heads": True,
+                "mixed_packed_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+                "mixed_packed_symbol": variant.cuda_symbol,
+                "mixed_packed_manifest": selected_candidate["abi_manifest"],
+                "mixed_packed_manifest_sha256": expected_mixed_hash,
+                "mixed_packed_head_manifest_sha256": selected_candidate[
+                    "head_abi_manifest_sha256"
+                ],
+                "supported_backend_families": [
+                    FIRST_LINEAR_ABI_FAMILY,
+                    PACKED_FIRST_LINEAR_ABI_FAMILY,
+                    WHOLE_HEAD_ABI_FAMILY,
+                ],
+                "supported_mixed_abis": [1, 2, 3, 4],
+                "resource_query_family_aware": True,
+            }
+        )
+        required_method = "forward_with_packed_heads"
+    elif variant.backend == WHOLE_HEAD_BACKEND:
+        capability = selected_candidate["capability_requirements"]
+        expected.update(
+            {
+                "mixed_render_whole_heads_abi": WHOLE_HEAD_MIXED_ABI_VERSION,
+                "mixed_render_whole_heads": True,
+                "mixed_whole_family": WHOLE_HEAD_ABI_FAMILY,
+                "mixed_whole_symbol": variant.cuda_symbol,
+                "mixed_whole_manifest": selected_candidate["abi_manifest"],
+                "mixed_whole_manifest_sha256": expected_mixed_hash,
+                "mixed_whole_head_manifest_sha256": selected_candidate[
+                    "head_abi_manifest_sha256"
+                ],
+                "whole_head_tail_features_min": 1,
+                "whole_head_tail_features_max": 128,
+                "whole_head_scratch_bytes_per_worker_group": capability[
+                    "shared_scratch_bytes_per_worker_group"
+                ],
+                "whole_head_named_barriers_per_worker_group": capability[
+                    "named_barriers_per_worker_group"
+                ],
+                "whole_head_barrier_base_id": 2,
+                "whole_head_descriptor_named_barrier_id": capability[
+                    "descriptor_named_barrier_id"
+                ],
+                "supported_backend_families": [
+                    FIRST_LINEAR_ABI_FAMILY,
+                    PACKED_FIRST_LINEAR_ABI_FAMILY,
+                    WHOLE_HEAD_ABI_FAMILY,
+                ],
+                "supported_mixed_abis": [1, 2, 3, 4],
+                "resource_query_family_aware": True,
+            }
+        )
+        required_method = "forward_with_whole_heads"
+    else:
+        return "selected Tacker partition backend is unsupported"
     for key, value in expected.items():
         if not _capability_matches(
             _capability_value(capabilities, key, None), value
@@ -1943,9 +2445,10 @@ def _rasterizer_capability_contract_reason(
     if threads_by_groups[variant.worker_groups] != variant.physical_cta_threads:
         return "selected mixed CTA thread count changed"
 
-    expected_participants = worker_threads * variant.worker_groups
-    if barrier["participants"] != expected_participants:
-        return "selected descriptor barrier participant count changed"
+    if variant.backend == FIRST_LINEAR_BACKEND:
+        expected_participants = worker_threads * variant.worker_groups
+        if barrier["participants"] != expected_participants:
+            return "selected descriptor barrier participant count changed"
     expected_head_begin = raster_threads
     for worker_index, subgroup in enumerate(
         selected_candidate["backend_subgroups"]
@@ -1953,10 +2456,16 @@ def _rasterizer_capability_contract_reason(
         begin = expected_head_begin + worker_index * worker_threads
         if subgroup["thread_range_inclusive"] != [begin, begin + worker_threads - 1]:
             return "sealed head worker range disagrees with compiled capabilities"
-        if subgroup["named_barrier_ids"] != [barrier["id"]]:
+        if variant.backend == FIRST_LINEAR_BACKEND:
+            expected_barrier_ids = [barrier["id"]]
+        elif variant.backend == PACKED_FIRST_LINEAR_BACKEND:
+            expected_barrier_ids = []
+        else:
+            expected_barrier_ids = [2 + worker_index, 7]
+        if subgroup["named_barrier_ids"] != expected_barrier_ids:
             return "sealed head worker barrier contract changed"
-    if not callable(getattr(GaussianRasterizer, "forward_with_heads", None)):
-        return "GaussianRasterizer.forward_with_heads is unavailable"
+    if not callable(getattr(GaussianRasterizer, required_method, None)):
+        return "GaussianRasterizer.{} is unavailable".format(required_method)
     return None
 
 
@@ -1983,6 +2492,12 @@ def _rasterizer_resource_contract_reason(
         "compute_capability_major": expected_capability[0],
         "compute_capability_minor": expected_capability[1],
     }
+    if variant.family in (
+        PACKED_FIRST_LINEAR_ABI_FAMILY,
+        WHOLE_HEAD_ABI_FAMILY,
+    ):
+        exact_runtime["backend_family"] = variant.family
+        exact_runtime["backend_abi_version"] = variant.abi_version
     for key, value in exact_runtime.items():
         actual = runtime_resources.get(key)
         if type(value) is int:
@@ -2120,7 +2635,7 @@ def tacker_support_reason(
         return capability_reason
     try:
         runtime_resources = _query_rasterizer_variant_resources(
-            variant.worker_groups, variant.abi_version
+            variant.worker_groups, variant.abi_version, variant.family
         )
     except Exception as error:
         return "rasterizer variant resource query failed: {}".format(error)
@@ -2191,6 +2706,8 @@ class FusionVariant:
     cuda_symbol: str
     physical_cta_threads: int
     legacy_pos_l1: bool = False
+    backend: str = FIRST_LINEAR_BACKEND
+    family: str = FIRST_LINEAR_ABI_FAMILY
 
 
 def fusion_variant_from_candidate(candidate):
@@ -2209,19 +2726,40 @@ def fusion_variant_from_candidate(candidate):
             cuda_symbol="tacker_mix_render_head_v1",
             physical_cta_threads=384,
             legacy_pos_l1=True,
+            backend="legacy_pos_l1",
+            family=LEGACY_ABI_FAMILY,
+        )
+    if not isinstance(partition, dict):
+        raise TackerProfileError("candidate.partition must be an object")
+    kind = partition.get("kind")
+    registration = PARTITION_KIND_REGISTRY.get(kind)
+    if registration is None:
+        raise TackerProfileError(
+            "selected candidate has unsupported partition kind {!r}".format(kind)
         )
     selected_heads = _canonical_head_names(
         partition.get("selected_heads"), "candidate.partition"
     )
+    if kind != FIRST_LINEAR_PARTITION_KIND:
+        if candidate.get("abi_family") != registration["abi_family"]:
+            raise TackerProfileError(
+                "selected candidate ABI family disagrees with partition kind"
+            )
+        if partition.get("backend") != registration["backend"]:
+            raise TackerProfileError(
+                "selected candidate backend disagrees with partition kind"
+            )
     return FusionVariant(
         variant_id=candidate["variant_id"],
         selected_heads=selected_heads,
         worker_groups=partition["worker_groups"],
         persistent_blocks=candidate["persistent_blocks"],
-        abi_version=MIXED_MULTI_ABI_VERSION,
+        abi_version=registration["abi_version"],
         cuda_symbol=candidate["cuda_symbol"],
         physical_cta_threads=candidate["physical_cta_threads"],
         legacy_pos_l1=False,
+        backend=registration["backend"],
+        family=registration["abi_family"],
     )
 
 
@@ -2267,6 +2805,17 @@ class FusionTask:
     rotation_delta: object = None
     opacity_delta: object = None
     shs_delta: object = None
+    shared_head_input: object = None
+    packed_head_weights: object = None
+    packed_head_biases: object = None
+    packed_head_outputs: object = None
+    whole_head_inputs: object = None
+    whole_first_weights: object = None
+    whole_first_biases: object = None
+    whole_tail_weights: object = None
+    whole_tail_biases: object = None
+    whole_head_outputs: object = None
+    output_widths: object = None
 
     def record_stream(self, stream):
         for field in fields(self):
@@ -2308,6 +2857,86 @@ def _cache_pos_head_parameters(pc):
     return weights[0], biases[0]
 
 
+def _cache_packed_head_parameters(pc, head_names):
+    weights, biases = _cache_head_parameters(pc, head_names)
+    return (
+        torch.stack(weights, dim=0).contiguous(),
+        torch.stack(biases, dim=0).contiguous(),
+    )
+
+
+def _cache_whole_head_parameters(pc, head_names):
+    first_weights, first_biases = _cache_head_parameters(pc, head_names)
+    network = pc._deformation.deformation_net
+    tail_weights = []
+    tail_biases = []
+    for head_name in head_names:
+        tail = getattr(network, HEAD_MODULES[head_name])[3]
+        tail_weights.append(
+            tail.weight.detach().to(dtype=torch.float32).contiguous()
+        )
+        tail_biases.append(
+            tail.bias.detach().to(dtype=torch.float32).contiguous()
+        )
+    return (
+        tuple(first_weights),
+        tuple(first_biases),
+        tuple(tail_weights),
+        tuple(tail_biases),
+    )
+
+
+def _prepare_deformation_prefix(context, pc):
+    deformation = pc._deformation
+    network = deformation.deformation_net
+    point_emb = _poc_fre(context.means3D, deformation.pos_poc)
+    scales_emb = _poc_fre(context.scales, deformation.rotation_scaling_poc)
+    rotations_emb = _poc_fre(
+        context.rotations, deformation.rotation_scaling_poc
+    )
+    hidden = network.query_time(
+        point_emb,
+        scales_emb,
+        rotations_emb,
+        None,
+        context.timestamp,
+    )
+
+    args = network.args
+    if bool(getattr(args, "static_mlp", False)):
+        mask = network.static_mlp(hidden)
+    elif bool(getattr(args, "empty_voxel", False)):
+        mask = network.empty_voxel(point_emb[:, :3])
+    else:
+        mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
+    return (
+        deformation,
+        network,
+        point_emb,
+        scales_emb,
+        rotations_emb,
+        hidden,
+        mask,
+    )
+
+
+def _run_parallel_deformation_heads(network, hidden, selected_heads):
+    parallel_outputs = {}
+    executed_python_nodes = []
+    args = network.args
+    for head_name in HEAD_ORDER:
+        if head_name in selected_heads:
+            continue
+        if bool(getattr(args, HEAD_DISABLE_FLAGS[head_name], False)):
+            parallel_outputs[head_name] = None
+            continue
+        parallel_outputs[head_name] = getattr(
+            network, HEAD_MODULES[head_name]
+        )(hidden)
+        executed_python_nodes.append(_full_head_node(head_name))
+    return parallel_outputs, executed_python_nodes
+
+
 def prepare_fusion_task(
     context,
     pc,
@@ -2338,28 +2967,15 @@ def prepare_fusion_task(
         raise ValueError("cached head parameter count does not match selected heads")
 
     with torch.cuda.stream(deform_stream):
-        deformation = pc._deformation
-        network = deformation.deformation_net
-        point_emb = _poc_fre(context.means3D, deformation.pos_poc)
-        scales_emb = _poc_fre(context.scales, deformation.rotation_scaling_poc)
-        rotations_emb = _poc_fre(
-            context.rotations, deformation.rotation_scaling_poc
-        )
-        hidden = network.query_time(
+        (
+            deformation,
+            network,
             point_emb,
             scales_emb,
             rotations_emb,
-            None,
-            context.timestamp,
-        )
-
-        args = network.args
-        if bool(getattr(args, "static_mlp", False)):
-            mask = network.static_mlp(hidden)
-        elif bool(getattr(args, "empty_voxel", False)):
-            mask = network.empty_voxel(point_emb[:, :3])
-        else:
-            mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
+            hidden,
+            mask,
+        ) = _prepare_deformation_prefix(context, pc)
 
         head_inputs = []
         for head_name in variant.selected_heads:
@@ -2371,18 +2987,9 @@ def prepare_fusion_task(
         head_inputs = tuple(head_inputs)
         prefix_ready.record(deform_stream)
 
-        parallel_outputs = {}
-        executed_python_nodes = []
-        for head_name in HEAD_ORDER:
-            if head_name in variant.selected_heads:
-                continue
-            if bool(getattr(args, HEAD_DISABLE_FLAGS[head_name], False)):
-                parallel_outputs[head_name] = None
-                continue
-            parallel_outputs[head_name] = getattr(
-                network, HEAD_MODULES[head_name]
-            )(hidden)
-            executed_python_nodes.append(_full_head_node(head_name))
+        parallel_outputs, executed_python_nodes = _run_parallel_deformation_heads(
+            network, hidden, variant.selected_heads
+        )
 
     task = FusionTask(
         context=context,
@@ -2408,6 +3015,159 @@ def prepare_fusion_task(
         task.head_input = head_inputs[0]
         task.head_weight = head_weights[0]
         task.head_bias = head_biases[0]
+    task.scale_delta = parallel_outputs.get("scales")
+    task.rotation_delta = parallel_outputs.get("rotations")
+    task.opacity_delta = parallel_outputs.get("opacity")
+    task.shs_delta = parallel_outputs.get("shs")
+    task.assert_selected_nodes_not_executed_by_python()
+    return task
+
+
+def prepare_packed_first_linear_task(
+    context,
+    pc,
+    deform_stream,
+    variant,
+    packed_head_weights,
+    packed_head_biases,
+    prefix_ready=None,
+):
+    """Prepare one C3 task with exactly one shared ``ReLU(hidden)`` input."""
+
+    if prefix_ready is None:
+        prefix_ready = torch.cuda.Event(blocking=False)
+    with torch.cuda.stream(deform_stream):
+        (
+            _deformation,
+            network,
+            point_emb,
+            scales_emb,
+            rotations_emb,
+            hidden,
+            mask,
+        ) = _prepare_deformation_prefix(context, pc)
+        shared_head_input = getattr(
+            network, HEAD_MODULES[variant.selected_heads[0]]
+        )[0](hidden).to(dtype=torch.float16).contiguous()
+        prefix_ready.record(deform_stream)
+        parallel_outputs, executed_python_nodes = _run_parallel_deformation_heads(
+            network, hidden, variant.selected_heads
+        )
+
+    task = FusionTask(
+        context=context,
+        variant=variant,
+        point_emb=point_emb,
+        scales_emb=scales_emb,
+        rotations_emb=rotations_emb,
+        opacity_emb=context.opacity,
+        shs_emb=context.shs,
+        hidden=hidden,
+        mask=mask,
+        head_inputs=(shared_head_input,),
+        head_weights=(packed_head_weights,),
+        head_biases=(packed_head_biases,),
+        parallel_outputs=parallel_outputs,
+        prefix_ready=prefix_ready,
+        skipped_python_nodes=tuple(
+            _first_linear_node(name) for name in variant.selected_heads
+        ),
+        executed_python_nodes=executed_python_nodes,
+        head_input=shared_head_input,
+        shared_head_input=shared_head_input,
+        packed_head_weights=packed_head_weights,
+        packed_head_biases=packed_head_biases,
+        output_widths=tuple(128 for _name in variant.selected_heads),
+    )
+    task.scale_delta = parallel_outputs.get("scales")
+    task.rotation_delta = parallel_outputs.get("rotations")
+    task.opacity_delta = parallel_outputs.get("opacity")
+    task.shs_delta = parallel_outputs.get("shs")
+    task.assert_selected_nodes_not_executed_by_python()
+    return task
+
+
+def prepare_whole_head_task(
+    context,
+    pc,
+    deform_stream,
+    variant,
+    cached_parameters,
+    prefix_ready=None,
+):
+    """Prepare C4 operands while leaving every selected tail to the backend."""
+
+    if prefix_ready is None:
+        prefix_ready = torch.cuda.Event(blocking=False)
+    (
+        first_weights,
+        first_biases,
+        tail_weights,
+        tail_biases,
+    ) = cached_parameters
+    expected_count = len(variant.selected_heads)
+    if any(
+        len(values) != expected_count
+        for values in (
+            first_weights,
+            first_biases,
+            tail_weights,
+            tail_biases,
+        )
+    ):
+        raise ValueError("cached whole-head parameter count does not match selected heads")
+
+    with torch.cuda.stream(deform_stream):
+        (
+            _deformation,
+            network,
+            point_emb,
+            scales_emb,
+            rotations_emb,
+            hidden,
+            mask,
+        ) = _prepare_deformation_prefix(context, pc)
+        shared_head_input = getattr(
+            network, HEAD_MODULES[variant.selected_heads[0]]
+        )[0](hidden).to(dtype=torch.float16).contiguous()
+        whole_head_inputs = tuple(
+            shared_head_input for _name in variant.selected_heads
+        )
+        prefix_ready.record(deform_stream)
+        parallel_outputs, executed_python_nodes = _run_parallel_deformation_heads(
+            network, hidden, variant.selected_heads
+        )
+
+    task = FusionTask(
+        context=context,
+        variant=variant,
+        point_emb=point_emb,
+        scales_emb=scales_emb,
+        rotations_emb=rotations_emb,
+        opacity_emb=context.opacity,
+        shs_emb=context.shs,
+        hidden=hidden,
+        mask=mask,
+        head_inputs=whole_head_inputs,
+        head_weights=first_weights,
+        head_biases=first_biases,
+        parallel_outputs=parallel_outputs,
+        prefix_ready=prefix_ready,
+        skipped_python_nodes=tuple(
+            _full_head_node(name) for name in variant.selected_heads
+        ),
+        executed_python_nodes=executed_python_nodes,
+        head_input=shared_head_input,
+        shared_head_input=shared_head_input,
+        whole_head_inputs=whole_head_inputs,
+        whole_first_weights=tuple(first_weights),
+        whole_first_biases=tuple(first_biases),
+        whole_tail_weights=tuple(tail_weights),
+        whole_tail_biases=tuple(tail_biases),
+        output_widths=tuple(
+            HEAD_OUTPUT_WIDTHS[name] for name in variant.selected_heads
+        ),
+    )
     task.scale_delta = parallel_outputs.get("scales")
     task.rotation_delta = parallel_outputs.get("rotations")
     task.opacity_delta = parallel_outputs.get("opacity")
@@ -2473,7 +3233,7 @@ def _normalise_head_outputs(task, head_outputs):
     return dict(zip(task.variant.selected_heads, values))
 
 
-def _validate_head_output(task, head_name, value):
+def _validate_head_output(task, head_name, value, output_width=128):
     dtype = getattr(value, "dtype", None)
     if dtype is not None and str(dtype) not in (
         "float32",
@@ -2482,13 +3242,54 @@ def _validate_head_output(task, head_name, value):
     ):
         raise TypeError("mixed {} head output must be FP32".format(head_name))
     shape = tuple(getattr(value, "shape", ()))
-    if shape and (len(shape) != 2 or shape[1] != 128):
+    if shape and (len(shape) != 2 or shape[1] != output_width):
         raise ValueError(
-            "mixed {} head output must have shape [N, 128]".format(head_name)
+            "mixed {} head output must have shape [N, {}]".format(
+                head_name, output_width
+            )
         )
     hidden_shape = tuple(getattr(task.hidden, "shape", ()))
     if shape and hidden_shape and shape[0] != hidden_shape[0]:
         raise ValueError("mixed head output row count changed")
+
+
+def _normalise_packed_head_outputs(task, packed_outputs):
+    dtype = getattr(packed_outputs, "dtype", None)
+    if dtype is not None and str(dtype) not in (
+        "float32",
+        "float",
+        "torch.float32",
+    ):
+        raise TypeError("mixed packed head outputs must be FP32")
+    shape = tuple(getattr(packed_outputs, "shape", ()))
+    expected_count = len(task.variant.selected_heads)
+    hidden_shape = tuple(getattr(task.hidden, "shape", ()))
+    if shape:
+        if (
+            len(shape) != 3
+            or shape[0] != expected_count
+            or shape[2] != 128
+        ):
+            raise ValueError(
+                "mixed packed head output must have shape [H, N, 128]"
+            )
+        if hidden_shape and shape[1] != hidden_shape[0]:
+            raise ValueError("mixed packed head output row count changed")
+    values = {}
+    for index, head_name in enumerate(task.variant.selected_heads):
+        value = packed_outputs[index]
+        _validate_head_output(task, head_name, value)
+        values[head_name] = value
+    return values
+
+
+def _normalise_whole_head_outputs(task, head_outputs):
+    outputs = _normalise_head_outputs(task, head_outputs)
+    for head_name in task.variant.selected_heads:
+        _validate_head_output(
+            task, head_name, outputs[head_name], HEAD_OUTPUT_WIDTHS[head_name]
+        )
+    return outputs
 
 
 def finish_fusion_task(task, pc, head_outputs):
@@ -2496,7 +3297,6 @@ def finish_fusion_task(task, pc, head_outputs):
 
     outputs = _normalise_head_outputs(task, head_outputs)
     network = pc._deformation.deformation_net
-    args = network.args
     deltas = dict(task.parallel_outputs)
     for head_name in task.variant.selected_heads:
         value = outputs[head_name]
@@ -2513,6 +3313,52 @@ def finish_fusion_task(task, pc, head_outputs):
     task.opacity_delta = deltas.get("opacity")
     task.shs_delta = deltas.get("shs")
     task.assert_selected_nodes_not_executed_by_python()
+
+    return _render_state_from_deltas(task, pc, deltas)
+
+
+def finish_packed_first_linear_task(task, pc, packed_outputs):
+    """Run only the selected Python tails after one packed C3 output."""
+
+    outputs = _normalise_packed_head_outputs(task, packed_outputs)
+    network = pc._deformation.deformation_net
+    deltas = dict(task.parallel_outputs)
+    for head_name in task.variant.selected_heads:
+        deltas[head_name] = getattr(network, HEAD_MODULES[head_name])[2:](
+            outputs[head_name]
+        )
+        task.executed_python_nodes.extend(_suffix_head_nodes(head_name))
+    task.mixed_outputs = outputs
+    task.packed_head_outputs = packed_outputs
+    task.scale_delta = deltas.get("scales")
+    task.rotation_delta = deltas.get("rotations")
+    task.opacity_delta = deltas.get("opacity")
+    task.shs_delta = deltas.get("shs")
+    task.assert_selected_nodes_not_executed_by_python()
+    return _render_state_from_deltas(task, pc, deltas)
+
+
+def finish_whole_head_task(task, pc, head_outputs):
+    """Consume C4 deltas directly; selected tails never run in Python."""
+
+    outputs = _normalise_whole_head_outputs(task, head_outputs)
+    deltas = dict(task.parallel_outputs)
+    deltas.update(outputs)
+    task.mixed_outputs = outputs
+    task.whole_head_outputs = outputs
+    task.scale_delta = deltas.get("scales")
+    task.rotation_delta = deltas.get("rotations")
+    task.opacity_delta = deltas.get("opacity")
+    task.shs_delta = deltas.get("shs")
+    task.assert_selected_nodes_not_executed_by_python()
+    return _render_state_from_deltas(task, pc, deltas)
+
+
+def _render_state_from_deltas(task, pc, deltas):
+    """Apply the original deformation residual rules to unique head deltas."""
+
+    network = pc._deformation.deformation_net
+    args = network.args
 
     if bool(getattr(args, "no_dx", False)):
         pts = task.point_emb[:, :3]
@@ -2607,6 +3453,59 @@ def _forward_with_heads(context, state, task, persistent_blocks):
     )
 
 
+def _forward_with_packed_heads(context, state, task, persistent_blocks):
+    """Adapter around the C3 shared-input packed mixed binding."""
+
+    method = getattr(context.rasterizer, "forward_with_packed_heads", None)
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.forward_with_packed_heads is unavailable"
+        )
+    return method(
+        means3D=state.means3D,
+        means2D=context.means2D,
+        opacities=state.opacities,
+        head_input=task.shared_head_input,
+        packed_head_weights=task.packed_head_weights,
+        packed_head_biases=task.packed_head_biases,
+        shs=state.shs,
+        colors_precomp=context.colors_precomp,
+        scales=state.scales,
+        rotations=state.rotations,
+        cov3D_precomp=context.cov3D_precomp,
+        worker_groups=task.variant.worker_groups,
+        persistent_blocks=persistent_blocks,
+    )
+
+
+def _forward_with_whole_heads(context, state, task, persistent_blocks):
+    """Adapter around the C4 variable-width whole-head mixed binding."""
+
+    method = getattr(context.rasterizer, "forward_with_whole_heads", None)
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.forward_with_whole_heads is unavailable"
+        )
+    return method(
+        means3D=state.means3D,
+        means2D=context.means2D,
+        opacities=state.opacities,
+        head_inputs=task.whole_head_inputs,
+        first_weights=task.whole_first_weights,
+        first_biases=task.whole_first_biases,
+        tail_weights=task.whole_tail_weights,
+        tail_biases=task.whole_tail_biases,
+        output_widths=task.output_widths,
+        shs=state.shs,
+        colors_precomp=context.colors_precomp,
+        scales=state.scales,
+        rotations=state.rotations,
+        cov3D_precomp=context.cov3D_precomp,
+        worker_groups=task.variant.worker_groups,
+        persistent_blocks=persistent_blocks,
+    )
+
+
 def _result_from_mixed(context, mixed_outputs):
     image, radii, depth, head_output = mixed_outputs
     result = RenderResult(
@@ -2639,6 +3538,20 @@ def _result_from_mixed_heads(context, mixed_outputs, expected_head_count):
     return result, head_outputs
 
 
+def _result_from_mixed_packed_heads(context, mixed_outputs):
+    if not isinstance(mixed_outputs, (list, tuple)) or len(mixed_outputs) != 4:
+        raise RuntimeError("mixed packed binding returned an invalid result")
+    image, radii, depth, packed_outputs = mixed_outputs
+    result = RenderResult(
+        render=image,
+        viewspace_points=context.screenspace_points,
+        visibility_filter=radii > 0,
+        radii=radii,
+        depth=depth,
+    )
+    return result, packed_outputs
+
+
 class FusionPartition:
     """Candidate interface used by the two-slot scheduler."""
 
@@ -2647,6 +3560,10 @@ class FusionPartition:
 
     def cache_parameters(self, pc):
         return _cache_head_parameters(pc, self.variant.selected_heads)
+
+    def cached_tensors(self, cached):
+        weights, biases = cached
+        return tuple(weights) + tuple(biases)
 
     def prepare(self, context, pc, deform_stream, cached, prefix_ready):
         weights, biases = cached
@@ -2704,11 +3621,100 @@ class LegacyPosFusionPartition(FusionPartition):
         return finish_pos_head_task(task, pc, head_output)
 
 
+class PackedFirstLinearPartition(FusionPartition):
+    """C3 partition using one shared input and stacked parameter storage."""
+
+    def cache_parameters(self, pc):
+        return _cache_packed_head_parameters(pc, self.variant.selected_heads)
+
+    def cached_tensors(self, cached):
+        return tuple(cached)
+
+    def prepare(self, context, pc, deform_stream, cached, prefix_ready):
+        packed_weights, packed_biases = cached
+        return prepare_packed_first_linear_task(
+            context,
+            pc,
+            deform_stream,
+            self.variant,
+            packed_weights,
+            packed_biases,
+            prefix_ready=prefix_ready,
+        )
+
+    def launch_mixed(self, context, state, task):
+        return _forward_with_packed_heads(
+            context, state, task, self.variant.persistent_blocks
+        )
+
+    def result_from_mixed(self, context, mixed_outputs):
+        return _result_from_mixed_packed_heads(context, mixed_outputs)
+
+    def finish(self, task, pc, packed_outputs):
+        return finish_packed_first_linear_task(task, pc, packed_outputs)
+
+
+class WholeHeadPartition(FusionPartition):
+    """C4 partition whose selected first-linear and tail execute physically."""
+
+    def cache_parameters(self, pc):
+        return _cache_whole_head_parameters(pc, self.variant.selected_heads)
+
+    def cached_tensors(self, cached):
+        values = []
+        for group in cached:
+            values.extend(group)
+        return tuple(values)
+
+    def prepare(self, context, pc, deform_stream, cached, prefix_ready):
+        return prepare_whole_head_task(
+            context,
+            pc,
+            deform_stream,
+            self.variant,
+            cached,
+            prefix_ready=prefix_ready,
+        )
+
+    def launch_mixed(self, context, state, task):
+        return _forward_with_whole_heads(
+            context, state, task, self.variant.persistent_blocks
+        )
+
+    def result_from_mixed(self, context, mixed_outputs):
+        return _result_from_mixed_heads(
+            context, mixed_outputs, len(self.variant.selected_heads)
+        )
+
+    def finish(self, task, pc, head_outputs):
+        return finish_whole_head_task(task, pc, head_outputs)
+
+
+PARTITION_KIND_REGISTRY[FIRST_LINEAR_PARTITION_KIND][
+    "partition_class"
+] = FusionPartition
+PARTITION_KIND_REGISTRY[PACKED_FIRST_LINEAR_PARTITION_KIND][
+    "partition_class"
+] = PackedFirstLinearPartition
+PARTITION_KIND_REGISTRY[WHOLE_HEAD_PARTITION_KIND][
+    "partition_class"
+] = WholeHeadPartition
+
+
 def resolve_fusion_partition(candidate):
     variant = fusion_variant_from_candidate(candidate)
     if variant.legacy_pos_l1:
         return LegacyPosFusionPartition(variant)
-    return FusionPartition(variant)
+    kind = candidate["partition"]["kind"]
+    registration = PARTITION_KIND_REGISTRY.get(kind)
+    partition_class = None if registration is None else registration.get(
+        "partition_class"
+    )
+    if partition_class is None:
+        raise TackerProfileError(
+            "selected candidate has no registered partition implementation"
+        )
+    return partition_class(variant)
 
 
 @dataclass
@@ -2742,6 +3748,7 @@ class TackerRenderer:
         cam_type=None,
         profile_path=None,
         profile_override=None,
+        profile_snapshot_error=None,
         workload_name=None,
         iteration=None,
         qualification_mode=False,
@@ -2759,7 +3766,26 @@ class TackerRenderer:
 
         self._profile_error = None
         self.profile = None
-        if type(qualification_mode) is not bool:
+        self.profile_file_sha256 = None
+        self.profile_source_path = None
+        if profile_snapshot_error is not None and (
+            type(profile_snapshot_error) is not str
+            or not profile_snapshot_error.strip()
+        ):
+            self._profile_error = (
+                "profile_snapshot_error must be a non-empty string or None"
+            )
+        elif profile_snapshot_error is not None and (
+            profile_path is not None or profile_override is not None
+        ):
+            self._profile_error = (
+                "profile_snapshot_error forbids profile_path/profile_override"
+            )
+        elif profile_snapshot_error is not None and qualification_mode:
+            self._profile_error = (
+                "qualification_mode forbids profile_snapshot_error"
+            )
+        elif type(qualification_mode) is not bool:
             self._profile_error = "qualification_mode must be boolean"
         elif qualification_mode and (
             profile_override is None or profile_path is not None
@@ -2768,9 +3794,19 @@ class TackerRenderer:
                 "qualification_mode requires an explicit profile_override and "
                 "forbids profile_path/default-profile admission"
             )
+        elif profile_snapshot_error is not None:
+            # The caller already observed and sealed a missing/unreadable
+            # profile.  Consuming that observation directly is important: a
+            # second pathname read here would re-open the TOCTOU window that
+            # the pre-import seal is meant to close.
+            self._profile_error = profile_snapshot_error
         try:
             if self._profile_error is None:
-                self.profile = load_tacker_profile(
+                (
+                    self.profile,
+                    self.profile_file_sha256,
+                    self.profile_source_path,
+                ) = load_tacker_profile_snapshot(
                     profile_path=profile_path,
                     profile_override=profile_override,
                 )
@@ -2802,11 +3838,17 @@ class TackerRenderer:
                 if candidate.get("execution_mode") == "tacker":
                     self.partition = resolve_fusion_partition(candidate)
                     self.cached_head_parameters = self.partition.cache_parameters(pc)
-                    weights, biases = self.cached_head_parameters
-                    if len(weights) == 1:
-                        self.head_weight = weights[0]
-                        self.head_bias = biases[0]
-                    cache_values = weights
+                    cache_values = self.partition.cached_tensors(
+                        self.cached_head_parameters
+                    )
+                    if self.partition.variant.backend in (
+                        FIRST_LINEAR_BACKEND,
+                        "legacy_pos_l1",
+                    ):
+                        weights, biases = self.cached_head_parameters
+                        if len(weights) == 1:
+                            self.head_weight = weights[0]
+                            self.head_bias = biases[0]
                 else:
                     cache_values = ()
             if any(bool(getattr(value, "is_cuda", False)) for value in cache_values):
@@ -3047,7 +4089,11 @@ class TackerRenderer:
             )
             next_slot.mixed_outputs = head_outputs
             next_slot.task.mixed_outputs = head_outputs
-            if len(self.partition.variant.selected_heads) == 1:
+            if (
+                len(self.partition.variant.selected_heads) == 1
+                and self.partition.variant.backend
+                in (FIRST_LINEAR_BACKEND, "legacy_pos_l1")
+            ):
                 next_slot.task.head_output = head_outputs
             _record_stream_tree(head_outputs, self.raster_stream)
             result.record_stream(self.raster_stream)
@@ -3245,12 +4291,31 @@ __all__ = [
     "DEFAULT_PROFILE_PATH",
     "LEGACY_PROFILE_SCHEMA_VERSION",
     "LEGACY_VARIANT_ID",
+    "LEGACY_ABI_FAMILY",
     "FIRST_LINEAR_PARTITION_KIND",
+    "FIRST_LINEAR_ABI_FAMILY",
+    "FIRST_LINEAR_BACKEND",
+    "PACKED_FIRST_LINEAR_PARTITION_KIND",
+    "PACKED_FIRST_LINEAR_ABI_FAMILY",
+    "PACKED_FIRST_LINEAR_BACKEND",
+    "PACKED_MIXED_ABI_MANIFEST",
+    "PACKED_MIXED_ABI_SHA256",
+    "PACKED_MIXED_ABI_VERSION",
+    "WHOLE_HEAD_PARTITION_KIND",
+    "WHOLE_HEAD_ABI_FAMILY",
+    "WHOLE_HEAD_BACKEND",
+    "WHOLE_HEAD_MIXED_ABI_MANIFEST",
+    "WHOLE_HEAD_MIXED_ABI_SHA256",
+    "WHOLE_HEAD_MIXED_ABI_VERSION",
+    "PARTITION_KIND_REGISTRY",
     "FusionPartition",
+    "PackedFirstLinearPartition",
+    "WholeHeadPartition",
     "FusionTask",
     "FusionVariant",
     "HEAD_MULTI_ABI_SHA256",
     "HEAD_ORDER",
+    "HEAD_OUTPUT_WIDTHS",
     "MIXED_MULTI_ABI_VERSION",
     "PAIR_KEY",
     "PROFILE_SCHEMA_VERSION",
@@ -3260,14 +4325,20 @@ __all__ = [
     "TackerProfileError",
     "TackerRenderer",
     "finish_fusion_task",
+    "finish_packed_first_linear_task",
     "finish_pos_head_task",
+    "finish_whole_head_task",
     "first_linear_candidate_contract",
+    "packed_first_linear_candidate_contract",
+    "whole_head_candidate_contract",
     "fusion_variant_from_candidate",
     "load_tacker_profile",
     "manifest_sha256",
     "profile_sha256",
     "prepare_fusion_task",
+    "prepare_packed_first_linear_task",
     "prepare_pos_head_task",
+    "prepare_whole_head_task",
     "resolve_fusion_partition",
     "tacker_profile_admission_reason",
     "tacker_support_reason",

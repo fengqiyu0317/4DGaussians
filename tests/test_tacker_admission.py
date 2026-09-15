@@ -662,6 +662,60 @@ def _candidate(report, variant_id):
 
 
 class AdmissionV2Tests(unittest.TestCase):
+    def test_schema2_finalist_measurement_triplet_is_accepted(self):
+        inputs = passing_inputs()
+        for name in ("device", "raster", "leaf"):
+            inputs[name]["schema_version"] = 2
+        mixed_sha = "a" * 64
+        head_sha = "b" * 64
+        extensions = inputs["device"]["extensions"]
+        extensions["abi"] = {
+            "version": 3,
+            "mixed_manifest": {"file_sha256": mixed_sha},
+            "head_manifest": {"file_sha256": head_sha},
+            "candidate_mixed_manifest_sha256": mixed_sha,
+            "candidate_head_manifest_sha256": head_sha,
+            "mixed_symbol": ADMISSION.EXPECTED_MIXED_PACKED_SYMBOL,
+            "head_symbols": [ADMISSION.EXPECTED_HEAD_PACKED_GPTB_SYMBOL],
+        }
+        extensions["rasterizer"]["capabilities"].update(
+            {
+                "mixed_render_packed_heads": True,
+                "mixed_render_packed_heads_abi": 3,
+                "mixed_packed_symbol": ADMISSION.EXPECTED_MIXED_PACKED_SYMBOL,
+                "mixed_packed_manifest_sha256": mixed_sha,
+                "mixed_packed_head_manifest_sha256": head_sha,
+            }
+        )
+        extensions["rasterizer"]["cuda_global_symbols"] = [
+            ADMISSION.EXPECTED_MIXED_PACKED_SYMBOL
+        ]
+        extensions["head"]["capabilities"] = {
+            "abi_version": 2,
+            "sm_target": ADMISSION.EXPECTED_CUDA_ARCH,
+            "head_features": 128,
+            "global_kernel_symbols": {
+                "packed_gptb": ADMISSION.EXPECTED_HEAD_PACKED_GPTB_SYMBOL,
+            },
+        }
+        extensions["head"]["cuda_global_symbols"] = [
+            ADMISSION.EXPECTED_HEAD_PACKED_GPTB_SYMBOL
+        ]
+
+        report, profile = ADMISSION.evaluate_admission(inputs)
+
+        self.assertTrue(report["passed"])
+        self.assertIsNotNone(profile)
+
+        tampered = copy.deepcopy(inputs)
+        tampered["device"]["extensions"]["rasterizer"]["capabilities"][
+            "mixed_packed_symbol"
+        ] = "wrong_symbol"
+        rejected, rejected_profile = ADMISSION.evaluate_admission(tampered)
+        self.assertFalse(rejected["passed"])
+        self.assertIsNone(rejected_profile)
+        self.assertIn("mixed_packed_symbol", rejected["errors"][0])
+
     def test_slow_raster_and_slow_leaf_are_diagnostics_not_gates(self):
         report, profile = ADMISSION.evaluate_admission(passing_inputs())
 
@@ -1274,6 +1328,70 @@ class AdmissionV2Tests(unittest.TestCase):
                 self.assertFalse(report["passed"])
                 self.assertIsNone(profile)
                 self.assertIn(error_text, report["errors"][0])
+
+    def test_only_optional_simple_knn_wrapper_may_have_null_source_hash(self):
+        def set_source_hash(benchmark, name, digest):
+            benchmark["stable_provenance"]["source_files"][name] = digest
+            for run in benchmark["runs"]:
+                metrics = run["metrics"]
+                metrics["stable_provenance"]["source_files"][name] = digest
+                metrics["provenance"]["repository"]["source_files"][
+                    name
+                ] = digest
+
+        accepted_inputs = passing_inputs()
+        set_source_hash(
+            accepted_inputs["fps_benchmark"],
+            "simple_knn/__init__.py",
+            None,
+        )
+        report, profile = ADMISSION.evaluate_admission(accepted_inputs)
+        self.assertTrue(report["passed"], report["errors"])
+        self.assertIsNotNone(profile)
+
+        for name in (
+            "unexpected_optional_source.py",
+            "gaussian_renderer/tacker_pipeline.py",
+        ):
+            with self.subTest(rejected_null_source=name):
+                rejected_inputs = passing_inputs()
+                set_source_hash(rejected_inputs["fps_benchmark"], name, None)
+                rejected, rejected_profile = ADMISSION.evaluate_admission(
+                    rejected_inputs
+                )
+                self.assertFalse(rejected["passed"])
+                self.assertIsNone(rejected_profile)
+                self.assertIn("source files require", rejected["errors"][0])
+
+        top_only_inputs = passing_inputs()
+        top_only_inputs["fps_benchmark"]["stable_provenance"][
+            "source_files"
+        ]["simple_knn/__init__.py"] = None
+        top_only, top_only_profile = ADMISSION.evaluate_admission(
+            top_only_inputs
+        )
+        self.assertFalse(top_only["passed"])
+        self.assertIsNone(top_only_profile)
+        self.assertIn("stable_provenance disagrees", top_only["errors"][0])
+
+        missing_repository_inputs = passing_inputs()
+        benchmark = missing_repository_inputs["fps_benchmark"]
+        benchmark["stable_provenance"]["source_files"][
+            "simple_knn/__init__.py"
+        ] = None
+        for run in benchmark["runs"]:
+            run["metrics"]["stable_provenance"]["source_files"][
+                "simple_knn/__init__.py"
+            ] = None
+        missing_repository, missing_repository_profile = (
+            ADMISSION.evaluate_admission(missing_repository_inputs)
+        )
+        self.assertFalse(missing_repository["passed"])
+        self.assertIsNone(missing_repository_profile)
+        self.assertIn(
+            "repository provenance disagrees",
+            missing_repository["errors"][0],
+        )
 
     def test_additional_benchmark_candidates_must_use_tacker_mode(self):
         inputs = passing_inputs(
@@ -2482,6 +2600,223 @@ class Phase2DescriptorContractTests(unittest.TestCase):
             ADMISSION.AdmissionInputError, "semantic digest"
         ):
             ADMISSION._validate_head_abi(tampered_head)
+
+
+class Phase31AdmissionContractTests(unittest.TestCase):
+    WINNER_NAME = (
+        "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+    )
+    WINNER_PROFILE = (
+        PROJECT_ROOT
+        / "tacker_profiles"
+        / "baselines"
+        / "a6000_phase31_20260913"
+        / "run-complete-v3"
+        / "attempts"
+        / "selection"
+        / "0001"
+        / "winner-qualification-profile.json"
+    )
+
+    @staticmethod
+    def _phase31_resources(abi_version, worker_groups=1):
+        physical_threads = 256 + 128 * worker_groups
+        return {
+            "abi_version": abi_version,
+            "backend_abi_version": abi_version,
+            "worker_groups": worker_groups,
+            "block_threads": physical_threads,
+            "physical_threads": physical_threads,
+            "registers_per_thread": 48,
+            "static_shared_memory_bytes": (
+                512 * worker_groups if abi_version == 4 else 0
+            ),
+            "max_threads_per_block": 896,
+            "active_blocks_per_sm": 1,
+        }
+
+    def test_phase31_disabled_packed_winner_becomes_enabled_v2_profile(self):
+        name = self.WINNER_NAME
+        fps = {
+            "serial": [90.0] * 10,
+            "two_stream": [95.0] * 10,
+            "current_tacker": [96.0] * 10,
+            name: [100.0] * 10,
+        }
+        inputs = passing_inputs(fps_by_name=fps)
+        source_profile = _read_json(self.WINNER_PROFILE)
+        source_file_sha256 = ADMISSION._sha256_file(self.WINNER_PROFILE)
+        self.assertEqual(
+            source_profile["deployment"], {"enabled": False, "valid": False}
+        )
+        _bind_benchmark_profile_sha256(
+            inputs["fps_benchmark"],
+            name,
+            source_file_sha256,
+            source_profile,
+        )
+        descriptor, loaded_sha256 = (
+            ADMISSION._descriptor_from_candidate_profile(
+                inputs["fps_benchmark"], name, self.WINNER_PROFILE
+            )
+        )
+        self.assertEqual(loaded_sha256, source_file_sha256)
+        self.assertFalse(descriptor["source_profile_deployment_enabled"])
+        descriptor["source_profile_file_sha256"] = source_file_sha256
+        inputs["candidate_descriptors"][name] = descriptor
+        inputs["quality"]["modes"][name] = {"actual_mode": "tacker"}
+        inputs["quality"]["deltas"][name] = {
+            "psnr_drop_db": 0.001,
+            "ssim_drop": 0.000001,
+            "lpips_increase": 0.000001,
+            "numerics": {"passed": True},
+        }
+        inputs["mixed_abi"] = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_packed_heads_v3.json"
+        )
+        inputs["head_abi"] = _read_json(
+            PROJECT_ROOT / "tacker_ext" / "abi" / "head_linear_v2.json"
+        )
+
+        report, profile = ADMISSION.evaluate_admission(inputs)
+
+        self.assertTrue(report["passed"], report["errors"])
+        self.assertIsNotNone(profile)
+        self.assertEqual(profile["schema_version"], 2)
+        self.assertEqual(
+            profile["deployment"], {"enabled": True, "valid": True}
+        )
+        self.assertEqual(profile["selected_variant_id"], name)
+        selected = _candidate(profile, name)
+        self.assertTrue(selected["correctness"]["valid"])
+        self.assertEqual(
+            selected["abi_family"], ADMISSION.PACKED_FIRST_LINEAR_ABI_FAMILY
+        )
+        self.assertFalse(selected["source_profile_deployment_enabled"])
+        self.assertNotIn("raster_slowdown_pct_max", profile)
+        self.assertEqual(
+            profile["provenance"]["validated_abi"]["mixed_abi_version"], 3
+        )
+        self.assertEqual(
+            profile["provenance"]["validated_abi"]["head_abi_version"], 2
+        )
+        self.assertEqual(profile["profile_sha256"], ADMISSION.profile_sha256(profile))
+
+        from tests.test_tacker_pipeline import _load_module
+
+        runtime = _load_module()
+        self.assertIsNone(runtime.tacker_profile_admission_reason(profile))
+
+    def test_abi3_and_abi4_are_sibling_manifests_and_c4_is_versioned_4_2(self):
+        packed_abi = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_packed_heads_v3.json"
+        )
+        whole_abi = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_whole_heads_v4.json"
+        )
+        head_abi = _read_json(
+            PROJECT_ROOT / "tacker_ext" / "abi" / "head_linear_v2.json"
+        )
+        self.assertEqual(
+            ADMISSION._validate_mixed_abi(packed_abi),
+            frozenset((1, 2, 3)),
+        )
+        self.assertEqual(
+            ADMISSION._validate_mixed_abi(whole_abi),
+            frozenset((1, 2, 4)),
+        )
+        all_mixed_versions = ADMISSION._validate_mixed_abi(
+            [packed_abi, whole_abi]
+        )
+        self.assertEqual(all_mixed_versions, frozenset((1, 2, 3, 4)))
+
+        from tests.test_tacker_pipeline import _load_module
+
+        runtime = _load_module()
+        descriptor = runtime.whole_head_candidate_contract(
+            "c4_whole_heads_opacity_wg1_pb5440",
+            ["opacity"],
+            worker_groups=1,
+            persistent_blocks=5440,
+            resources=self._phase31_resources(4),
+        )
+        self.assertIs(
+            ADMISSION._validate_tacker_descriptor(descriptor, "candidate"),
+            descriptor,
+        )
+        self.assertEqual(ADMISSION._candidate_abi_requirements(descriptor), (4, 2))
+        selectable = copy.deepcopy(descriptor)
+        selectable["correctness"] = {"valid": True}
+        selectable["performance"] = {"median_throughput_fps": 1.0}
+        ADMISSION._validate_candidate_abi_evidence(
+            [selectable],
+            all_mixed_versions,
+            ADMISSION._validate_head_abi(head_abi),
+        )
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "mixed ABI v4 evidence"
+        ):
+            ADMISSION._validate_candidate_abi_evidence(
+                [selectable], frozenset((1, 2, 3)), frozenset((1, 2))
+            )
+
+    def test_phase31_descriptor_and_manifest_mutations_fail_closed(self):
+        source = _read_json(self.WINNER_PROFILE)
+        descriptor = copy.deepcopy(_candidate(source, self.WINNER_NAME))
+        for field in ("correctness", "performance", "diagnostics"):
+            descriptor.pop(field, None)
+        cases = (
+            ("abi_family", "whole_heads_v4", "abi_family"),
+            ("abi_manifest_sha256", "0" * 64, "abi_manifest_sha256"),
+            ("cuda_symbol", "wrong", "cuda_symbol"),
+        )
+        for field, value, error_text in cases:
+            with self.subTest(field=field):
+                tampered = copy.deepcopy(descriptor)
+                tampered[field] = value
+                with self.assertRaisesRegex(
+                    ADMISSION.AdmissionInputError, error_text
+                ):
+                    ADMISSION._validate_tacker_descriptor(tampered, "candidate")
+
+        wrong_partition = copy.deepcopy(descriptor)
+        wrong_partition["partition"]["kind"] = ADMISSION.WHOLE_HEAD_PARTITION_KIND
+        with self.assertRaises(ADMISSION.AdmissionInputError):
+            ADMISSION._validate_tacker_descriptor(wrong_partition, "candidate")
+
+        wrong_resource_version = copy.deepcopy(descriptor)
+        wrong_resource_version["resources"]["backend_abi_version"] = 2
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "backend_abi_version"
+        ):
+            ADMISSION._validate_tacker_descriptor(
+                wrong_resource_version, "candidate"
+            )
+
+        packed_abi = _read_json(
+            PROJECT_ROOT
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_packed_heads_v3.json"
+        )
+        packed_abi["tensor_contract"]["output_dtype"] = "float16"
+        with self.assertRaisesRegex(
+            ADMISSION.AdmissionInputError, "semantic digest"
+        ):
+            ADMISSION._validate_mixed_abi(packed_abi)
 
 
 if __name__ == "__main__":

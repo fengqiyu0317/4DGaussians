@@ -1,0 +1,152 @@
+{
+  "benchmark_argv_fragment": [
+    "--current-tacker-profile",
+    "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/tacker_profiles/incumbents/current-v1.json",
+    "--candidate",
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440=/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+    "--candidate",
+    "c2h3_scales_rotations_opacity_l1_wg1_pb7000=/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+    "--candidate",
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000=/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+    "--candidate",
+    "c2h3_scales_opacity_shs_l1_wg1_pb5440=/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_opacity_shs_l1_wg1_pb5440.json",
+    "--candidate",
+    "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440=/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h4_pos_scales_opacity_shs_l1_wg1_pb5440.json",
+    "--correctness-json",
+    "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-correctness.json"
+  ],
+  "benchmark_driver": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/scripts/benchmark_tacker_fps.py",
+  "candidates": [
+    {
+      "candidate_sha256": "7637989f0bd0db26846b9f7deaf59cf380c6c3f786181fad8b44fc10c2946248",
+      "checkpoint_artifacts": {
+        "correctness_artifact_sha256": "ea537eb9a65251bd192f7408bc20b5dad28978df28f97be0d226aa7958ecb6ab",
+        "screening_artifact_sha256": "0c0b8c40f735cf76b77fbf3000a0ff26dc884619e27af8cb95adf5b2193b073a"
+      },
+      "profile_file_sha256": "8e0e0e7b0044dbbc79b4092311cceffbaf6c1c1d0252d8a5a88ea58fc9c3dd51",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+      "rank": 1,
+      "screening_score": 86.01789867298778,
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate_sha256": "b20f5b652dda49a054503d5426c0573026affd3938a95933e64292338fa602d1",
+      "checkpoint_artifacts": {
+        "correctness_artifact_sha256": "f8f2467cb92149b44cd12710d81e16644d11a32806cc5810282980d3c5a45d98",
+        "screening_artifact_sha256": "d55c9dc6ed02dbbe151e58b0ed0effe3125ae7504364409bfbaa3e477ac93627"
+      },
+      "profile_file_sha256": "cdf375d181363df172f6a73eb171356a40f21b0bbbb4fb8ffcbfd3f6b357bd81",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_rotations_opacity_l1_wg1_pb7000.json",
+      "rank": 2,
+      "screening_score": 85.45183646033357,
+      "variant_id": "c2h3_scales_rotations_opacity_l1_wg1_pb7000"
+    },
+    {
+      "candidate_sha256": "a1fef6afa2bcd8be3efa884d875daa1a52c349fc35587555e1d7f0ba456f9a40",
+      "checkpoint_artifacts": {
+        "correctness_artifact_sha256": "d2d4a3bc5b838acba08c17a90bd0eea594c6b46771e52e46f919dc2b2d927550",
+        "screening_artifact_sha256": "ff7d0c33664f585f15a97a8dfcd9bbb63a9840e36c72e34f3ccb9ad2a9102267"
+      },
+      "profile_file_sha256": "afb6f82155b5da3ac6473cd2277b806ae83ed180bdde2e5011d54ea843520922",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000.json",
+      "rank": 3,
+      "screening_score": 85.30256065282194,
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000"
+    },
+    {
+      "candidate_sha256": "efb2bde4130e3764f6166e6ab43a772ced6df955701030a13a592fd336870388",
+      "checkpoint_artifacts": {
+        "correctness_artifact_sha256": "496ca0f29c117e7a348c5dc6568335f51ec2abdb1571203f59c3741513a2fe6e",
+        "screening_artifact_sha256": "223650b015798eb5d8876246fdc9fd0489c236eb61cbeb1e6ff70610e2f9b623"
+      },
+      "profile_file_sha256": "461cb74515de4fc0a94d196da24b28078d31e4cd396122eee3d111f27e043454",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h3_scales_opacity_shs_l1_wg1_pb5440.json",
+      "rank": 4,
+      "screening_score": 85.04519352914929,
+      "variant_id": "c2h3_scales_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate_sha256": "dc956ea12ff76d7adc80282a8b9570a33bc2f8afd0c8f13622fef6e4162fe1ae",
+      "checkpoint_artifacts": {
+        "correctness_artifact_sha256": "de3ba4fd06542fa31071cf4b130c13dfab2269dad0c0cb8590ee0cf453281646",
+        "screening_artifact_sha256": "9e492669edd4b6e9978f6020f07ad77ae65a9e9b4a4af8ce4a91e61b3c9aa322"
+      },
+      "profile_file_sha256": "9cd6df43b67f4a18fd91e5512e120aa2bb84fee3868314d44d4c16665fb3814e",
+      "profile_path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h4_pos_scales_opacity_shs_l1_wg1_pb5440.json",
+      "rank": 5,
+      "screening_score": 84.96815962695791,
+      "variant_id": "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440"
+    }
+  ],
+  "correctness_json": {
+    "artifact_sha256": "bb7540c5cba0c7bae10126bcd24639f796b822c6c5f24934ad3a8dcb98c92a03",
+    "path": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-correctness.json"
+  },
+  "correctness_qualifications": {
+    "c2h3_scales_opacity_shs_l1_wg1_pb5440": {
+      "leaf_passed": true,
+      "leaf_report_sha256": "45abc106afb03d1e7635e5968564debc66939013671cbe654468449f3cbd57ff",
+      "quality_passed": true,
+      "quality_report_sha256": "f04d3c164e67a9b1a1e0fc5e782f3773d99af75ab649c36d1cb6508304c39326",
+      "valid": true
+    },
+    "c2h3_scales_rotations_opacity_l1_wg1_pb7000": {
+      "leaf_passed": true,
+      "leaf_report_sha256": "45941a1bb0e22ca656195707cae76b65b843dbb71874673317f3657d85e53eff",
+      "quality_passed": true,
+      "quality_report_sha256": "2e6912bf24a091aeca489fe913f727ed5d17137584788b4f221f19f6c7ce9552",
+      "valid": true
+    },
+    "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440": {
+      "leaf_passed": true,
+      "leaf_report_sha256": "cf16813d516a40cafdf08220f872366bd49f7358bfccd1e1454fe1cef8d9a64b",
+      "quality_passed": true,
+      "quality_report_sha256": "d172fb1cef74d8247291a5e8d18dea9b48fc04f4f7cc6b35eef5180ce31f7309",
+      "valid": true
+    },
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440": {
+      "leaf_passed": true,
+      "leaf_report_sha256": "7ffc25177900b5e27ac9f1c37eeec29126190bc1294adf4ea5c0e98f80fbeef3",
+      "quality_passed": true,
+      "quality_report_sha256": "ee5bb4b29ba96c17e8da28f66a78bf535b5268347e716cee613f39a676ded538",
+      "valid": true
+    },
+    "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000": {
+      "leaf_passed": true,
+      "leaf_report_sha256": "e424f216f27ee822b4a123d1949019ffc6db8115f1fdd7da0853da4594f64f1f",
+      "quality_passed": true,
+      "quality_report_sha256": "e99a20f05bfd663518ff6ca619b3bbd74e38be9cf3de3a7092396fd050064eb9",
+      "valid": true
+    },
+    "current_tacker": {
+      "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+      "valid": true
+    },
+    "serial": {
+      "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+      "valid": true
+    },
+    "two_stream": {
+      "quality_report_sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+      "valid": true
+    }
+  },
+  "correctness_stage_input_sha256": "da86bea0c946ae135d144f0acf1cc15936a0494b2fd752e15eefad848551ee80",
+  "current_tacker_profile": {
+    "artifact_sha256": "b2b8441300dc2527cfd9380624de5fa3b2368503794dd3d734632175a3f1acf1",
+    "path": "/home/qyfeng/tacker_phase3_code/20260911-codex-phase3/tacker_profiles/incumbents/current-v1.json"
+  },
+  "higher_is_better": true,
+  "kind": "tacker_autotune_formal_benchmark_plan",
+  "matrix_sha256": "8956a212b0ee99d9cf17fb2de3a43e793745eadfcc0651924fb135e2603c4295",
+  "plan_sha256": "0a0d36b018ab7009814c9f2d143df336274cad91b0ddf11762b0241629999ed7",
+  "required_baselines": [
+    "serial",
+    "two_stream",
+    "current_tacker"
+  ],
+  "schema_version": 1,
+  "screening_stage_input_sha256": "4d3fcb002f077b290b7f245287912c2647293209b8c534fe3fa28a9595032f16",
+  "selection_objective": "screening_score",
+  "top_k": 5
+}

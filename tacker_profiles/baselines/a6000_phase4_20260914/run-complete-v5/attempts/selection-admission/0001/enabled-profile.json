@@ -1,0 +1,3053 @@
+{
+  "candidates": [
+    {
+      "benchmark_candidate_name": "serial",
+      "correctness": {
+        "actual_execution_mode": "serial",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "serial",
+          "fallback_reason": null,
+          "valid": true
+        },
+        "reasons": [],
+        "source": "quality_validation",
+        "valid": true
+      },
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          606.3544311523438,
+          604.6331176757812,
+          605.2628784179688,
+          606.0318603515625,
+          605.7902221679688,
+          605.570068359375,
+          605.1686401367188,
+          603.0786743164062,
+          602.3751831054688,
+          605.5659790039062
+        ],
+        "max_frame_ms_trials": [
+          12.494976043701172,
+          12.487680435180664,
+          13.318161010742188,
+          12.45081615447998,
+          12.500991821289062,
+          12.490752220153809,
+          13.390838623046875,
+          12.485631942749023,
+          12.45695972442627,
+          15.39276123046875
+        ],
+        "median_cuda_event_total_render_ms": 605.4144287109375,
+        "median_max_frame_ms": 12.49286413192749,
+        "median_p50_frame_ms": 12.0501708984375,
+        "median_p95_frame_ms": 12.342221784591674,
+        "p50_frame_ms_trials": [
+          12.066314697265625,
+          12.054000854492188,
+          12.051956176757812,
+          12.06219482421875,
+          12.052993774414062,
+          12.048385620117188,
+          12.044784545898438,
+          12.018699645996094,
+          11.9971923828125,
+          12.034049987792969
+        ],
+        "p95_frame_ms_trials": [
+          12.354304599761964,
+          12.336536884307861,
+          12.387891006469726,
+          12.334100723266602,
+          12.360345077514648,
+          12.35071940422058,
+          12.347596836090087,
+          12.33684673309326,
+          12.323584604263306,
+          12.195556259155273
+        ]
+      },
+      "execution_mode": "serial",
+      "performance": {
+        "max_throughput_fps": 83.00436445257635,
+        "median_throughput_fps": 82.58830649179885,
+        "median_total_render_ms": 605.4126224480569,
+        "min_throughput_fps": 82.4609272499639,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          82.4609272499639,
+          82.69569039612958,
+          82.60925445407602,
+          82.50407144460871,
+          82.5370065663614,
+          82.56664666678996,
+          82.62157754023727,
+          82.9077240344057,
+          83.00436445257635,
+          82.56735852952168
+        ],
+        "trial_count": 10
+      },
+      "selection_metadata": {
+        "abi_complexity": 0.0,
+        "peak_memory_bytes": 530579456.0
+      },
+      "variant_id": "serial"
+    },
+    {
+      "benchmark_candidate_name": "two_stream",
+      "correctness": {
+        "actual_execution_mode": "two_stream",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "two_stream",
+          "fallback_reason": null,
+          "valid": true
+        },
+        "reasons": [],
+        "source": "quality_validation",
+        "valid": true
+      },
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          586.8973999023438,
+          578.2599487304688,
+          580.9089965820312,
+          579.5000610351562,
+          579.0075073242188,
+          579.6249389648438,
+          578.77197265625,
+          578.97265625,
+          579.17431640625,
+          577.3260498046875
+        ],
+        "max_frame_ms_trials": [
+          19.352575302124023,
+          19.2860164642334,
+          19.31670379638672,
+          18.62041664123535,
+          19.307519912719727,
+          19.26246452331543,
+          19.8338565826416,
+          19.767295837402344,
+          19.77235221862793,
+          19.25324821472168
+        ],
+        "median_cuda_event_total_render_ms": 579.0909118652344,
+        "median_max_frame_ms": 19.312111854553223,
+        "median_p50_frame_ms": 11.544830322265625,
+        "median_p95_frame_ms": 12.786248159408569,
+        "p50_frame_ms_trials": [
+          11.558395385742188,
+          11.569656372070312,
+          11.55072021484375,
+          11.536376953125,
+          11.534858703613281,
+          11.551239013671875,
+          11.5338134765625,
+          11.556838989257812,
+          11.5389404296875,
+          11.520511627197266
+        ],
+        "p95_frame_ms_trials": [
+          13.136741828918456,
+          12.551155853271485,
+          12.575746154785156,
+          13.053961181640624,
+          12.743208694458007,
+          12.719499588012695,
+          12.999633407592775,
+          12.71802577972412,
+          12.82928762435913,
+          13.044271850585936
+        ]
+      },
+      "execution_mode": "two_stream",
+      "performance": {
+        "max_throughput_fps": 86.60565228949356,
+        "median_throughput_fps": 86.34166387622865,
+        "median_total_render_ms": 579.0947126224637,
+        "min_throughput_fps": 85.19380909620183,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          85.19380909620183,
+          86.46674471084955,
+          86.0721680917216,
+          86.2813152352479,
+          86.35405473209354,
+          86.26182861327132,
+          86.38941440782206,
+          86.3595447417317,
+          86.32927302036376,
+          86.60565228949356
+        ],
+        "trial_count": 10
+      },
+      "selection_metadata": {
+        "abi_complexity": 1.0,
+        "peak_memory_bytes": 1015021568.0
+      },
+      "variant_id": "two_stream"
+    },
+    {
+      "abi_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+      "backend_subgroups": [
+        {
+          "name": "pos_deform_l1",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "current_tacker",
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86"
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "fallback_reason": null,
+          "lpips_increase": 1.0550022125355163e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json",
+              "sha256": "5bf329e85300ba74e7019bf44fc9f0e1dad8530406be66b583219aa9c0a0a1f9",
+              "size_bytes": 11157
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.0001391601562517053,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/baseline-quality.json",
+            "sha256": "211e780d55789cb89b3e396a94f679112ebeaf6cf3ae4a3232c3da553518662b",
+            "size_bytes": 51949
+          },
+          "reasons": [],
+          "ssim_drop": 1.2326240539373146e-06,
+          "valid": true
+        },
+        "lpips_increase": 1.0550022125355163e-07,
+        "psnr_drop_db": 0.0001391601562517053,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.2326240539373146e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_head_v1",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          573.7216186523438,
+          572.9371948242188,
+          572.452880859375,
+          571.4954223632812,
+          570.576904296875,
+          571.9521484375,
+          571.6900024414062,
+          572.0411987304688,
+          572.9740600585938,
+          572.1354370117188
+        ],
+        "max_frame_ms_trials": [
+          19.47443199157715,
+          19.717119216918945,
+          19.83692741394043,
+          19.738624572753906,
+          19.351551055908203,
+          19.774463653564453,
+          19.716096878051758,
+          19.760128021240234,
+          19.81235122680664,
+          19.699871063232422
+        ],
+        "median_cuda_event_total_render_ms": 572.0883178710938,
+        "median_max_frame_ms": 19.727871894836426,
+        "median_p50_frame_ms": 11.392515182495117,
+        "median_p95_frame_ms": 11.554132843017578,
+        "mixed_leaf_faster_than_solo_sum": true,
+        "mixed_p50_ms": 4.343296051025391,
+        "mixed_raster_p50_ms": 4.343296051025391,
+        "p50_frame_ms_trials": [
+          11.442695617675781,
+          11.39508056640625,
+          11.400711059570312,
+          11.39455795288086,
+          11.389907836914062,
+          11.390472412109375,
+          11.395576477050781,
+          11.388946533203125,
+          11.389938354492188,
+          11.372543334960938
+        ],
+        "p95_frame_ms_trials": [
+          11.499518394470215,
+          11.637419509887696,
+          11.66345157623291,
+          11.469921875,
+          11.444989013671876,
+          11.532695102691651,
+          11.575570583343506,
+          11.656039810180664,
+          11.607193565368652,
+          11.462199020385743
+        ],
+        "raster_slowdown_pct": 4.599263715419,
+        "solo_head_p50_ms": 0.2611199915409088,
+        "solo_leaf_sum_p50_ms": 4.413439899682999,
+        "solo_raster_p50_ms": 4.15231990814209
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128"
+      ],
+      "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
+      "parallel_nodes": [
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "performance": {
+        "max_throughput_fps": 87.63081415353403,
+        "median_throughput_fps": 87.39840746014474,
+        "median_total_render_ms": 572.0928083173931,
+        "min_throughput_fps": 87.15084290047604,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          87.15084290047604,
+          87.27007648543473,
+          87.3436328417072,
+          87.48990197917705,
+          87.63081415353403,
+          87.41930467095953,
+          87.45934424989021,
+          87.40588849834677,
+          87.26331679886977,
+          87.39092642194271
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 7000,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta"
+      ],
+      "resources": null,
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1340080128.0
+      },
+      "source_profile_deployment_enabled": true,
+      "source_profile_file_sha256": "b2b8441300dc2527cfd9380624de5fa3b2368503794dd3d734632175a3f1acf1",
+      "source_profile_manifest_sha256": "06bb93db67a72af5b22aa6e82f3049ef00cef6e700c08eeb5b58f644c795ee21",
+      "source_profile_schema_version": 1,
+      "source_profile_selection_sha256": null,
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "input_dtype": "float16",
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "legacy_pos_l1"
+    },
+    {
+      "abi_family": "packed_first_linear_v3",
+      "abi_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+      "abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "backend_named_barriers": [],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "capability_requirements": {
+        "backend_family": "packed_first_linear_v3",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_packed_heads_abi": 3
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "615594b32a83cea9eab03683487403dd27032ae15ea853dad744095dc5acb451",
+          "fallback_reason": null,
+          "lpips_increase": 6.729364395163806e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json",
+              "sha256": "cd68537d8b04e48f21402b8bb0d3bd1058790d1e4ddbb0165d63c3319998401c",
+              "size_bytes": 921239
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.00020996093750369482,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.json",
+            "sha256": "75ffa314291908ae6973d02c51de605d373acfa3bfcf1d720996dd8b3627e723",
+            "size_bytes": 33724
+          },
+          "reasons": [],
+          "ssim_drop": 1.3160705566450659e-06,
+          "valid": true
+        },
+        "lpips_increase": 6.729364395163806e-07,
+        "psnr_drop_db": 0.00020996093750369482,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.3160705566450659e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          501.793701171875,
+          497.7612609863281,
+          498.8293151855469,
+          495.20025634765625,
+          495.56683349609375,
+          502.6027526855469,
+          497.1786193847656,
+          495.163330078125,
+          496.31109619140625,
+          498.23846435546875
+        ],
+        "max_frame_ms_trials": [
+          18.99305534362793,
+          16.8621768951416,
+          16.9564151763916,
+          16.65433692932129,
+          17.055744171142578,
+          16.875520706176758,
+          17.0567684173584,
+          16.815040588378906,
+          16.998207092285156,
+          16.84899139404297
+        ],
+        "median_cuda_event_total_render_ms": 497.4699401855469,
+        "median_max_frame_ms": 16.91596794128418,
+        "median_p50_frame_ms": 9.8162841796875,
+        "median_p95_frame_ms": 10.07557716369629,
+        "p50_frame_ms_trials": [
+          9.88018798828125,
+          9.838729858398438,
+          9.82681655883789,
+          9.830913543701172,
+          9.821624755859375,
+          9.802238464355469,
+          9.799163818359375,
+          9.78125,
+          9.807365417480469,
+          9.810943603515625
+        ],
+        "p95_frame_ms_trials": [
+          10.12029399871826,
+          10.062692451477051,
+          10.392444229125976,
+          9.878761291503906,
+          10.073394966125488,
+          11.95325469970702,
+          10.078564262390138,
+          10.037714004516602,
+          10.076160430908203,
+          10.074993896484376
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [],
+      "partition": {
+        "backend": "packed_first_linear",
+        "kind": "packed_first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 100.97614027780871,
+        "median_throughput_fps": 100.50825626566274,
+        "median_total_render_ms": 497.4717367440462,
+        "min_throughput_fps": 99.48154336812848,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          99.64235199189116,
+          100.4499933897554,
+          100.23465852038295,
+          100.96886691672594,
+          100.89417624232121,
+          99.48154336812848,
+          100.56651914157005,
+          100.97614027780871,
+          100.74269591503614,
+          100.3521333873648
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 3,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 3,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 2065694720.0,
+        "registers_per_thread": 70.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+      "source_profile_manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "f91e5f129708ee7612e4a45e95b00e23fe15a92eb1f1be376c2a85095379599e",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "packed_head_parameters:cache_ready->mixed_done",
+        "packed_head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.shs_deform[2]",
+        "deformation.shs_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "bias_layout": "packed_head",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_layout": "packed_head_row_major",
+        "shared_input": true,
+        "weight_dtype": "float16",
+        "weight_layout": "packed_head_out_in"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+    },
+    {
+      "abi_family": "packed_first_linear_v3",
+      "abi_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+      "abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "backend_named_barriers": [],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "capability_requirements": {
+        "backend_family": "packed_first_linear_v3",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_packed_heads_abi": 3
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "fd18a0b1f492086d6fa282d1481d36f1a2f78f3adf6bb0c115fdec1edd55f9d0",
+          "fallback_reason": null,
+          "lpips_increase": 6.729364395163806e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000/report.json",
+              "sha256": "0e32c1a66a15fadbdd469c9a8d6155d5afbed2dfc2211855b3a486a57b3944a6",
+              "size_bytes": 921241
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.00020996093750369482,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.json",
+            "sha256": "1d1fd750385f0e7813c8a913c77772e4ba404aa823072619d006330fe304eb81",
+            "size_bytes": 33724
+          },
+          "reasons": [],
+          "ssim_drop": 1.3160705566450659e-06,
+          "valid": true
+        },
+        "lpips_increase": 6.729364395163806e-07,
+        "psnr_drop_db": 0.00020996093750369482,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.3160705566450659e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          500.5238342285156,
+          500.5403137207031,
+          498.9573059082031,
+          498.684814453125,
+          502.6795654296875,
+          499.0494689941406,
+          499.4865417480469,
+          499.76422119140625,
+          501.2889709472656,
+          502.04364013671875
+        ],
+        "max_frame_ms_trials": [
+          16.93791961669922,
+          17.02288055419922,
+          16.946176528930664,
+          16.655231475830078,
+          17.389568328857422,
+          16.963584899902344,
+          17.063743591308594,
+          16.951295852661133,
+          16.957439422607422,
+          16.97177505493164
+        ],
+        "median_cuda_event_total_render_ms": 500.14402770996094,
+        "median_max_frame_ms": 16.960512161254883,
+        "median_p50_frame_ms": 9.897991180419922,
+        "median_p95_frame_ms": 10.160971498489381,
+        "p50_frame_ms_trials": [
+          9.894912719726562,
+          9.894393920898438,
+          9.900550842285156,
+          9.910873413085938,
+          9.93121337890625,
+          9.895431518554688,
+          9.887741088867188,
+          9.901618957519531,
+          9.877494812011719,
+          9.902603149414062
+        ],
+        "p95_frame_ms_trials": [
+          10.166528987884522,
+          10.19876308441162,
+          10.124236297607421,
+          9.966080474853516,
+          10.162738418579103,
+          10.124698066711426,
+          10.176959419250487,
+          10.171238803863524,
+          10.149529266357423,
+          10.159204578399658
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [],
+      "partition": {
+        "backend": "packed_first_linear",
+        "kind": "packed_first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 100.26366720585384,
+        "median_throughput_fps": 99.97122427122335,
+        "median_total_render_ms": 500.1442045904696,
+        "min_throughput_fps": 99.46635880583709,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          99.89582044892272,
+          99.89237534462318,
+          100.20893977352344,
+          100.26366720585384,
+          99.46635880583709,
+          100.19001415306813,
+          100.10220002025272,
+          100.04662809352399,
+          99.74228033413613,
+          99.59259357962013
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 7000,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 3,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 3,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 2065694720.0,
+        "registers_per_thread": 70.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+      "source_profile_manifest_sha256": "357cb05b00627c7bd99e6b21be2aca86e30bf7321e0aadf0e933b0fb994dd151",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "49860c2101bfb0d07cb05217200f0050934163f9c103f2f115350ab9af588f8a",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "packed_head_parameters:cache_ready->mixed_done",
+        "packed_head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.shs_deform[2]",
+        "deformation.shs_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "bias_layout": "packed_head",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_layout": "packed_head_row_major",
+        "shared_input": true,
+        "weight_dtype": "float16",
+        "weight_layout": "packed_head_out_in"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000"
+    },
+    {
+      "abi_family": "packed_first_linear_v3",
+      "abi_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+      "abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "backend_named_barriers": [],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "capability_requirements": {
+        "backend_family": "packed_first_linear_v3",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_packed_heads_abi": 3
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "b85d23d8496a13a0ad7024e55d273df21b3c1b1ca4ac4aa3b3e45a174f931294",
+          "fallback_reason": null,
+          "lpips_increase": 6.729364395163806e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/report.json",
+              "sha256": "c11b1ca0ed10e4bd210550cd9eaaee242fe6afe31ba151e17f27045f47cf3226",
+              "size_bytes": 921261
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.00020996093750369482,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.json",
+            "sha256": "e91086938158a13879a160fcecf2f7e2d291d74aef962754bd28939f5a5eec06",
+            "size_bytes": 33726
+          },
+          "reasons": [],
+          "ssim_drop": 1.3160705566450659e-06,
+          "valid": true
+        },
+        "lpips_increase": 6.729364395163806e-07,
+        "psnr_drop_db": 0.00020996093750369482,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.3160705566450659e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          504.3722229003906,
+          503.2325134277344,
+          502.83111572265625,
+          504.57275390625,
+          501.7671813964844,
+          504.2923583984375,
+          503.1116943359375,
+          501.0462646484375,
+          504.27392578125,
+          503.54278564453125
+        ],
+        "max_frame_ms_trials": [
+          17.00351905822754,
+          17.0383358001709,
+          16.995328903198242,
+          16.992095947265625,
+          16.550912857055664,
+          17.04140853881836,
+          16.98099136352539,
+          16.985088348388672,
+          18.702335357666016,
+          17.02297592163086
+        ],
+        "median_cuda_event_total_render_ms": 503.3876495361328,
+        "median_max_frame_ms": 16.99942398071289,
+        "median_p50_frame_ms": 9.95819091796875,
+        "median_p95_frame_ms": 10.2074875831604,
+        "p50_frame_ms_trials": [
+          9.993782043457031,
+          9.959930419921875,
+          9.955848693847656,
+          9.978363037109375,
+          9.964401245117188,
+          9.974807739257812,
+          9.956451416015625,
+          9.940483093261719,
+          9.94561767578125,
+          9.938888549804688
+        ],
+        "p95_frame_ms_trials": [
+          10.203342151641845,
+          10.212745666503906,
+          10.198117637634278,
+          10.202674674987794,
+          10.169042968749999,
+          10.21592483520508,
+          10.211633014678956,
+          10.202315139770509,
+          10.227921485900879,
+          10.218140411376954
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [],
+      "partition": {
+        "backend": "packed_first_linear",
+        "kind": "packed_first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 99.79065577923905,
+        "median_throughput_fps": 99.32692087136182,
+        "median_total_render_ms": 503.388250246644,
+        "min_throughput_fps": 99.09356243337702,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          99.13347075760541,
+          99.35801454867804,
+          99.43668188385308,
+          99.09356243337702,
+          99.6472132338179,
+          99.1484795036671,
+          99.38105461414409,
+          99.79065577923905,
+          99.15127158043974,
+          99.2958271940456
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 13942,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 3,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 3,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 2065694720.0,
+        "registers_per_thread": 70.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+      "source_profile_manifest_sha256": "28dbd0a0298cdeef60c74045eb302ce7614f7b59ebfc0e64c84d033673ce795f",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "f7ad4caf52dbba2afa6ff30633f94c37faf58700aa4b6293298f19159940d248",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "packed_head_parameters:cache_ready->mixed_done",
+        "packed_head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.shs_deform[2]",
+        "deformation.shs_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "bias_layout": "packed_head",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_layout": "packed_head_row_major",
+        "shared_input": true,
+        "weight_dtype": "float16",
+        "weight_layout": "packed_head_out_in"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942"
+    },
+    {
+      "abi_family": "packed_first_linear_v3",
+      "abi_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+      "abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "backend_named_barriers": [],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "capability_requirements": {
+        "backend_family": "packed_first_linear_v3",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_packed_heads_abi": 3
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "4436c3e0e7d9823b5ec645a0ce19976e9e5e3781182f62fcbe3f92f1810acf55",
+          "fallback_reason": null,
+          "lpips_increase": 2.604722976473628e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000/report.json",
+              "sha256": "d4860a0df8bf3a0ff719149047df4438ed51c22afeade7e7581efdf0322adb33",
+              "size_bytes": 904311
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.00013587951660554154,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.json",
+            "sha256": "559f406c50331b72dc2effa77be2eec7f08a52bd756eede440189b41db4b9228",
+            "size_bytes": 33669
+          },
+          "reasons": [],
+          "ssim_drop": 1.2433528899791213e-06,
+          "valid": true
+        },
+        "lpips_increase": 2.604722976473628e-07,
+        "psnr_drop_db": 0.00013587951660554154,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.2433528899791213e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          537.0325927734375,
+          534.4440307617188,
+          535.8775634765625,
+          533.1568603515625,
+          534.8851928710938,
+          534.6600952148438,
+          536.80126953125,
+          535.3072509765625,
+          533.0675659179688,
+          535.7965698242188
+        ],
+        "max_frame_ms_trials": [
+          18.82307243347168,
+          18.673664093017578,
+          18.619295120239258,
+          18.42892837524414,
+          18.652000427246094,
+          18.66035270690918,
+          18.63680076599121,
+          18.64089584350586,
+          18.60688018798828,
+          18.577247619628906
+        ],
+        "median_cuda_event_total_render_ms": 535.0962219238281,
+        "median_max_frame_ms": 18.638848304748535,
+        "median_p50_frame_ms": 10.613967895507812,
+        "median_p95_frame_ms": 10.882894849777223,
+        "p50_frame_ms_trials": [
+          10.606613159179688,
+          10.6162109375,
+          10.611190795898438,
+          10.611724853515625,
+          10.620529174804688,
+          10.619903564453125,
+          10.626571655273438,
+          10.6173095703125,
+          10.586616516113281,
+          10.600944519042969
+        ],
+        "p95_frame_ms_trials": [
+          10.90433473587036,
+          10.880363082885744,
+          10.894820308685304,
+          10.658561038970948,
+          10.86817216873169,
+          10.8922869682312,
+          10.8854266166687,
+          10.898015785217286,
+          10.858188247680664,
+          10.878155326843261
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [
+        "deformation.rotations_deform",
+        "deformation.shs_deform"
+      ],
+      "partition": {
+        "backend": "packed_first_linear",
+        "kind": "packed_first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "opacity"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 93.79673031271919,
+        "median_throughput_fps": 93.44061240735206,
+        "median_total_render_ms": 535.0993159227073,
+        "min_throughput_fps": 93.10525014284427,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          93.10525014284427,
+          93.55542509287116,
+          93.30508194119469,
+          93.78066718856424,
+          93.47746776278201,
+          93.51705863164374,
+          93.14378663650614,
+          93.4037570519221,
+          93.79673031271919,
+          93.31850349141878
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 7000,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 3,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 3,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1797259264.0,
+        "registers_per_thread": 70.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "95736179d8c6e4f2767d66dc7310f9e6ecccef71038ee5bc36a9016d3cf02f89",
+      "source_profile_manifest_sha256": "357cb05b00627c7bd99e6b21be2aca86e30bf7321e0aadf0e933b0fb994dd151",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "5508b709b3f2124084de8f38e4a8b0533eebd40053f34654e9b5b75c526c59c8",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "packed_head_parameters:cache_ready->mixed_done",
+        "packed_head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "bias_layout": "packed_head",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_layout": "packed_head_row_major",
+        "shared_input": true,
+        "weight_dtype": "float16",
+        "weight_layout": "packed_head_out_in"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000"
+    },
+    {
+      "abi_family": "packed_first_linear_v3",
+      "abi_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+      "abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "backend_named_barriers": [],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "capability_requirements": {
+        "backend_family": "packed_first_linear_v3",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_packed_heads_abi": 3
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "8ee489cb888569113545ff774009671d4082efe70e04bb1a6e87870ee423e517",
+          "fallback_reason": null,
+          "lpips_increase": 2.577900886369111e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440/report.json",
+              "sha256": "64e4bcf18d60330dc91e886a114c70c58f1db177e6cb8b66996e196c835c358e",
+              "size_bytes": 904419
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 2.174377441122033e-05,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.json",
+            "sha256": "1d5b1c59ed6dd0cc0f20a9038850aa14a35801558b41b68cbff38939e6319bce",
+            "size_bytes": 33439
+          },
+          "reasons": [],
+          "ssim_drop": 4.887580873358388e-08,
+          "valid": true
+        },
+        "lpips_increase": 2.577900886369111e-07,
+        "psnr_drop_db": 2.174377441122033e-05,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 4.887580873358388e-08,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_packed_heads_v3",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          534.2748413085938,
+          535.4526977539062,
+          533.391357421875,
+          534.9373779296875,
+          534.5382690429688,
+          535.4588012695312,
+          532.3622436523438,
+          535.7638549804688,
+          534.1110229492188,
+          533.42822265625
+        ],
+        "max_frame_ms_trials": [
+          18.589439392089844,
+          18.61631965637207,
+          18.390016555786133,
+          18.713375091552734,
+          18.593791961669922,
+          18.60710334777832,
+          18.6112003326416,
+          18.6243839263916,
+          18.61199951171875,
+          18.25279998779297
+        ],
+        "median_cuda_event_total_render_ms": 534.4065551757812,
+        "median_max_frame_ms": 18.60915184020996,
+        "median_p50_frame_ms": 10.61172866821289,
+        "median_p95_frame_ms": 10.880768632888794,
+        "p50_frame_ms_trials": [
+          10.632184028625488,
+          10.61990737915039,
+          10.612258911132812,
+          10.59063720703125,
+          10.599414825439453,
+          10.61785888671875,
+          10.583951950073242,
+          10.622467041015625,
+          10.611198425292969,
+          10.607620239257812
+        ],
+        "p95_frame_ms_trials": [
+          10.66981201171875,
+          10.878720760345459,
+          10.683511352539064,
+          10.890034675598145,
+          10.907493591308594,
+          10.90099115371704,
+          10.657997131347656,
+          10.897766876220704,
+          10.882816505432128,
+          10.683035469055177
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [
+        "deformation.pos_deform",
+        "deformation.shs_deform"
+      ],
+      "partition": {
+        "backend": "packed_first_linear",
+        "kind": "packed_first_linear_heads",
+        "selected_heads": [
+          "scales",
+          "rotations",
+          "opacity"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 93.92074004302157,
+        "median_throughput_fps": 93.56189615840174,
+        "median_total_render_ms": 534.405620303005,
+        "min_throughput_fps": 93.32413593177658,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          93.58539214120589,
+          93.37921724280122,
+          93.73995198277899,
+          93.46924120125092,
+          93.53840017559759,
+          93.37701443756256,
+          93.92074004302157,
+          93.32413593177658,
+          93.61287077960344,
+          93.73264369210209
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 3,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 3,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 70,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1797259264.0,
+        "registers_per_thread": 70.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "skipped_python_nodes": [
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "83699ee679dcb607f5feff3d4476ca10f8a654a3134f46d2ee23283be4ce7856",
+      "source_profile_manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "f5aea75e0c5334973730b67e904cf6355ca5d0e493fb51bca441cd341aed2d24",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "packed_head_parameters:cache_ready->mixed_done",
+        "packed_head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "bias_layout": "packed_head",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_layout": "packed_head_row_major",
+        "shared_input": true,
+        "weight_dtype": "float16",
+        "weight_layout": "packed_head_out_in"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440"
+    },
+    {
+      "abi_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+      "backend_named_barriers": [
+        {
+          "id": 2,
+          "participants": 128,
+          "purpose": "head_descriptor_broadcast"
+        }
+      ],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [
+            2
+          ],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_heads_abi": 2
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "17062db9028370d1ca21e0aad4490ff03cd92ae5463408bf2c6a014fd893bd52",
+          "fallback_reason": null,
+          "lpips_increase": 6.729364395163806e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440/report.json",
+              "sha256": "d71bb8245c5b506741db7e8436813c7e02ea69a0ea436268be278acca0ddda64",
+              "size_bytes": 923777
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.00020996093750369482,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.json",
+            "sha256": "eb744967ca2d75d87b87b78788001c7d72e1f67f7a4b33b8ae8b2ab3a3f62ac0",
+            "size_bytes": 33694
+          },
+          "reasons": [],
+          "ssim_drop": 1.3160705566450659e-06,
+          "valid": true
+        },
+        "lpips_increase": 6.729364395163806e-07,
+        "psnr_drop_db": 0.00020996093750369482,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.3160705566450659e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_heads_v2",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          559.8709716796875,
+          561.9671020507812,
+          557.0089111328125,
+          558.3800048828125,
+          557.8209228515625,
+          556.854248046875,
+          560.9718017578125,
+          558.5531005859375,
+          556.1804809570312,
+          556.9125366210938
+        ],
+        "max_frame_ms_trials": [
+          18.134016036987305,
+          18.21286392211914,
+          17.64454460144043,
+          18.05824089050293,
+          18.03878402709961,
+          18.079872131347656,
+          18.23641586303711,
+          18.086912155151367,
+          17.812480926513672,
+          17.959007263183594
+        ],
+        "median_cuda_event_total_render_ms": 558.1004638671875,
+        "median_max_frame_ms": 18.069056510925293,
+        "median_p50_frame_ms": 11.087053298950195,
+        "median_p95_frame_ms": 11.311282253265382,
+        "p50_frame_ms_trials": [
+          11.119110107421875,
+          11.15435791015625,
+          11.08469009399414,
+          11.073043823242188,
+          11.06585693359375,
+          11.08941650390625,
+          11.104843139648438,
+          11.093109130859375,
+          11.08377456665039,
+          11.070472717285156
+        ],
+        "p95_frame_ms_trials": [
+          11.328715991973876,
+          11.39583969116211,
+          11.211082458496094,
+          11.337935638427734,
+          11.305881881713868,
+          11.169535541534422,
+          11.3260892868042,
+          11.316682624816895,
+          11.141452026367187,
+          11.299471855163574
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [],
+      "partition": {
+        "kind": "first_linear_heads",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 89.8982047687036,
+        "median_throughput_fps": 89.58897981412336,
+        "median_total_render_ms": 558.1044964492321,
+        "min_throughput_fps": 88.97363705353995,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          89.30804628548027,
+          88.97363705353995,
+          89.7651980689214,
+          89.54424528390615,
+          89.63371434434058,
+          89.78980979960944,
+          89.13060131739245,
+          89.51648134981293,
+          89.8982047687036,
+          89.78008612040672
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 2,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 2,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41776,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 68,
+        "static_shared_bytes": 7376,
+        "static_shared_memory_bytes": 7376,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 2361393152.0,
+        "registers_per_thread": 68.0,
+        "shared_memory_bytes": 7376.0
+      },
+      "skipped_python_nodes": [
+        "deformation.pos_deform[1].linear_128x128",
+        "deformation.scales_deform[1].linear_128x128",
+        "deformation.rotations_deform[1].linear_128x128",
+        "deformation.opacity_deform[1].linear_128x128",
+        "deformation.shs_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "07e666b8684123efca6fa26a0d220bb8290832432f195f5876ec49f70cff51ee",
+      "source_profile_manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "26ddf3f952f9f8b103be71aca7700f58a3e234835591dcdd295b2353bccc2eb9",
+      "stream_lifetimes": [
+        "head_inputs:deform_prefix->mixed_done",
+        "head_parameters:cache_ready->mixed_done",
+        "head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.scales_deform[2]",
+        "deformation.scales_deform[3]",
+        "deformation.rotations_deform[2]",
+        "deformation.rotations_deform[3]",
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.shs_deform[2]",
+        "deformation.shs_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "abi_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+      "backend_subgroups": [
+        {
+          "name": "pos_deform_l1",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c0_legacy_pos_l1_pb5440",
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86"
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "5c836048011c3634b9a1f205870309aa869019bf3f7662fb47b6ba54693e7c4a",
+          "fallback_reason": null,
+          "lpips_increase": 1.0550022125355163e-07,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c0_legacy_pos_l1_pb5440/report.json",
+              "sha256": "c151cb13f828e5a5a3fa75f5a5b8fde0aafb4752ef8c62fc1a9525a155ef504e",
+              "size_bytes": 874075
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": 0.0001391601562517053,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.json",
+            "sha256": "f2fc457b887fd707694af8edee1a1bed493c16353ab3dca250ce9b000908db41",
+            "size_bytes": 33627
+          },
+          "reasons": [],
+          "ssim_drop": 1.2326240539373146e-06,
+          "valid": true
+        },
+        "lpips_increase": 1.0550022125355163e-07,
+        "psnr_drop_db": 0.0001391601562517053,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": 1.2326240539373146e-06,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_head_v1",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          569.0787353515625,
+          572.9136352539062,
+          571.1431884765625,
+          570.9783325195312,
+          573.7318115234375,
+          570.7222900390625,
+          570.513427734375,
+          570.2379150390625,
+          573.150146484375,
+          574.2387084960938
+        ],
+        "max_frame_ms_trials": [
+          19.406816482543945,
+          19.85331153869629,
+          19.487743377685547,
+          19.859455108642578,
+          19.83283233642578,
+          19.799039840698242,
+          19.41913604736328,
+          19.504064559936523,
+          19.880895614624023,
+          19.954687118530273
+        ],
+        "median_cuda_event_total_render_ms": 571.0607604980469,
+        "median_max_frame_ms": 19.81593608856201,
+        "median_p50_frame_ms": 11.37533187866211,
+        "median_p95_frame_ms": 11.477510213851929,
+        "p50_frame_ms_trials": [
+          11.351547241210938,
+          11.401214599609375,
+          11.39404296875,
+          11.378173828125,
+          11.39556884765625,
+          11.368408203125,
+          11.379714965820312,
+          11.368450164794922,
+          11.372489929199219,
+          11.372016906738281
+        ],
+        "p95_frame_ms_trials": [
+          11.400166320800782,
+          11.643443489074707,
+          11.443836975097657,
+          11.428402709960938,
+          11.658238315582274,
+          11.506487560272216,
+          11.448532867431641,
+          11.435627746582032,
+          11.851725673675535,
+          11.784963607788086
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128"
+      ],
+      "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
+      "parallel_nodes": [
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "performance": {
+        "max_throughput_fps": 87.86181490622295,
+        "median_throughput_fps": 87.55640266156249,
+        "median_total_render_ms": 571.0604763589799,
+        "min_throughput_fps": 87.07120268711262,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          87.86181490622295,
+          87.27347431349415,
+          87.54394507140836,
+          87.56886025171661,
+          87.14808723665358,
+          87.60790199773467,
+          87.6401400588498,
+          87.68243229409491,
+          87.23672157089425,
+          87.07120268711262
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta"
+      ],
+      "resources": {
+        "abi_version": 1,
+        "active_blocks_per_multiprocessor": 4,
+        "active_blocks_per_sm": 4,
+        "active_warps_per_multiprocessor": 48,
+        "backend_abi_version": 1,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 384,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41984,
+        "max_threads_per_block": 384,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 1.0,
+        "physical_threads": 384,
+        "registers_per_thread": 40,
+        "static_shared_bytes": 7168,
+        "static_shared_memory_bytes": 7168,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1340080128.0,
+        "registers_per_thread": 40.0,
+        "shared_memory_bytes": 7168.0
+      },
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "3584e0cef124097b930c856ac97160c73ddb5986a2c230b1b99f8114a5f17063",
+      "source_profile_manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "7ea85afb7974477baab7821cff80aa9ea2e4d2472bfe4f2b869036a0aebdb616",
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "input_dtype": "float16",
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c0_legacy_pos_l1_pb5440"
+    },
+    {
+      "abi_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+      "backend_named_barriers": [
+        {
+          "id": 2,
+          "participants": 128,
+          "purpose": "head_descriptor_broadcast"
+        }
+      ],
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [
+            2
+          ],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c1_opacity_l1_wg1_pb13942",
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "mixed_render_heads_abi": 2
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "e5d8b285e3a1290fc50b48f8abd453b81d39a5e442ac026998d74526f31ce36d",
+          "fallback_reason": null,
+          "lpips_increase": -9.834766390159899e-08,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c1_opacity_l1_wg1_pb13942/report.json",
+              "sha256": "c635d470265922089538fcf499c507eee10452e3bc8ad8741d2c04132b5c6a3d",
+              "size_bytes": 890067
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": -1.5716552731248612e-05,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.json",
+            "sha256": "9793c392dda76eccf5b309fc765a1beef37ef2dca3813cf77e6a66d9a5bd6dc5",
+            "size_bytes": 33267
+          },
+          "reasons": [],
+          "ssim_drop": -8.344650304081824e-09,
+          "valid": true
+        },
+        "lpips_increase": -9.834766390159899e-08,
+        "psnr_drop_db": -1.5716552731248612e-05,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": -8.344650304081824e-09,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_heads_v2",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          587.1185913085938,
+          588.3463745117188,
+          586.618896484375,
+          587.1032104492188,
+          585.9194946289062,
+          585.7064819335938,
+          585.206787109375,
+          584.0824584960938,
+          588.621826171875,
+          584.8576049804688
+        ],
+        "max_frame_ms_trials": [
+          20.23526382446289,
+          20.395008087158203,
+          20.271135330200195,
+          20.324352264404297,
+          19.931135177612305,
+          20.282367706298828,
+          20.023296356201172,
+          19.972095489501953,
+          20.321279525756836,
+          20.377599716186523
+        ],
+        "median_cuda_event_total_render_ms": 586.2691955566406,
+        "median_max_frame_ms": 20.27675151824951,
+        "median_p50_frame_ms": 11.667716979980469,
+        "median_p95_frame_ms": 11.932188796997071,
+        "p50_frame_ms_trials": [
+          11.66387939453125,
+          11.71661376953125,
+          11.665924072265625,
+          11.674118041992188,
+          11.673599243164062,
+          11.659248352050781,
+          11.678207397460938,
+          11.66070556640625,
+          11.669509887695312,
+          11.651586532592773
+        ],
+        "p95_frame_ms_trials": [
+          11.962009811401368,
+          11.902367782592773,
+          11.978630161285402,
+          11.977916145324707,
+          11.824595642089843,
+          11.966669845581055,
+          11.722579193115234,
+          11.693267059326171,
+          11.997798061370851,
+          11.808003234863282
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [
+        "deformation.pos_deform",
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.shs_deform"
+      ],
+      "partition": {
+        "kind": "first_linear_heads",
+        "selected_heads": [
+          "opacity"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 85.60390711341142,
+        "median_throughput_fps": 85.28512341121763,
+        "median_total_render_ms": 586.2689255736768,
+        "min_throughput_fps": 84.9433568226966,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          85.16227015085443,
+          84.98401128119478,
+          85.23442399590326,
+          85.16415497425365,
+          85.33582282653198,
+          85.36656187068563,
+          85.43976732540742,
+          85.60390711341142,
+          84.9433568226966,
+          85.49042333961823
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 13942,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 2,
+        "active_blocks_per_multiprocessor": 2,
+        "active_blocks_per_sm": 2,
+        "active_warps_per_multiprocessor": 24,
+        "backend_abi_version": 2,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 41776,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 0.5,
+        "physical_threads": 384,
+        "registers_per_thread": 68,
+        "static_shared_bytes": 7376,
+        "static_shared_memory_bytes": 7376,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1340080128.0,
+        "registers_per_thread": 68.0,
+        "shared_memory_bytes": 7376.0
+      },
+      "skipped_python_nodes": [
+        "deformation.opacity_deform[1].linear_128x128"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "e48b361e04784ce23c273a2a8ac96e2fa2b5e5ec91e5417f179bc5e7f74b112a",
+      "source_profile_manifest_sha256": "28dbd0a0298cdeef60c74045eb302ce7614f7b59ebfc0e64c84d033673ce795f",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "91fa81fece8e50e5e54a4a8a9fe026bcb8d58804464bfdfa184837b69368f5bf",
+      "stream_lifetimes": [
+        "head_inputs:deform_prefix->mixed_done",
+        "head_parameters:cache_ready->mixed_done",
+        "head_outputs:mixed_done->suffix_ready",
+        "render_state:suffix_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.opacity_deform[2]",
+        "deformation.opacity_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "features": 128,
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c1_opacity_l1_wg1_pb13942"
+    },
+    {
+      "abi_family": "whole_heads_v4",
+      "abi_manifest": "abi/tacker_mixed_render_whole_heads_v4.json",
+      "abi_manifest_sha256": "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1",
+      "backend_named_barriers": [
+        {
+          "id": 2,
+          "participants": 128,
+          "purpose": "whole_head_hidden_0"
+        },
+        {
+          "id": 7,
+          "participants": 128,
+          "purpose": "whole_head_descriptor_broadcast"
+        }
+      ],
+      "backend_shared_scratch_bytes": 512,
+      "backend_subgroups": [
+        {
+          "name": "head_worker_0",
+          "named_barrier_ids": [
+            2,
+            7
+          ],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "benchmark_candidate_name": "c4_whole_heads_opacity_wg1_pb5440",
+      "capability_requirements": {
+        "backend_family": "whole_heads_v4",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "descriptor_named_barrier_id": 7,
+        "mixed_render_whole_heads_abi": 4,
+        "named_barriers_per_worker_group": 1,
+        "shared_scratch_bytes_per_worker_group": 512
+      },
+      "correctness": {
+        "actual_execution_mode": "tacker",
+        "fallback_reason": null,
+        "fps_benchmark_qualification": {
+          "actual_execution_mode": "tacker",
+          "candidate_sha256": "f7c76db66b2868021e4f1bc845581a7af39d3779702e0075e0ae1933330e64b6",
+          "fallback_reason": null,
+          "lpips_increase": -9.14931297391064e-08,
+          "numerics": {
+            "passed": true,
+            "source_report": {
+              "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json",
+              "sha256": "6ea8c6b4a0dea68f31de0e8dfdaaefd339cdb48fe73961071e1056a0627878dc",
+              "size_bytes": 886659
+            }
+          },
+          "passed": true,
+          "psnr_drop_db": -1.594543456917563e-05,
+          "quality_report": {
+            "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.json",
+            "sha256": "6f4e369d51ee44c6110952f18fbe90cd44b4cd30b4798ef4362687b18dad25ed",
+            "size_bytes": 33283
+          },
+          "reasons": [],
+          "ssim_drop": -3.576278717609682e-09,
+          "valid": true
+        },
+        "lpips_increase": -9.14931297391064e-08,
+        "psnr_drop_db": -1.594543456917563e-05,
+        "reasons": [],
+        "source": "quality_validation",
+        "ssim_drop": -3.576278717609682e-09,
+        "valid": true
+      },
+      "cuda_symbol": "tacker_mix_render_whole_heads_v4",
+      "diagnostics": {
+        "cuda_event_total_render_ms_trials": [
+          1122.5784912109375,
+          1122.0018310546875,
+          1117.877197265625,
+          1118.2261962890625,
+          1117.8536376953125,
+          1118.6923828125,
+          1119.7244873046875,
+          1117.9571533203125,
+          1118.6903076171875,
+          1118.544921875
+        ],
+        "max_frame_ms_trials": [
+          31.081472396850586,
+          31.14588737487793,
+          30.936063766479492,
+          30.93075180053711,
+          30.937088012695312,
+          30.98316764831543,
+          31.947744369506836,
+          30.962688446044922,
+          31.151103973388672,
+          31.218687057495117
+        ],
+        "median_cuda_event_total_render_ms": 1118.6176147460938,
+        "median_max_frame_ms": 31.032320022583008,
+        "median_p50_frame_ms": 22.536724090576172,
+        "median_p95_frame_ms": 22.87312231063843,
+        "p50_frame_ms_trials": [
+          22.637039184570312,
+          22.589954376220703,
+          22.501376152038574,
+          22.56488037109375,
+          22.523399353027344,
+          22.5587158203125,
+          22.550048828125,
+          22.51209259033203,
+          22.490203857421875,
+          22.5115966796875
+        ],
+        "p95_frame_ms_trials": [
+          22.670932006835937,
+          22.883543968200684,
+          22.94841613769531,
+          22.658258056640626,
+          22.64810485839844,
+          22.97502746582031,
+          23.012789154052733,
+          22.618984985351563,
+          23.371072387695314,
+          22.86270065307617
+        ]
+      },
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.opacity_deform"
+      ],
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "parallel_nodes": [
+        "deformation.pos_deform",
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.shs_deform"
+      ],
+      "partition": {
+        "backend": "whole_head",
+        "kind": "whole_heads",
+        "selected_heads": [
+          "opacity"
+        ],
+        "worker_groups": 1
+      },
+      "performance": {
+        "max_throughput_fps": 44.72865871052541,
+        "median_throughput_fps": 44.69793554764483,
+        "median_total_render_ms": 1118.6199001967907,
+        "min_throughput_fps": 44.54072014865755,
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ],
+        "throughput_fps_trials": [
+          44.54072014865755,
+          44.56382178712988,
+          44.72783725453275,
+          44.71383421668068,
+          44.72865871052541,
+          44.6950454495317,
+          44.653860280904404,
+          44.724584705816156,
+          44.6950993655487,
+          44.70077172974097
+        ],
+        "trial_count": 10
+      },
+      "persistent_blocks": 5440,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "abi_version": 4,
+        "active_blocks_per_multiprocessor": 4,
+        "active_blocks_per_sm": 4,
+        "active_warps_per_multiprocessor": 48,
+        "backend_abi_version": 4,
+        "block_threads": 384,
+        "compute_capability_major": 8,
+        "compute_capability_minor": 6,
+        "device_max_threads_per_block": 1024,
+        "device_max_threads_per_multiprocessor": 1536,
+        "device_ordinal": 0,
+        "kernel_max_threads_per_block": 896,
+        "local_bytes_per_thread": 0,
+        "max_dynamic_shared_bytes": 39136,
+        "max_threads_per_block": 896,
+        "max_warps_per_multiprocessor": 48,
+        "multiprocessor_count": 84,
+        "occupancy": 1.0,
+        "physical_threads": 384,
+        "registers_per_thread": 36,
+        "static_shared_bytes": 10016,
+        "static_shared_memory_bytes": 10016,
+        "warp_size": 32,
+        "worker_groups": 1
+      },
+      "selection_metadata": {
+        "abi_complexity": 2.0,
+        "peak_memory_bytes": 1283457024.0,
+        "registers_per_thread": 36.0,
+        "shared_memory_bytes": 10016.0
+      },
+      "skipped_python_nodes": [
+        "deformation.opacity_deform"
+      ],
+      "source_profile_deployment_enabled": false,
+      "source_profile_file_sha256": "80439c008f4f2438e0051656313adcedba0083af0b82f80e50b28c5bb0b9f055",
+      "source_profile_manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+      "source_profile_schema_version": 2,
+      "source_profile_selection_sha256": "fe58f36450bad7d730deb85b3593c2890709e8853c6f3fcb893d7dc1e7f50c07",
+      "stream_lifetimes": [
+        "shared_head_input:deform_prefix->mixed_done",
+        "whole_head_parameters:cache_ready->mixed_done",
+        "whole_head_outputs:mixed_done->residual_ready",
+        "render_state:residual_ready->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "features": 128,
+        "first_bias_dtype": "float32",
+        "first_weight_dtype": "float16",
+        "input_dtype": "float16",
+        "max_heads": 5,
+        "output_dtype": "float32",
+        "output_widths": [
+          1
+        ],
+        "shared_input": true,
+        "tail_bias_dtype": "float32",
+        "tail_weight_dtype": "float32"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "c4_whole_heads_opacity_wg1_pb5440"
+    }
+  ],
+  "correctness_thresholds": {
+    "lpips_increase_max": 0.0001,
+    "psnr_drop_db_max": 0.05,
+    "ssim_drop_max": 0.0001
+  },
+  "deployment": {
+    "enabled": true,
+    "valid": true
+  },
+  "manifest": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "gaussian_count": 111525,
+    "gpu_name": "NVIDIA RTX A6000",
+    "iteration": 14000,
+    "persistent_blocks": 5440,
+    "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+    "resolution": [
+      1352,
+      1014
+    ],
+    "workload": "flame_steak",
+    "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+  },
+  "manifest_sha256": "74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52",
+  "note": "Generated from correctness qualification and whole-run median FPS selection; Raster/leaf latency values are diagnostics only.",
+  "profile_sha256": "22e27f5ee9cf5f98b53cf4e790bb165163c1a61f9970775da4faabea0d9f22d6",
+  "provenance": {
+    "fps_benchmark_generated_at_utc": "2026-09-15T03:01:27.080062+00:00",
+    "fps_benchmark_stable_environment": {
+      "cuda_runtime": "12.4",
+      "gpu_name": "NVIDIA RTX A6000",
+      "pytorch_version": "2.4.1+cu124"
+    },
+    "fps_benchmark_stable_provenance": {
+      "environment": {
+        "cuda_runtime": "12.4",
+        "gpu_name": "NVIDIA RTX A6000",
+        "pytorch_version": "2.4.1+cu124"
+      },
+      "repository_commit": "a6c475ee737341c28f88a8fda5fa04479e211592",
+      "repository_commit_source": "git",
+      "repository_dirty": true,
+      "source_files": {
+        "configs": "f51ab4697a9c20704a460d11ccd6365fa51f42e8722873bd1f768f45425e4ab1",
+        "diff_gaussian_rasterization._C": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+        "diff_gaussian_rasterization/__init__.py": "42c7035f64d189399c7ae90d830de63050c3f8c153852048a2f921eca9eb662f",
+        "gaussian_renderer/__init__.py": "f866fb2bf90386c743a2afe3717ec1ce1965bb555df218c02ef0c88dc84da6a4",
+        "gaussian_renderer/tacker_pipeline.py": "2a6e717a8a38c1fa22f682c8dd6823490e59e61db97444d66cb7e761a5960ce4",
+        "profile_render.py": "d7006d8b5fcce5b92abfb1257d01ad616c80cb54f7892f7c5e7310fa4f33d6e6",
+        "simple_knn._C": "c04852b5c0d0db5cd2c76bdba106c81fca79f3502896dec2ed33e87ea48fdae8",
+        "simple_knn/__init__.py": null,
+        "tacker_4dgs_head._C": "f99bc3134ef9997d3a88f4772476a6641b219db275a522d67327048d3f2db3a5",
+        "tacker_4dgs_head/__init__.py": "f9ad3fd2337611c223373a806ce3318664af25910dcec3fca708927c08ca56d0"
+      },
+      "submodules": [
+        {
+          "commit": null,
+          "path": "submodules/depth-diff-gaussian-rasterization",
+          "source": null,
+          "status": "unavailable"
+        },
+        {
+          "commit": null,
+          "path": "submodules/simple-knn",
+          "source": null,
+          "status": "unavailable"
+        }
+      ]
+    },
+    "generated_at_utc": "2026-09-15T03:24:49.896181+00:00",
+    "input_sha256": {
+      "candidate_correctness": "f7f373889ce7fb8bebdd27b94b9d84b68e9611be69d180053287d1e37916ef0d",
+      "candidate_descriptors": "855ca7c2848b412d25b5f20ccf73295e71bcd79f7905d03c9f4adc945fc362c8",
+      "device": "2686ecf2e2cc7cdf856c30316b5ab9b7fe7ca287aef1c0c0ed117b3f4f22b276",
+      "fps_benchmark": "96a51da6b4dc973972817e7e9cf0842f958072d24c5ac184feca27553cd8dfa0",
+      "head_abi": "650867ba75e0eee4f74ad1c39d9eb6a3c709a9a5ff1729ded40070e174d606bb",
+      "leaf": "9937bbf69f0aa0b1852585c95500792e1b4d701c9d072ed9e756885923b96334",
+      "mixed_abi": "8b18ab41eddbdb640f2c41198dced53a2274d4d1ca118d225c80a4237a7e3ea9",
+      "quality": "450c480dad8980e8fa20325c9aa210a51fdbba77a463ef4730dbc1d947f0edd8",
+      "raster": "fdf685b956fa3947e402f70e8b2e94233baf4941f7a03023decf739855561bd4",
+      "template": "deabc5695dfb59f0b8e5ca45cb9a1b87f431e2c63b6b06c3d89fe2cec690e86a"
+    },
+    "validated_abi": {
+      "head_abi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+      "head_abi_version": 2,
+      "head_gptb_kernel_symbol": "tacker_head_linear_multi_gptb_v2",
+      "head_solo_kernel_symbol": "tacker_head_linear_multi_solo_v2",
+      "mixed_abi_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+      "mixed_abi_version": 3,
+      "mixed_kernel_symbol": "tacker_mix_render_packed_heads_v3",
+      "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf"
+    }
+  },
+  "schema_version": 2,
+  "selected_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+  "selection": {
+    "deployment_winner_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "eligible_variant_ids": [
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "c0_legacy_pos_l1_pb5440",
+      "legacy_pos_l1",
+      "two_stream",
+      "c1_opacity_l1_wg1_pb13942",
+      "serial",
+      "c4_whole_heads_opacity_wg1_pb5440"
+    ],
+    "equivalence": {
+      "candidate_variant_ids_in_preference_order": [
+        "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440"
+      ],
+      "fraction": 0.005,
+      "missing_metadata_policy": "known_first_then_benchmark_candidate_name",
+      "preferred_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "tie_break_order": [
+        "abi_complexity",
+        "peak_memory_bytes",
+        "registers_per_thread",
+        "shared_memory_bytes",
+        "benchmark_candidate_name"
+      ],
+      "top_median_throughput_fps": 100.50825626566274
+    },
+    "experimental_winner_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "global_median_fps_ranking": [
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+      "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+      "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+      "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+      "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+      "c0_legacy_pos_l1_pb5440",
+      "legacy_pos_l1",
+      "two_stream",
+      "c1_opacity_l1_wg1_pb13942",
+      "serial",
+      "c4_whole_heads_opacity_wg1_pb5440"
+    ],
+    "incumbent_variant_id": "legacy_pos_l1",
+    "ineligible_variant_ids": [],
+    "promotion": {
+      "candidate_evaluations": [
+        {
+          "candidate_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+          "criteria": {
+            "baseline_fps_ratios": {
+              "observed": {
+                "legacy_pos_l1": 1.1500010032962709,
+                "two_stream": 1.1640759715928337
+              },
+              "passed": true,
+              "required_min": 1.0
+            },
+            "median_fps_ratio": {
+              "observed": 1.1500010032962709,
+              "passed": true,
+              "required_min": 1.01
+            },
+            "paired_bootstrap_95_ci_lower": {
+              "observed": 1.1446137379277883,
+              "passed": true,
+              "required_strictly_greater_than": 1.0
+            }
+          },
+          "paired_comparison": {
+            "candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+            "median_fps_ratio": 1.1500010032962709,
+            "median_paired_fps_ratio": 1.15044519305058,
+            "paired_bootstrap_95_ci": {
+              "confidence": 0.95,
+              "lower": 1.1446137379277883,
+              "percentile_method": "linear_type_7",
+              "resamples": 10000,
+              "resampling_unit": "paired_round",
+              "seed": 0,
+              "statistic": "median(candidate_fps)/median(reference_fps)",
+              "upper": 1.1542292551006885
+            },
+            "paired_fps_ratios": [
+              1.1433320513684544,
+              1.1510244683527966,
+              1.1475897585120847,
+              1.1540630933699862,
+              1.1513550024258479,
+              1.1379814074542278,
+              1.1498659177483634,
+              1.1552555784581793,
+              1.1544678750549275,
+              1.148312959892913
+            ],
+            "reference": "current_tacker",
+            "round_indices": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          "passed": true
+        }
+      ],
+      "challenger_variant_id": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+      "criteria": {
+        "baseline_fps_ratios": {
+          "observed": {
+            "legacy_pos_l1": 1.1500010032962709,
+            "two_stream": 1.1640759715928337
+          },
+          "passed": true,
+          "required_min": 1.0
+        },
+        "median_fps_ratio": {
+          "observed": 1.1500010032962709,
+          "passed": true,
+          "required_min": 1.01
+        },
+        "paired_bootstrap_95_ci_lower": {
+          "observed": 1.1446137379277883,
+          "passed": true,
+          "required_strictly_greater_than": 1.0
+        }
+      },
+      "decision": "promoted_equivalent_challenger",
+      "incumbent_variant_id": "legacy_pos_l1",
+      "median_fps_ratio": 1.1500010032962709,
+      "minimum_bootstrap_lower_exclusive": 1.0,
+      "minimum_median_fps_ratio": 1.01,
+      "paired_bootstrap_95_ci_lower": 1.1446137379277883,
+      "paired_comparison": {
+        "candidate": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+        "median_fps_ratio": 1.1500010032962709,
+        "median_paired_fps_ratio": 1.15044519305058,
+        "paired_bootstrap_95_ci": {
+          "confidence": 0.95,
+          "lower": 1.1446137379277883,
+          "percentile_method": "linear_type_7",
+          "resamples": 10000,
+          "resampling_unit": "paired_round",
+          "seed": 0,
+          "statistic": "median(candidate_fps)/median(reference_fps)",
+          "upper": 1.1542292551006885
+        },
+        "paired_fps_ratios": [
+          1.1433320513684544,
+          1.1510244683527966,
+          1.1475897585120847,
+          1.1540630933699862,
+          1.1513550024258479,
+          1.1379814074542278,
+          1.1498659177483634,
+          1.1552555784581793,
+          1.1544678750549275,
+          1.148312959892913
+        ],
+        "reference": "current_tacker",
+        "round_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "passed": true,
+      "required": true
+    }
+  },
+  "selection_objective": "median_throughput_fps",
+  "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+}

@@ -1,0 +1,72 @@
+{
+  "candidates": [
+    {
+      "candidate_sha256": "7637989f0bd0db26846b9f7deaf59cf380c6c3f786181fad8b44fc10c2946248",
+      "rank": 1,
+      "result": {
+        "leaf_passed": true,
+        "leaf_report_sha256": "7ffc25177900b5e27ac9f1c37eeec29126190bc1294adf4ea5c0e98f80fbeef3",
+        "quality_passed": true,
+        "quality_report_sha256": "ee5bb4b29ba96c17e8da28f66a78bf535b5268347e716cee613f39a676ded538",
+        "valid": true
+      },
+      "resumed_from_db": false,
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate_sha256": "b20f5b652dda49a054503d5426c0573026affd3938a95933e64292338fa602d1",
+      "rank": 2,
+      "result": {
+        "leaf_passed": true,
+        "leaf_report_sha256": "45941a1bb0e22ca656195707cae76b65b843dbb71874673317f3657d85e53eff",
+        "quality_passed": true,
+        "quality_report_sha256": "2e6912bf24a091aeca489fe913f727ed5d17137584788b4f221f19f6c7ce9552",
+        "valid": true
+      },
+      "resumed_from_db": false,
+      "variant_id": "c2h3_scales_rotations_opacity_l1_wg1_pb7000"
+    },
+    {
+      "candidate_sha256": "a1fef6afa2bcd8be3efa884d875daa1a52c349fc35587555e1d7f0ba456f9a40",
+      "rank": 3,
+      "result": {
+        "leaf_passed": true,
+        "leaf_report_sha256": "e424f216f27ee822b4a123d1949019ffc6db8115f1fdd7da0853da4594f64f1f",
+        "quality_passed": true,
+        "quality_report_sha256": "e99a20f05bfd663518ff6ca619b3bbd74e38be9cf3de3a7092396fd050064eb9",
+        "valid": true
+      },
+      "resumed_from_db": false,
+      "variant_id": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb7000"
+    },
+    {
+      "candidate_sha256": "efb2bde4130e3764f6166e6ab43a772ced6df955701030a13a592fd336870388",
+      "rank": 4,
+      "result": {
+        "leaf_passed": true,
+        "leaf_report_sha256": "45abc106afb03d1e7635e5968564debc66939013671cbe654468449f3cbd57ff",
+        "quality_passed": true,
+        "quality_report_sha256": "f04d3c164e67a9b1a1e0fc5e782f3773d99af75ab649c36d1cb6508304c39326",
+        "valid": true
+      },
+      "resumed_from_db": false,
+      "variant_id": "c2h3_scales_opacity_shs_l1_wg1_pb5440"
+    },
+    {
+      "candidate_sha256": "dc956ea12ff76d7adc80282a8b9570a33bc2f8afd0c8f13622fef6e4162fe1ae",
+      "rank": 5,
+      "result": {
+        "leaf_passed": true,
+        "leaf_report_sha256": "cf16813d516a40cafdf08220f872366bd49f7358bfccd1e1454fe1cef8d9a64b",
+        "quality_passed": true,
+        "quality_report_sha256": "d172fb1cef74d8247291a5e8d18dea9b48fc04f4f7cc6b35eef5180ce31f7309",
+        "valid": true
+      },
+      "resumed_from_db": false,
+      "variant_id": "c2h4_pos_scales_opacity_shs_l1_wg1_pb5440"
+    }
+  ],
+  "correctness_input_sha256": "da86bea0c946ae135d144f0acf1cc15936a0494b2fd752e15eefad848551ee80",
+  "matrix_sha256": "8956a212b0ee99d9cf17fb2de3a43e793745eadfcc0651924fb135e2603c4295",
+  "valid_candidates": 5
+}

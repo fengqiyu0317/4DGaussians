@@ -76,6 +76,8 @@ EXPECTED_HEAD_SOLO_SYMBOL = "tacker_head_linear_solo_v1"
 EXPECTED_HEAD_GPTB_SYMBOL = "tacker_head_linear_gptb_v1"
 EXPECTED_HEAD_MULTI_SOLO_SYMBOL = "tacker_head_linear_multi_solo_v2"
 EXPECTED_HEAD_MULTI_GPTB_SYMBOL = "tacker_head_linear_multi_gptb_v2"
+EXPECTED_HEAD_PACKED_GPTB_SYMBOL = "tacker_head_linear_packed_gptb_v2"
+EXPECTED_HEAD_WHOLE_GPTB_SYMBOL = "tacker_whole_head_gptb_v2"
 EXPECTED_MIXED_ABI_SHA256 = (
     "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426"
 )
@@ -87,6 +89,14 @@ EXPECTED_MIXED_MULTI_ABI_SHA256 = (
 )
 EXPECTED_HEAD_MULTI_ABI_SHA256 = (
     "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f"
+)
+EXPECTED_MIXED_PACKED_SYMBOL = "tacker_mix_render_packed_heads_v3"
+EXPECTED_MIXED_WHOLE_HEAD_SYMBOL = "tacker_mix_render_whole_heads_v4"
+EXPECTED_MIXED_PACKED_ABI_SHA256 = (
+    "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40"
+)
+EXPECTED_MIXED_WHOLE_HEAD_ABI_SHA256 = (
+    "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1"
 )
 # The public ABI constants above are raw-file digests used by profile and run
 # provenance. Admission receives parsed JSON objects, so these canonical JSON
@@ -104,8 +114,29 @@ EXPECTED_MIXED_MULTI_ABI_CANONICAL_SHA256 = (
 EXPECTED_HEAD_MULTI_ABI_CANONICAL_SHA256 = (
     "650867ba75e0eee4f74ad1c39d9eb6a3c709a9a5ff1729ded40070e174d606bb"
 )
+EXPECTED_MIXED_PACKED_ABI_CANONICAL_SHA256 = (
+    "8e5a521a3e1d3c770aa9dd9418965f786c093b9a7672dee89698fd3d0b2acbff"
+)
+EXPECTED_MIXED_WHOLE_HEAD_ABI_CANONICAL_SHA256 = (
+    "8da7090f08af28e00eceb0ff21b816be74066d154aacba6b39eef914eedf6ead"
+)
 EXPECTED_MIXED_MULTI_SYMBOL = "tacker_mix_render_heads_v2"
 FIRST_LINEAR_PARTITION_KIND = "first_linear_heads"
+PACKED_FIRST_LINEAR_PARTITION_KIND = "packed_first_linear_heads"
+WHOLE_HEAD_PARTITION_KIND = "whole_heads"
+PACKED_FIRST_LINEAR_ABI_FAMILY = "packed_first_linear_v3"
+WHOLE_HEAD_ABI_FAMILY = "whole_heads_v4"
+PACKED_FIRST_LINEAR_BACKEND = "packed_first_linear"
+WHOLE_HEAD_BACKEND = "whole_head"
+PACKED_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_packed_heads_v3.json"
+WHOLE_HEAD_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_whole_heads_v4.json"
+# ``simple_knn`` is legitimately deployed as an extension-only namespace
+# package in the sealed Phase-4 runtime.  The producer records the wrapper
+# role explicitly with a null digest instead of pretending that an absent
+# ``__init__.py`` has bytes.  No other provenance source may use this marker.
+OPTIONAL_ABSENT_PROVENANCE_SOURCE_FILES = frozenset(
+    ("simple_knn/__init__.py",)
+)
 HEAD_ORDER = ("pos", "scales", "rotations", "opacity", "shs")
 HEAD_MODULES = {
     "pos": "pos_deform",
@@ -113,6 +144,13 @@ HEAD_MODULES = {
     "rotations": "rotations_deform",
     "opacity": "opacity_deform",
     "shs": "shs_deform",
+}
+HEAD_OUTPUT_WIDTHS = {
+    "pos": 3,
+    "scales": 3,
+    "rotations": 4,
+    "opacity": 1,
+    "shs": 48,
 }
 
 EXPECTED_RASTER_CAPABILITIES = {
@@ -275,6 +313,16 @@ def _is_lower_hex(value, length):
     )
 
 
+def _is_valid_provenance_source_file(name, digest):
+    return isinstance(name, str) and (
+        _is_lower_hex(digest, 64)
+        or (
+            digest is None
+            and name in OPTIONAL_ABSENT_PROVENANCE_SOURCE_FILES
+        )
+    )
+
+
 def _finite(mapping, keys, label, positive=False, nonnegative=False):
     """Return the first present finite number from ``keys``."""
 
@@ -363,10 +411,20 @@ def _workload(document, label):
         )
 
 
-def _require_document_contract(document, label, kind, require_numerics=False):
+def _require_document_contract(
+    document,
+    label,
+    kind,
+    require_numerics=False,
+    allowed_schema_versions=(SCHEMA_VERSION,),
+):
     document = _mapping(document, label)
-    if document.get("schema_version") != SCHEMA_VERSION:
-        raise AdmissionInputError("{} schema_version must be 1".format(label))
+    if document.get("schema_version") not in allowed_schema_versions:
+        raise AdmissionInputError(
+            "{} schema_version must be one of {}".format(
+                label, list(allowed_schema_versions)
+            )
+        )
     if document.get("kind") != kind:
         raise AdmissionInputError(
             "{} kind must be {}".format(label, kind)
@@ -454,11 +512,118 @@ def _normalise_capability(value):
     return None
 
 
+def _validate_schema2_device_extensions(
+    extensions, rasterizer, head_extension, raster_capabilities, head_capabilities
+):
+    abi = _mapping(extensions.get("abi"), "device selected ABI")
+    version = abi.get("version")
+    contracts = {
+        2: {
+            "mixed_symbol": EXPECTED_MIXED_MULTI_SYMBOL,
+            "head_symbols": [
+                EXPECTED_HEAD_MULTI_SOLO_SYMBOL,
+                EXPECTED_HEAD_MULTI_GPTB_SYMBOL,
+            ],
+            "capability_enabled": "mixed_render_heads",
+            "capability_abi": "mixed_render_heads_abi",
+            "capability_symbol": "mixed_multi_symbol",
+            "capability_manifest": "mixed_multi_manifest_sha256",
+            "capability_head_manifest": "head_multi_manifest_sha256",
+            "head_capability_symbols": {
+                "multi_solo": EXPECTED_HEAD_MULTI_SOLO_SYMBOL,
+                "multi_gptb": EXPECTED_HEAD_MULTI_GPTB_SYMBOL,
+            },
+        },
+        3: {
+            "mixed_symbol": EXPECTED_MIXED_PACKED_SYMBOL,
+            "head_symbols": [EXPECTED_HEAD_PACKED_GPTB_SYMBOL],
+            "capability_enabled": "mixed_render_packed_heads",
+            "capability_abi": "mixed_render_packed_heads_abi",
+            "capability_symbol": "mixed_packed_symbol",
+            "capability_manifest": "mixed_packed_manifest_sha256",
+            "capability_head_manifest": "mixed_packed_head_manifest_sha256",
+            "head_capability_symbols": {
+                "packed_gptb": EXPECTED_HEAD_PACKED_GPTB_SYMBOL,
+            },
+        },
+        4: {
+            "mixed_symbol": EXPECTED_MIXED_WHOLE_HEAD_SYMBOL,
+            "head_symbols": [EXPECTED_HEAD_WHOLE_GPTB_SYMBOL],
+            "capability_enabled": "mixed_render_whole_heads",
+            "capability_abi": "mixed_render_whole_heads_abi",
+            "capability_symbol": "mixed_whole_symbol",
+            "capability_manifest": "mixed_whole_manifest_sha256",
+            "capability_head_manifest": "mixed_whole_head_manifest_sha256",
+            "head_capability_symbols": {
+                "whole_head_gptb": EXPECTED_HEAD_WHOLE_GPTB_SYMBOL,
+            },
+        },
+    }
+    contract = contracts.get(version)
+    if contract is None:
+        raise AdmissionInputError("device selected ABI version must be 2, 3, or 4")
+    mixed_manifest = _mapping(
+        abi.get("mixed_manifest"), "device selected mixed ABI manifest"
+    )
+    head_manifest = _mapping(
+        abi.get("head_manifest"), "device selected head ABI manifest"
+    )
+    mixed_sha = mixed_manifest.get("file_sha256")
+    head_sha = head_manifest.get("file_sha256")
+    if (
+        not _is_lower_hex(mixed_sha, 64)
+        or not _is_lower_hex(head_sha, 64)
+        or abi.get("candidate_mixed_manifest_sha256") != mixed_sha
+        or abi.get("candidate_head_manifest_sha256") != head_sha
+        or abi.get("mixed_symbol") != contract["mixed_symbol"]
+        or abi.get("head_symbols") != contract["head_symbols"]
+    ):
+        raise AdmissionInputError("device selected ABI manifest/symbol binding changed")
+    expected_raster = {
+        "stream_aware": True,
+        "rasterizer_commit": EXPECTED_RASTERIZER_COMMIT,
+        "sm_target": EXPECTED_CUDA_ARCH,
+        contract["capability_enabled"]: True,
+        contract["capability_abi"]: version,
+        contract["capability_symbol"]: contract["mixed_symbol"],
+        contract["capability_manifest"]: mixed_sha,
+        contract["capability_head_manifest"]: head_sha,
+    }
+    for key, expected in expected_raster.items():
+        if raster_capabilities.get(key) != expected:
+            raise AdmissionInputError(
+                "device rasterizer capability {} must be {!r}".format(
+                    key, expected
+                )
+            )
+    if rasterizer.get("cuda_global_symbols") != [contract["mixed_symbol"]]:
+        raise AdmissionInputError("device selected Raster CUDA symbol changed")
+    if (
+        head_capabilities.get("abi_version") != 2
+        or head_capabilities.get("sm_target") != EXPECTED_CUDA_ARCH
+        or head_capabilities.get("head_features") != 128
+        or head_extension.get("cuda_global_symbols") != contract["head_symbols"]
+    ):
+        raise AdmissionInputError("device selected head ABI capabilities changed")
+    global_symbols = _mapping(
+        head_capabilities.get("global_kernel_symbols"),
+        "device head global kernel symbols",
+    )
+    for key, expected in contract["head_capability_symbols"].items():
+        if global_symbols.get(key) != expected:
+            raise AdmissionInputError(
+                "device head capability symbol {} must be {!r}".format(
+                    key, expected
+                )
+            )
+
+
 def _device(document):
     document = _require_document_contract(
         document,
         "device input",
         "4dgaussians_tacker_device",
+        allowed_schema_versions=(1, 2),
     )
     extensions = _mapping(document.get("extensions"), "device extensions")
     rasterizer = _mapping(
@@ -473,25 +638,38 @@ def _device(document):
     head_capabilities = _mapping(
         head_extension.get("capabilities"), "device head capabilities"
     )
-    for key, expected in EXPECTED_RASTER_CAPABILITIES.items():
-        if raster_capabilities.get(key) != expected:
-            raise AdmissionInputError(
-                "device rasterizer capability {} must be {!r}".format(
-                    key, expected
+    selected_abi = extensions.get("abi") if document["schema_version"] == 2 else None
+    selected_version = selected_abi.get("version") if isinstance(selected_abi, dict) else None
+    if document["schema_version"] == 2 and selected_version in (2, 3, 4):
+        _validate_schema2_device_extensions(
+            extensions,
+            rasterizer,
+            head_extension,
+            raster_capabilities,
+            head_capabilities,
+        )
+    else:
+        if document["schema_version"] == 2 and selected_version != 1:
+            raise AdmissionInputError("schema-v2 device input omitted selected ABI")
+        for key, expected in EXPECTED_RASTER_CAPABILITIES.items():
+            if raster_capabilities.get(key) != expected:
+                raise AdmissionInputError(
+                    "device rasterizer capability {} must be {!r}".format(
+                        key, expected
+                    )
                 )
-            )
-    for key, expected in EXPECTED_HEAD_CAPABILITIES.items():
-        if head_capabilities.get(key) != expected:
-            raise AdmissionInputError(
-                "device head capability {} must be {!r}".format(key, expected)
-            )
-    if rasterizer.get("cuda_global_symbols") != [EXPECTED_MIXED_SYMBOL]:
-        raise AdmissionInputError("device rasterizer CUDA symbol provenance changed")
-    if head_extension.get("cuda_global_symbols") != [
-        EXPECTED_HEAD_SOLO_SYMBOL,
-        EXPECTED_HEAD_GPTB_SYMBOL,
-    ]:
-        raise AdmissionInputError("device head CUDA symbol provenance changed")
+        for key, expected in EXPECTED_HEAD_CAPABILITIES.items():
+            if head_capabilities.get(key) != expected:
+                raise AdmissionInputError(
+                    "device head capability {} must be {!r}".format(key, expected)
+                )
+        if rasterizer.get("cuda_global_symbols") != [EXPECTED_MIXED_SYMBOL]:
+            raise AdmissionInputError("device rasterizer CUDA symbol provenance changed")
+        if head_extension.get("cuda_global_symbols") != [
+            EXPECTED_HEAD_SOLO_SYMBOL,
+            EXPECTED_HEAD_GPTB_SYMBOL,
+        ]:
+            raise AdmissionInputError("device head CUDA symbol provenance changed")
     nested = document.get("device")
     source = nested if isinstance(nested, dict) else document
     name = source.get("name", source.get("gpu_name", document.get("gpu_name")))
@@ -524,8 +702,181 @@ def _optional_device_name(document, expected_name, label):
         )
 
 
-def _validate_mixed_abi(abi):
+def _validate_one_mixed_abi(abi):
     abi = _mapping(abi, "mixed ABI")
+    if abi.get("abi_version") == 3:
+        required = {
+            "backend_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+            "rasterizer_upstream_commit": EXPECTED_RASTERIZER_COMMIT,
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "global_kernel_symbol": EXPECTED_MIXED_PACKED_SYMBOL,
+            "python_binding": "rasterize_gaussians_with_packed_heads",
+            "python_method": "GaussianRasterizer.forward_with_packed_heads",
+            "capability_query": "tacker_capabilities",
+            "resource_query": "tacker_resource_requirements",
+        }
+        for key, expected in required.items():
+            if abi.get(key) != expected:
+                raise AdmissionInputError(
+                    "mixed ABI v3 {} must be {!r}".format(key, expected)
+                )
+        if abi.get("preserved_abis") != [
+            "abi/tacker_mixed_render_head_v1.json",
+            "abi/tacker_mixed_render_heads_v2.json",
+        ]:
+            raise AdmissionInputError("mixed ABI v3 must preserve ABI v1/v2")
+        dependency = _mapping(
+            abi.get("tacker_ext_dependency"),
+            "mixed ABI v3 tacker_ext_dependency",
+        )
+        if (
+            dependency.get("abi_version") != 2
+            or dependency.get("manifest_sha256")
+            != EXPECTED_HEAD_MULTI_ABI_SHA256
+            or dependency.get("device_adapter")
+            != "tacker_4dgs::head_linear_packed_gptb_device"
+        ):
+            raise AdmissionInputError(
+                "mixed ABI v3 must lock the exact packed head ABI v2 adapter"
+            )
+        launch = _mapping(
+            abi.get("physical_launch"), "mixed ABI v3 physical_launch"
+        )
+        if launch.get("thread_counts_by_worker_groups") != {
+            "1": 384,
+            "2": 512,
+            "3": 640,
+            "4": 768,
+            "5": 896,
+        }:
+            raise AdmissionInputError(
+                "mixed ABI v3 physical thread-count table changed"
+            )
+        subgroups = _mapping(abi.get("subgroups"), "mixed ABI v3 subgroups")
+        raster = _mapping(subgroups.get("raster"), "mixed ABI v3 raster subgroup")
+        workers = _mapping(
+            subgroups.get("head_workers"), "mixed ABI v3 head workers"
+        )
+        if (
+            raster.get("thread_range") != [0, 255]
+            or raster.get("threads") != 256
+            or raster.get("named_barrier_id") != 1
+            or raster.get("named_barrier_participants") != 256
+        ):
+            raise AdmissionInputError("mixed ABI v3 Raster subgroup changed")
+        if (
+            workers.get("threads_per_group") != 128
+            or workers.get("named_barrier_ids") != []
+            or workers.get("cta_wide_barriers") is not False
+        ):
+            raise AdmissionInputError("mixed ABI v3 head subgroup changed")
+        _require_sealed_manifest(
+            abi,
+            EXPECTED_MIXED_PACKED_ABI_CANONICAL_SHA256,
+            "mixed ABI v3",
+        )
+        return frozenset((1, 2, 3))
+
+    if abi.get("abi_version") == 4:
+        required = {
+            "backend_family": WHOLE_HEAD_ABI_FAMILY,
+            "rasterizer_upstream_commit": EXPECTED_RASTERIZER_COMMIT,
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "global_kernel_symbol": EXPECTED_MIXED_WHOLE_HEAD_SYMBOL,
+            "python_bindings": [
+                "rasterize_gaussians_with_whole_head",
+                "rasterize_gaussians_with_whole_heads",
+            ],
+            "python_methods": [
+                "GaussianRasterizer.forward_with_whole_head",
+                "GaussianRasterizer.forward_with_whole_heads",
+            ],
+            "capability_query": "tacker_capabilities",
+            "resource_query": "tacker_resource_requirements",
+        }
+        for key, expected in required.items():
+            if abi.get(key) != expected:
+                raise AdmissionInputError(
+                    "mixed ABI v4 {} must be {!r}".format(key, expected)
+                )
+        if abi.get("preserved_abis") != [
+            "abi/tacker_mixed_render_head_v1.json",
+            "abi/tacker_mixed_render_heads_v2.json",
+        ]:
+            raise AdmissionInputError("mixed ABI v4 must preserve ABI v1/v2")
+        dependency = _mapping(
+            abi.get("tacker_ext_dependency"),
+            "mixed ABI v4 tacker_ext_dependency",
+        )
+        if (
+            dependency.get("abi_version") != 2
+            or dependency.get("manifest_sha256")
+            != EXPECTED_HEAD_MULTI_ABI_SHA256
+            or dependency.get("device_adapter")
+            != "tacker_4dgs::whole_head_multi_gptb_device"
+            or dependency.get("task_type") != "tacker_4dgs::WholeHeadTaskV2"
+        ):
+            raise AdmissionInputError(
+                "mixed ABI v4 must lock the exact whole-head ABI v2 adapter"
+            )
+        task = _mapping(
+            abi.get("whole_head_task_argument"),
+            "mixed ABI v4 whole_head_task_argument",
+        )
+        if (
+            task.get("cpp_type") != "CudaRasterizer::MixedWholeHeadTaskV2"
+            or task.get("binary_compatible_with")
+            != "tacker_4dgs::WholeHeadTaskV2"
+            or task.get("compile_time_size_alignment_and_offset_checks")
+            is not True
+        ):
+            raise AdmissionInputError("mixed ABI v4 task layout changed")
+        launch = _mapping(
+            abi.get("physical_launch"), "mixed ABI v4 physical_launch"
+        )
+        if (
+            launch.get("thread_counts_by_worker_groups")
+            != {
+                "1": 384,
+                "2": 512,
+                "3": 640,
+                "4": 768,
+                "5": 896,
+            }
+            or launch.get("static_shared_scratch_bytes_per_worker_group")
+            != 512
+        ):
+            raise AdmissionInputError("mixed ABI v4 physical launch changed")
+        subgroups = _mapping(abi.get("subgroups"), "mixed ABI v4 subgroups")
+        raster = _mapping(subgroups.get("raster"), "mixed ABI v4 raster subgroup")
+        workers = _mapping(
+            subgroups.get("head_workers"), "mixed ABI v4 head workers"
+        )
+        if (
+            raster.get("thread_range") != [0, 255]
+            or raster.get("threads") != 256
+            or raster.get("named_barrier_id") != 1
+            or raster.get("named_barrier_participants") != 256
+        ):
+            raise AdmissionInputError("mixed ABI v4 Raster subgroup changed")
+        if (
+            workers.get("threads_per_group") != 128
+            or workers.get("worker_named_barrier_ids")
+            != "[2, 1 + worker_groups]"
+            or workers.get("worker_barrier_participants") != 128
+            or workers.get("descriptor_named_barrier_id") != 7
+            or workers.get("descriptor_barrier_participants")
+            != "worker_groups * 128"
+            or workers.get("cta_wide_barriers") is not False
+        ):
+            raise AdmissionInputError("mixed ABI v4 head subgroup changed")
+        _require_sealed_manifest(
+            abi,
+            EXPECTED_MIXED_WHOLE_HEAD_ABI_CANONICAL_SHA256,
+            "mixed ABI v4",
+        )
+        return frozenset((1, 2, 4))
+
     if abi.get("abi_version") == 2:
         required = {
             "rasterizer_upstream_commit": EXPECTED_RASTERIZER_COMMIT,
@@ -652,6 +1003,41 @@ def _validate_mixed_abi(abi):
     return frozenset((1,))
 
 
+def _validate_mixed_abi(abi):
+    """Validate one or more sealed Raster ABI manifests.
+
+    ABI v3 and v4 are sibling physical backends: neither manifest claims to
+    preserve the other.  A formal candidate set containing both therefore
+    supplies both documents, while the historical single-document input
+    remains accepted byte-for-byte.
+    """
+
+    if not isinstance(abi, list):
+        return _validate_one_mixed_abi(abi)
+    if not abi:
+        raise AdmissionInputError("mixed ABI manifest list must be non-empty")
+    versions = set()
+    declared_versions = set()
+    for index, document in enumerate(abi):
+        document = _mapping(document, "mixed ABI manifest {}".format(index))
+        declared = document.get("abi_version")
+        if type(declared) is not int:
+            raise AdmissionInputError(
+                "mixed ABI manifest {} abi_version must be an integer".format(
+                    index
+                )
+            )
+        if declared in declared_versions:
+            raise AdmissionInputError(
+                "mixed ABI manifest list contains duplicate ABI v{}".format(
+                    declared
+                )
+            )
+        declared_versions.add(declared)
+        versions.update(_validate_one_mixed_abi(document))
+    return frozenset(versions)
+
+
 def _validate_head_abi(abi):
     abi = _mapping(abi, "head ABI")
     if abi.get("abi_version") == 2:
@@ -758,17 +1144,19 @@ def _validate_candidate_abi_evidence(
             or candidate.get("performance") is None
         ):
             continue
-        required_version = 2 if candidate.get("partition") is not None else 1
-        if required_version not in mixed_abi_versions:
+        required_mixed_version, required_head_version = (
+            _candidate_abi_requirements(candidate)
+        )
+        if required_mixed_version not in mixed_abi_versions:
             raise AdmissionInputError(
                 "candidate {} requires mixed ABI v{} evidence".format(
-                    candidate.get("variant_id"), required_version
+                    candidate.get("variant_id"), required_mixed_version
                 )
             )
-        if required_version not in head_abi_versions:
+        if required_head_version not in head_abi_versions:
             raise AdmissionInputError(
                 "candidate {} requires head ABI v{} evidence".format(
-                    candidate.get("variant_id"), required_version
+                    candidate.get("variant_id"), required_head_version
                 )
             )
 
@@ -929,6 +1317,7 @@ def _raster_measurements(document):
         "raster input",
         "4dgaussians_tacker_raster_profile",
         require_numerics=True,
+        allowed_schema_versions=(1, 2),
     )
     source = _nested_measurements(document)
     solo = _finite(
@@ -965,6 +1354,7 @@ def _leaf_measurements(document):
         "leaf input",
         "4dgaussians_tacker_leaf_profile",
         require_numerics=True,
+        allowed_schema_versions=(1, 2),
     )
     source = _nested_measurements(document)
     return {
@@ -2247,11 +2637,12 @@ def _validate_fps_benchmark(document):
         "FPS benchmark stable_provenance.source_files",
     )
     if not source_files or any(
-        not isinstance(name, str) or not _is_lower_hex(digest, 64)
+        not _is_valid_provenance_source_file(name, digest)
         for name, digest in source_files.items()
     ):
         raise AdmissionInputError(
-            "FPS benchmark stable provenance source files require lowercase SHA-256 hashes"
+            "FPS benchmark stable provenance source files require lowercase "
+            "SHA-256 hashes; only simple_knn/__init__.py may be explicit null"
         )
     if not phase0_compatibility:
         if type(stable_provenance.get("repository_dirty")) is not bool:
@@ -2911,10 +3302,315 @@ def _validate_first_linear_descriptor(candidate, label):
     return candidate
 
 
+def _phase31_partition(candidate, label, expected_kind, expected_backend):
+    candidate = _mapping(candidate, label)
+    variant_id = candidate.get("variant_id")
+    if not isinstance(variant_id, str) or not variant_id.strip():
+        raise AdmissionInputError(
+            "{}.variant_id must be a non-empty string".format(label)
+        )
+    partition = _mapping(candidate.get("partition"), "{}.partition".format(label))
+    if partition.get("kind") != expected_kind:
+        raise AdmissionInputError(
+            "{}.partition.kind must be {!r}".format(label, expected_kind)
+        )
+    if partition.get("backend") != expected_backend:
+        raise AdmissionInputError(
+            "{}.partition.backend must be {!r}".format(label, expected_backend)
+        )
+    heads = partition.get("selected_heads")
+    if not isinstance(heads, list) or not heads:
+        raise AdmissionInputError(
+            "{}.partition.selected_heads must be non-empty".format(label)
+        )
+    if any(name not in HEAD_ORDER for name in heads) or len(set(heads)) != len(heads):
+        raise AdmissionInputError(
+            "{}.partition.selected_heads are invalid".format(label)
+        )
+    canonical_heads = [name for name in HEAD_ORDER if name in heads]
+    if heads != canonical_heads:
+        raise AdmissionInputError(
+            "{}.partition.selected_heads must use canonical order".format(label)
+        )
+    worker_groups = partition.get("worker_groups")
+    if (
+        type(worker_groups) is not int
+        or worker_groups < 1
+        or worker_groups > len(heads)
+    ):
+        raise AdmissionInputError(
+            "{}.partition.worker_groups must be in [1, selected head count]"
+            .format(label)
+        )
+    return candidate, heads, worker_groups
+
+
+def _phase31_subgroups(worker_groups, whole_head=False):
+    result = []
+    for worker_index in range(worker_groups):
+        begin = 256 + 128 * worker_index
+        result.append(
+            {
+                "name": "head_worker_{}".format(worker_index),
+                "thread_range_inclusive": [begin, begin + 127],
+                "threads": 128,
+                "named_barrier_ids": (
+                    [2 + worker_index, 7] if whole_head else []
+                ),
+            }
+        )
+    return result
+
+
+def _validate_phase31_resources(candidate, label, abi_version):
+    resources = candidate.get("resources")
+    if not isinstance(resources, dict):
+        raise AdmissionInputError(
+            "{}.resources must contain measured ABI v{} kernel resources".format(
+                label, abi_version
+            )
+        )
+    for name, value in resources.items():
+        if value is not None and (
+            not _is_finite_number(value) or float(value) < 0.0
+        ):
+            raise AdmissionInputError(
+                "{}.resources.{} must be null or a finite non-negative "
+                "number".format(label, name)
+            )
+    for name in (
+        "registers_per_thread",
+        "static_shared_memory_bytes",
+        "max_threads_per_block",
+        "active_blocks_per_sm",
+    ):
+        value = resources.get(name)
+        if not _is_finite_number(value) or float(value) < 0.0:
+            raise AdmissionInputError(
+                "{}.resources.{} must be finite and non-negative".format(
+                    label, name
+                )
+            )
+    if int(resources["active_blocks_per_sm"]) < 1:
+        raise AdmissionInputError(
+            "{}.resources.active_blocks_per_sm must be >= 1".format(label)
+        )
+    expected_identity = {
+        "abi_version": abi_version,
+        "backend_abi_version": abi_version,
+        "worker_groups": candidate["partition"]["worker_groups"],
+        "block_threads": candidate["physical_cta_threads"],
+        "physical_threads": candidate["physical_cta_threads"],
+    }
+    for name, expected in expected_identity.items():
+        # Older normalized resource reports predate some of these identity
+        # mirrors.  Accept their omission, but never accept a contradictory
+        # value when a producer records one.
+        if name in resources and resources[name] != expected:
+            raise AdmissionInputError(
+                "{}.resources.{} must be {!r}".format(label, name, expected)
+            )
+
+
+def _phase31_required_outputs():
+    return ["raster.color", "raster.depth", "raster.radii"] + [
+        "deformation.{}_delta".format(name)
+        for name in HEAD_ORDER
+    ]
+
+
+def _validate_packed_first_linear_descriptor(candidate, label):
+    candidate, heads, worker_groups = _phase31_partition(
+        candidate,
+        label,
+        PACKED_FIRST_LINEAR_PARTITION_KIND,
+        PACKED_FIRST_LINEAR_BACKEND,
+    )
+    expected = {
+        "execution_mode": "tacker",
+        "abi_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+        "cuda_symbol": EXPECTED_MIXED_PACKED_SYMBOL,
+        "abi_manifest": PACKED_MIXED_ABI_MANIFEST,
+        "abi_manifest_sha256": EXPECTED_MIXED_PACKED_ABI_SHA256,
+        "head_abi_manifest_sha256": EXPECTED_HEAD_MULTI_ABI_SHA256,
+        "physical_cta_threads": 256 + 128 * worker_groups,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "tile_shape": [16, 16],
+        "fused_nodes": ["raster.render_leaf"]
+        + [_first_linear_node(name) for name in heads],
+        "parallel_nodes": [
+            _full_head_node(name) for name in HEAD_ORDER if name not in heads
+        ],
+        "suffix_nodes": sum((_suffix_head_nodes(name) for name in heads), [])
+        + ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_first_linear_node(name) for name in heads],
+        "required_outputs": _phase31_required_outputs(),
+        "stream_lifetimes": [
+            "shared_head_input:deform_prefix->mixed_done",
+            "packed_head_parameters:cache_ready->mixed_done",
+            "packed_head_outputs:mixed_done->suffix_ready",
+            "render_state:suffix_ready->raster_done",
+        ],
+        "backend_named_barriers": [],
+        "backend_subgroups": _phase31_subgroups(worker_groups),
+        "tensor_contract": {
+            "input_dtype": "float16",
+            "weight_dtype": "float16",
+            "bias_dtype": "float32",
+            "accumulation_dtype": "float32",
+            "output_dtype": "float32",
+            "features": 128,
+            "max_heads": 5,
+            "shared_input": True,
+            "weight_layout": "packed_head_out_in",
+            "bias_layout": "packed_head",
+            "output_layout": "packed_head_row_major",
+        },
+        "capability_requirements": {
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "compute_capability": EXPECTED_COMPUTE_CAPABILITY,
+            "mixed_render_packed_heads_abi": 3,
+            "backend_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
+        },
+    }
+    for key, expected_value in expected.items():
+        if candidate.get(key) != expected_value:
+            raise AdmissionInputError(
+                "{}.{} must be {!r}".format(label, key, expected_value)
+            )
+    persistent_blocks = candidate.get("persistent_blocks")
+    if type(persistent_blocks) is not int or persistent_blocks < 0:
+        raise AdmissionInputError(
+            "{}.persistent_blocks must be an int >= 0".format(label)
+        )
+    _validate_phase31_resources(candidate, label, 3)
+    return candidate
+
+
+def _validate_whole_head_descriptor(candidate, label):
+    candidate, heads, worker_groups = _phase31_partition(
+        candidate,
+        label,
+        WHOLE_HEAD_PARTITION_KIND,
+        WHOLE_HEAD_BACKEND,
+    )
+    named_barriers = [
+        {
+            "id": 2 + worker_index,
+            "participants": 128,
+            "purpose": "whole_head_hidden_{}".format(worker_index),
+        }
+        for worker_index in range(worker_groups)
+    ]
+    named_barriers.append(
+        {
+            "id": 7,
+            "participants": 128 * worker_groups,
+            "purpose": "whole_head_descriptor_broadcast",
+        }
+    )
+    expected = {
+        "execution_mode": "tacker",
+        "abi_family": WHOLE_HEAD_ABI_FAMILY,
+        "cuda_symbol": EXPECTED_MIXED_WHOLE_HEAD_SYMBOL,
+        "abi_manifest": WHOLE_HEAD_MIXED_ABI_MANIFEST,
+        "abi_manifest_sha256": EXPECTED_MIXED_WHOLE_HEAD_ABI_SHA256,
+        "head_abi_manifest_sha256": EXPECTED_HEAD_MULTI_ABI_SHA256,
+        "physical_cta_threads": 256 + 128 * worker_groups,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "tile_shape": [16, 16],
+        "fused_nodes": ["raster.render_leaf"]
+        + [_full_head_node(name) for name in heads],
+        "parallel_nodes": [
+            _full_head_node(name) for name in HEAD_ORDER if name not in heads
+        ],
+        "suffix_nodes": ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_full_head_node(name) for name in heads],
+        "required_outputs": _phase31_required_outputs(),
+        "stream_lifetimes": [
+            "shared_head_input:deform_prefix->mixed_done",
+            "whole_head_parameters:cache_ready->mixed_done",
+            "whole_head_outputs:mixed_done->residual_ready",
+            "render_state:residual_ready->raster_done",
+        ],
+        "backend_named_barriers": named_barriers,
+        "backend_shared_scratch_bytes": 512 * worker_groups,
+        "backend_subgroups": _phase31_subgroups(worker_groups, whole_head=True),
+        "tensor_contract": {
+            "input_dtype": "float16",
+            "first_weight_dtype": "float16",
+            "first_bias_dtype": "float32",
+            "accumulation_dtype": "float32",
+            "tail_weight_dtype": "float32",
+            "tail_bias_dtype": "float32",
+            "output_dtype": "float32",
+            "features": 128,
+            "max_heads": 5,
+            "shared_input": True,
+            "output_widths": [HEAD_OUTPUT_WIDTHS[name] for name in heads],
+        },
+        "capability_requirements": {
+            "cuda_arch": EXPECTED_CUDA_ARCH,
+            "compute_capability": EXPECTED_COMPUTE_CAPABILITY,
+            "mixed_render_whole_heads_abi": 4,
+            "backend_family": WHOLE_HEAD_ABI_FAMILY,
+            "shared_scratch_bytes_per_worker_group": 512,
+            "named_barriers_per_worker_group": 1,
+            "descriptor_named_barrier_id": 7,
+        },
+    }
+    for key, expected_value in expected.items():
+        if candidate.get(key) != expected_value:
+            raise AdmissionInputError(
+                "{}.{} must be {!r}".format(label, key, expected_value)
+            )
+    persistent_blocks = candidate.get("persistent_blocks")
+    if type(persistent_blocks) is not int or persistent_blocks < 0:
+        raise AdmissionInputError(
+            "{}.persistent_blocks must be an int >= 0".format(label)
+        )
+    _validate_phase31_resources(candidate, label, 4)
+    return candidate
+
+
 def _validate_tacker_descriptor(candidate, label):
-    if isinstance(candidate, dict) and candidate.get("partition") is not None:
+    candidate = _mapping(candidate, label)
+    partition = candidate.get("partition")
+    if partition is None:
+        return _validate_pos_l1_descriptor(candidate, label)
+    partition = _mapping(partition, "{}.partition".format(label))
+    kind = partition.get("kind")
+    if kind == FIRST_LINEAR_PARTITION_KIND:
         return _validate_first_linear_descriptor(candidate, label)
-    return _validate_pos_l1_descriptor(candidate, label)
+    if kind == PACKED_FIRST_LINEAR_PARTITION_KIND:
+        return _validate_packed_first_linear_descriptor(candidate, label)
+    if kind == WHOLE_HEAD_PARTITION_KIND:
+        return _validate_whole_head_descriptor(candidate, label)
+    raise AdmissionInputError(
+        "{}.partition.kind {!r} is unsupported".format(label, kind)
+    )
+
+
+def _candidate_abi_requirements(candidate):
+    """Return independently versioned Raster/head ABI requirements."""
+
+    partition = candidate.get("partition")
+    if partition is None:
+        return 1, 1
+    kind = _mapping(partition, "candidate partition").get("kind")
+    if kind == FIRST_LINEAR_PARTITION_KIND:
+        return 2, 2
+    if kind == PACKED_FIRST_LINEAR_PARTITION_KIND:
+        return 3, 2
+    if kind == WHOLE_HEAD_PARTITION_KIND:
+        return 4, 2
+    raise AdmissionInputError(
+        "candidate partition.kind {!r} is unsupported".format(kind)
+    )
 
 
 def _validate_tacker_run_profile_identity(
@@ -4658,8 +5354,8 @@ def evaluate_admission_v2(inputs):
         if deployment_winner["execution_mode"] == "tacker"
         else incumbent
     )
-    selected_abi_version = (
-        2 if selected_abi_candidate.get("partition") is not None else 1
+    selected_mixed_abi_version, selected_head_abi_version = (
+        _candidate_abi_requirements(selected_abi_candidate)
     )
     provenance = {
         "generated_at_utc": report["generated_at_utc"],
@@ -4669,20 +5365,24 @@ def evaluate_admission_v2(inputs):
         "fps_benchmark_stable_provenance": benchmark["stable_provenance"],
         "validated_abi": {
             "rasterizer_commit": EXPECTED_RASTERIZER_COMMIT,
-            "mixed_abi_version": selected_abi_version,
+            "mixed_abi_version": selected_mixed_abi_version,
             "mixed_abi_manifest_sha256": selected_abi_candidate[
                 "abi_manifest_sha256"
             ],
             "mixed_kernel_symbol": selected_abi_candidate["cuda_symbol"],
-            "head_abi_version": selected_abi_version,
+            "head_abi_version": selected_head_abi_version,
+            "head_abi_manifest_sha256": selected_abi_candidate.get(
+                "head_abi_manifest_sha256",
+                EXPECTED_HEAD_ABI_SHA256,
+            ),
             "head_solo_kernel_symbol": (
                 EXPECTED_HEAD_MULTI_SOLO_SYMBOL
-                if selected_abi_version == 2
+                if selected_head_abi_version == 2
                 else EXPECTED_HEAD_SOLO_SYMBOL
             ),
             "head_gptb_kernel_symbol": (
                 EXPECTED_HEAD_MULTI_GPTB_SYMBOL
-                if selected_abi_version == 2
+                if selected_head_abi_version == 2
                 else EXPECTED_HEAD_GPTB_SYMBOL
             ),
         },
@@ -5086,12 +5786,11 @@ def _parser():
     )
     parser.add_argument(
         "--mixed-abi-json",
-        default=str(
-            project_root
-            / "submodules"
-            / "depth-diff-gaussian-rasterization"
-            / "abi"
-            / "tacker_mixed_render_head_v1.json"
+        action="append",
+        default=[],
+        help=(
+            "sealed Raster mixed ABI manifest; repeat for formal candidate "
+            "sets spanning sibling ABI3/ABI4 backends (defaults to ABI v1)"
         ),
     )
     parser.add_argument(
@@ -5109,12 +5808,21 @@ def _parser():
 
 def main(argv=None):
     args = _parser().parse_args(argv)
+    project_root = Path(__file__).resolve().parents[1]
+    mixed_abi_paths = list(args.mixed_abi_json) or [
+        str(
+            project_root
+            / "submodules"
+            / "depth-diff-gaussian-rasterization"
+            / "abi"
+            / "tacker_mixed_render_head_v1.json"
+        )
+    ]
     paths = {
         "device": args.device_json,
         "quality": args.quality_json,
         "raster": args.raster_json,
         "leaf": args.leaf_json,
-        "mixed_abi": args.mixed_abi_json,
         "head_abi": args.head_abi_json,
         "template": args.template_profile,
     }
@@ -5134,6 +5842,14 @@ def main(argv=None):
             name: _load_json(path, "{} JSON".format(name))
             for name, path in paths.items()
         }
+        mixed_abi_documents = [
+            _load_json(path, "mixed_abi JSON") for path in mixed_abi_paths
+        ]
+        inputs["mixed_abi"] = (
+            mixed_abi_documents[0]
+            if len(mixed_abi_documents) == 1
+            else mixed_abi_documents
+        )
         if args.candidate_correctness_json:
             inputs["candidate_correctness"] = _load_json(
                 args.candidate_correctness_json,
@@ -5162,6 +5878,14 @@ def main(argv=None):
         name: str(Path(path).expanduser().resolve())
         for name, path in paths.items()
     }
+    report["input_paths"]["mixed_abi"] = (
+        str(Path(mixed_abi_paths[0]).expanduser().resolve())
+        if len(mixed_abi_paths) == 1
+        else [
+            str(Path(path).expanduser().resolve())
+            for path in mixed_abi_paths
+        ]
+    )
     if candidate_profile_paths:
         report["input_paths"]["candidate_profiles"] = {
             name: str(Path(path).expanduser().resolve())

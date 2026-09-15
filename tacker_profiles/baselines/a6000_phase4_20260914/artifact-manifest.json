@@ -1,0 +1,942 @@
+{
+  "canonical_remote_run_root": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5",
+  "compact_archive": {
+    "sha256": "e4001628392c787fce7bbbf6265df833726491b56e815b772c9d10a859138f16",
+    "size_bytes": 1225058,
+    "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/tacker-phase4-run-complete-v5-compact.tar.gz"
+  },
+  "source_archive": {
+    "sha256": "9d7520ec75449681a9d9a3f9522d4111674987ce7e5877ae53de4c462b273a33",
+    "size_bytes": 7283749,
+    "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/tacker-phase4-final-20260914-v8.tar.gz"
+  },
+  "files": [
+    {
+      "origin": "local_index",
+      "path": "README.md",
+      "sha256": "af9bb93e780ede161a804afb1723bd5c4315b3dc8424acbcc674d430e227ad20",
+      "size_bytes": 15032,
+      "source_path": null
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/build-cuda.json",
+      "sha256": "973302800bb0e4ec4ab2883f4a30587e8989139ac0385ecd7c8144dc6e6a42cf",
+      "size_bytes": 19817,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/build-cuda.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/extension-binaries.json",
+      "sha256": "786243bd3befd5c0e9bbd3afb44e7c1ee2b2ec33d12b912ca1ab7b0448854c31",
+      "size_bytes": 993,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/extension-binaries.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/extension-import-query.log",
+      "sha256": "4f709ba0ce7562f244facfd885cce6a3d07f3a66a51c47e41f23a574a2c94f1e",
+      "size_bytes": 972,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/extension-import-query.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/head-cpu-contracts.log",
+      "sha256": "9f603137dcb24f7bb05071906fb744f875fb9ff40d5ebbd525c18059bc9cdc60",
+      "size_bytes": 6857,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-cpu-contracts.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/head-cuda-tests.log",
+      "sha256": "c3d8834a18f01e2c4d985be12dc2cfb6f87383331b41536ccb51e214a0d613b9",
+      "size_bytes": 2962,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-cuda-tests.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/head-sm86-build.log",
+      "sha256": "6a64a0ef92fba821af40b179f3ad7b7b0eb364cd4f6f184f379d3417b27b9fb3",
+      "size_bytes": 10099,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-sm86-build.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/phase4-cpu-contracts.log",
+      "sha256": "2da387b07fc53b32198486bc90e2b525a035a25b11bc18ddfa3774dd4c615280",
+      "size_bytes": 29681,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/phase4-cpu-contracts.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/raster-cpu-contracts.log",
+      "sha256": "57bb9c360f43b455d47b20329d1ad6a380629ff35582a9d6f60a4bfd6d9d9ae3",
+      "size_bytes": 5113,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-cpu-contracts.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/raster-cuda-tests.log",
+      "sha256": "fb766df04f308dfb16c6e6589959d3296828efb211da76f216dec4ba8f1ac38b",
+      "size_bytes": 2051,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-cuda-tests.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/raster-sm86-build.log",
+      "sha256": "9fadb0aaf73ade8f30b27dfb633b0566bb732eb2c7a758b90d98a37ac387e3e9",
+      "size_bytes": 83757,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-sm86-build.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/runtime-build/compile_commands.json",
+      "sha256": "8866151a10ddac459ec366db8b10ba715ce954086e5df0369870ed0fefc69031",
+      "size_bytes": 3578,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/compile_commands.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so.0.4.0",
+      "sha256": "78f4d2b1f85eb91dccaed07fc71597a27babcafda93413f96dfc47bd3f8e0671",
+      "size_bytes": 164640,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so.0.4.0"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/runtime-build.log",
+      "sha256": "7d4003f6ef6c0f8fa6f1483700cd59803292d8bad8c5d06dc2b30ca1b370d837",
+      "size_bytes": 818,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/runtime-configure.log",
+      "sha256": "7c20c178a34161fdb25de601f79ed178446cd5a5816de0b913bc7e6f98c9e8cf",
+      "size_bytes": 1320,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-configure.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/runtime-ctest.log",
+      "sha256": "e6b6bba4aa82433ad34b6af2c7c8e4d755ec88df3df77fa81c1ee9a7cc042685",
+      "size_bytes": 552,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-ctest.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/simple-knn-build.log",
+      "sha256": "608d636dbef2b0e6e4cfd3770b3fa0a38fbaf43b2fdb0f3077d0e976a1cee9f0",
+      "size_bytes": 8275,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/simple-knn-build.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/build-and-cuda/0001/stage-result.json",
+      "sha256": "5580b67c01c9dc21e47f3d4105f2856edca4a9c27bf7629d619285000d23edc3",
+      "size_bytes": 1461,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/canary.json",
+      "sha256": "f24e2d450cfeb77d3874c6b62103a918049f85bc1450b3e6c6a2a79c436f7e7c",
+      "size_bytes": 2709,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/canary.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/release-selection.json",
+      "sha256": "8886c50839549eaaa14bc6bd318500ed99218fd02296954fa149d21df5c7ee41",
+      "size_bytes": 12582,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/release-selection.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.json",
+      "sha256": "1fc3867204b51d1b88c40707e0f69170a89bd93cf4ee8e7dfcadd32ddf4fe8f0",
+      "size_bytes": 121527,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.log",
+      "sha256": "cd33df7c13b0cc3680acd057514a6806e30892ca392309ff68699d47343ade44",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.json",
+      "sha256": "86a4e923ceab274d39197c5e6060903258f2e73685050f1c7160b99e0718f043",
+      "size_bytes": 119824,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.log",
+      "sha256": "576a7af65ce5fb08845b800622d3eb3a49f5d026020cfccba33c4f3318b91473",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/rollback.json",
+      "sha256": "bd3b135bec857f1dfdcc7d76941063b16c5c564fb4abab23e596e99adabcdf99",
+      "size_bytes": 5019,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/canary-release-rollback/0001/stage-result.json",
+      "sha256": "8222ffefb40a512084c6ae00de563fe637b3026f77ecd3bd513ca6b2c255bbdf",
+      "size_bytes": 903,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.json",
+      "sha256": "d12552a2ad198ae3cafc21747475164b0573644ca18cebebe6622356a5ae22c1",
+      "size_bytes": 145835,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.log",
+      "sha256": "9b2042eea55a2100a31e299d0eec369f82cabe3d235e02d5a9dec91fe70a49b7",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/normal-deployment-10x50.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/enabled-profile-rerun/0001/stage-result.json",
+      "sha256": "e7c6845a21d8d733d81c18c27403f15f1e1a2ede37ad68f1eaf893e6243106dc",
+      "size_bytes": 2179,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/enabled-profile-rerun/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/fallback-smoke.json",
+      "sha256": "d06626b28068e4fe6da5f7182d615223b33b39a32f361121099e2216dffabe20",
+      "size_bytes": 7861,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/fallback-smoke.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/hash-mismatch-profile.json",
+      "sha256": "40903fde00943cce1ca6c83a523f4bee2b1e62aace878c98a3c1b6f0e9bf0c20",
+      "size_bytes": 102428,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash-mismatch-profile.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.json",
+      "sha256": "baceb1a78cb1c017129da6d9201e0133f5c80668b6fc4b1d49ba7be6554e169b",
+      "size_bytes": 109243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.log",
+      "sha256": "63cadb4d9331334c86544245ebfe28356962d42fcbe2b2e088ccb01aa1ba6eef",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/missing.json",
+      "sha256": "5d23341a8d1c5168424ef22291c4d22df38034b186d2cfafdd0a794937000c01",
+      "size_bytes": 109257,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/missing.log",
+      "sha256": "a5cd2feeeacd84b654bfb39e43b60dc18b7c2c28f60b9b59436e3e05f45eb76f",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/stage-result.json",
+      "sha256": "c378ebf314296d0685a58a3aeab9525ee756fbc967e0c5ba91d5c126de3464aa",
+      "size_bytes": 8125,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/stale_workload.json",
+      "sha256": "079fd771cbb2fab070a50022b445967508c6e84172cfcfd328fdfaac4abeab1e",
+      "size_bytes": 109679,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stale_workload.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/fallback-smoke/0001/stale_workload.log",
+      "sha256": "af326b2d58c237dd52c0dada351f171d503753744846d5cd00df01ecbbe67ec4",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stale_workload.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/device.json",
+      "sha256": "f0247c526dc976ed68644973446f8de0656afb3cbdfb7d644e745e682d02b573",
+      "size_bytes": 876578,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/device.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/leaf.json",
+      "sha256": "c1eb52396aaef678a4dd8eb52c6e8f0425e3ab412daca3f34147bd8df537eece",
+      "size_bytes": 958391,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/leaf.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.log",
+      "sha256": "aba2a9a91ccfbf15411df19fef31ad58ba8f17c5f3e3c81754058cfaf0a284d6",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/profile.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/raster.json",
+      "sha256": "b2be1c77a9cb8c050fa3852581441d4277fcb8065059a1d417a3f4f6088de576",
+      "size_bytes": 933819,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/raster.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json",
+      "sha256": "cd68537d8b04e48f21402b8bb0d3bd1058790d1e4ddbb0165d63c3319998401c",
+      "size_bytes": 921239,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440/report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/device.json",
+      "sha256": "15eaa8030f8af161192c81f96a1104dbf206de85d2ffe2c73da3fa4d530cc523",
+      "size_bytes": 874726,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/device.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/leaf.json",
+      "sha256": "f3c2c7b4e1c36664b2cbbd351bb5a7bbc97f1bc97169a54835d702badbd1452b",
+      "size_bytes": 924572,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/leaf.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/profile.log",
+      "sha256": "360179b107876f770470cac965ea9bf15977924fec1ae6860a189265d832853a",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/profile.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/raster.json",
+      "sha256": "11113ee3f7503cb7aa9c7b789c3406ba195304301aa8aa3cc1d1e5e237e2717d",
+      "size_bytes": 910694,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/raster.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json",
+      "sha256": "6ea8c6b4a0dea68f31de0e8dfdaaefd339cdb48fe73961071e1056a0627878dc",
+      "size_bytes": 886659,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/c4_whole_heads_opacity_wg1_pb5440/report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json",
+      "sha256": "8e3fffb4d81fb1ed8e7252d14acc73318fbffef125938c41a67385186a0eaac9",
+      "size_bytes": 5703,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json",
+      "sha256": "c7df01f248d8200cf17b63e40ca2c1791f0e068813cacd5a3fcfbb44841f0de8",
+      "size_bytes": 30541,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/profile.log",
+      "sha256": "281af89ad3ba36be366c8a3778db4c2ab3745400e0850ffeea9a734499c5d91c",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/profile.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json",
+      "sha256": "667109168bb69eba8ea5034964aa84ba38e1074787095ad3ef49460df89a3fa6",
+      "size_bytes": 25045,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json",
+      "sha256": "5bf329e85300ba74e7019bf44fc9f0e1dad8530406be66b583219aa9c0a0a1f9",
+      "size_bytes": 11157,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/resources-numerics.json",
+      "sha256": "771540f45cba4ec4eb1a4fe5bde108254520565070b3bbfa84622dde528dca74",
+      "size_bytes": 102614,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/resources-numerics.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/finalist-resources-numerics/0001/stage-result.json",
+      "sha256": "db4927f15cfa4b9386c9e911c85d5ccbb06066fdf4e721f930038408d977981d",
+      "size_bytes": 102076,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.json",
+      "sha256": "8cc23567062e7eb0d43d420ba6d8f9128b80844e1c96d2f3b44769f065982777",
+      "size_bytes": 1328069,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.log",
+      "sha256": "da49a230616a95f03fda01fc0ac180852f1d931d8712105deb5f9f7d9ed4a904",
+      "size_bytes": 435,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/formal-10x50-abba/0001/runs/phase4-formal/benchmark.checkpoint.json",
+      "sha256": "03ba085a47c0775ccd5b146cb0328747462f9c2ee6f152217dd35e4a1409aba3",
+      "size_bytes": 1432198,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/runs/phase4-formal/benchmark.checkpoint.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/formal-10x50-abba/0001/selection-metadata.json",
+      "sha256": "21f52a5eb1d93203dea17b0d5e9780ba28eac79a8f6f3cb01e73e94aa1306e12",
+      "size_bytes": 1564,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/selection-metadata.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/formal-10x50-abba/0001/stage-result.json",
+      "sha256": "1a5445afb48e0c884689b22c093262f7e27fa23b4a8cae90995e7fd679e4283b",
+      "size_bytes": 6688,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/generalization.json",
+      "sha256": "3f2fc29c8b7f5dad8f18b78724248d3a706560ab9b0ba7b5c5634c9df9fe64b7",
+      "size_bytes": 8241,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/generalization.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/serial.json",
+      "sha256": "0c7ddd6d4f765157906ea12ec8bacbe8e6652847ee4afad9f0bd61f66b405047",
+      "size_bytes": 119716,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/serial.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/serial.log",
+      "sha256": "949551752ae5a50620a7dd9a17cbb93d0575f46dbe133715e8166c8894427248",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/serial.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/split_serial.json",
+      "sha256": "e31e5c96c3e8a0e41121633364511dd69641aab925109dd3a0859afc159608d2",
+      "size_bytes": 119760,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/split_serial.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/split_serial.log",
+      "sha256": "9843475bd38558d001115d960c31852e9c0a933ec36f6da7783b2479c519be6f",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/split_serial.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/stage-result.json",
+      "sha256": "9260282de58bb9a29374e2dab6814c8482a66d528ce43ba7c6a1d207f2aeb061",
+      "size_bytes": 8516,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/two_stream.json",
+      "sha256": "5511e86974f88b99b6bc3f43612496a0d73bab0a98f89eeffe1d12e98ea66ff1",
+      "size_bytes": 119731,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/two_stream.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-1/0001/two_stream.log",
+      "sha256": "4275e3438043b055c9f84b9cdca94e97796401c3c0397b16673c40e537686232",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-1/0001/two_stream.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/generalization.json",
+      "sha256": "b54ec82160bf06e38c55d9517ca1b63209e5a06e8122e78cbd0d8986e6e1f22b",
+      "size_bytes": 8243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/generalization.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/serial.json",
+      "sha256": "a4ee5752473b309eb69e014e55533472510cbeeeeac2f0bcd36dd2dfa9991e6a",
+      "size_bytes": 119695,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/serial.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/serial.log",
+      "sha256": "532f46db7a6c6d324b9310dc768579cf9d8ab3691302589c4835d7054e3f5af7",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/serial.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/split_serial.json",
+      "sha256": "83eb23d1071a2d3bc0658b0e256c654a9535ffe51b2384948674eb466f0ad33a",
+      "size_bytes": 119722,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/split_serial.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/split_serial.log",
+      "sha256": "f8839557eb62e72d20a37599378bc5388e176d5b04a1da5c4eb828a4a1494e61",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/split_serial.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/stage-result.json",
+      "sha256": "860c09264c982d890a92e67efbb91f5efbdcf8532be67d55ae24a995d726fd61",
+      "size_bytes": 8518,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/two_stream.json",
+      "sha256": "11bcdce81acef78eb564a8aabe556a8567a47243f88bfbb546917ad77a034942",
+      "size_bytes": 119739,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/two_stream.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/generalization-workload-2/0001/two_stream.log",
+      "sha256": "036b59518422b3420b9512a98c1716a47915497aba695e874aeb922687142dbc",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/two_stream.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/device-query.json",
+      "sha256": "d440b754ce56ed91b33c77809a64d4eb6f9f13b7b8e11ba9a08d7139bec95f32",
+      "size_bytes": 402,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/device-query.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/device-query.log",
+      "sha256": "013dacfd7bfa2b4a9195f2832f92adeb16135fb35a08484ed95c504ea2203abf",
+      "size_bytes": 439,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/device-query.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/nvcc-version.log",
+      "sha256": "21e1bb8bfbc2e24b3df508de7ca855dff63f5a2141277d3456aff83a03f39fc0",
+      "size_bytes": 285,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/nvcc-version.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/nvidia-smi.log",
+      "sha256": "ab2366ef15708452744308196b6d52b44ae659a81092aaa9a33d439947ee79e6",
+      "size_bytes": 121,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/nvidia-smi.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/preflight.json",
+      "sha256": "864c9fbb11bc7068b57e7b37c62f539024346c5c734e29f583b0fba08d12ac56",
+      "size_bytes": 2453,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/preflight.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/preflight/0001/stage-result.json",
+      "sha256": "0302ccad7a4edba412cf271b948204253f382d6acd0be11d3d27851cf7b61231",
+      "size_bytes": 706,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/preflight/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/baseline-quality.json",
+      "sha256": "211e780d55789cb89b3e396a94f679112ebeaf6cf3ae4a3232c3da553518662b",
+      "size_bytes": 51949,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/baseline-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/baseline-quality.log",
+      "sha256": "93b08dcfff06733c4794c5c8fae9f05af84cfc82fc194db1c0dbe31dd39fa5d8",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/baseline-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.json",
+      "sha256": "f2fc457b887fd707694af8edee1a1bed493c16353ab3dca250ce9b000908db41",
+      "size_bytes": 33627,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.log",
+      "sha256": "c1bc1aff5b5d1451dc0fea082aaf34024b7c4c851b2a5a5f9f5f4d394abe7074",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c0_legacy_pos_l1_pb5440-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.json",
+      "sha256": "9793c392dda76eccf5b309fc765a1beef37ef2dca3813cf77e6a66d9a5bd6dc5",
+      "size_bytes": 33267,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.log",
+      "sha256": "83096ae7826bd086a4cef93ab104a6289e91cf7b3daba213a949d70647a26940",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c1_opacity_l1_wg1_pb13942-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.json",
+      "sha256": "eb744967ca2d75d87b87b78788001c7d72e1f67f7a4b33b8ae8b2ab3a3f62ac0",
+      "size_bytes": 33694,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.log",
+      "sha256": "f3198952c60aca42489e86e418772d01346d00f461ec28c86bc9ff6ec0fd547f",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.json",
+      "sha256": "559f406c50331b72dc2effa77be2eec7f08a52bd756eede440189b41db4b9228",
+      "size_bytes": 33669,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.log",
+      "sha256": "b225ec4e20949995348dc0e29e6cd90ec9f26186d7c52547c16a488a69ecaacd",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.json",
+      "sha256": "e91086938158a13879a160fcecf2f7e2d291d74aef962754bd28939f5a5eec06",
+      "size_bytes": 33726,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.log",
+      "sha256": "0ea8a49fe3f333640b0aa0e8021a4a340dd5eb8524445e59d4d69a1497783ed6",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.json",
+      "sha256": "75ffa314291908ae6973d02c51de605d373acfa3bfcf1d720996dd8b3627e723",
+      "size_bytes": 33724,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.log",
+      "sha256": "91c71434d07584c459787eaa4cadd1bbb5dc43ec999e0b3be38de6e9bd6e5703",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.json",
+      "sha256": "1d1fd750385f0e7813c8a913c77772e4ba404aa823072619d006330fe304eb81",
+      "size_bytes": 33724,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.log",
+      "sha256": "d16fa49df0eddd0d202f4cccb186d07b7a996ca977b88df1c10c507145df5456",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.json",
+      "sha256": "1d5b1c59ed6dd0cc0f20a9038850aa14a35801558b41b68cbff38939e6319bce",
+      "size_bytes": 33439,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.log",
+      "sha256": "63facafaeada3551e4d56d82a00e38bee220ce323e157c74b752650eb3600263",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.json",
+      "sha256": "6f4e369d51ee44c6110952f18fbe90cd44b4cd30b4798ef4362687b18dad25ed",
+      "size_bytes": 33283,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.log",
+      "sha256": "963897a542dadf299a80027faaf41c6b374e338e260dc9544bed99534e15412f",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/c4_whole_heads_opacity_wg1_pb5440-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/formal-correctness.json",
+      "sha256": "c898ce96e17a5580878eaee7c962a033839c9b2ccb119265d078cc3e246cab77",
+      "size_bytes": 11317,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/formal-correctness.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/quality-50-view.json",
+      "sha256": "db0921fd48f736e6be38e820656a4f45b170eaf05d30ec240139e20676919f0b",
+      "size_bytes": 22823,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/quality-50-view.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/quality-50-view/0001/stage-result.json",
+      "sha256": "71696b15cad5f841c83b175d7e3d89e6102e5cdd33ec6269f3c7788b030836db",
+      "size_bytes": 4391,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/selection-admission/0001/admission-report.json",
+      "sha256": "877d7a2af7983cc9bbbd2d0626693ca6e06766ff2ce7ac74df305cc6293289f6",
+      "size_bytes": 106701,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/admission-report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/selection-admission/0001/admission.log",
+      "sha256": "6e52f882e259bf324e155c222c56820ad2fad1b4d2fb3372416ae82b7ab5c392",
+      "size_bytes": 390,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/admission.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+      "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+      "size_bytes": 102428,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/selection-admission/0001/stage-result.json",
+      "sha256": "72881747c27891dcd83f59a9e6da8a55c0fed8c334131a0d5f2884fbea88ff12",
+      "size_bytes": 7287,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.json",
+      "sha256": "bcb51e900d8082dd4159d6dae2e4bb5e705f14061aa578a9d0e83ac08f26d0d9",
+      "size_bytes": 3835,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.log",
+      "sha256": "71bbf40eac8fbee231680e57983d49704ff82d2cc9e4a369f75d9ed74c88b31e",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.json",
+      "sha256": "8cc16b6a83b78bf9a841590e2e60ec9149c70f753b7070093341f3c8e6c17496",
+      "size_bytes": 111361,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.log",
+      "sha256": "1a7b1b27774cb10465a54f0b7eef212cf00814d772b6c6d81a532ccff701d12a",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.json",
+      "sha256": "d98ed035d184b700cf041d0406f28140c6852165028c2453208a43352ac6c072",
+      "size_bytes": 4490,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.log",
+      "sha256": "9218a6c7373c223350985b89ac15c22888c87828494e90c5d62dc555300f0fc3",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.json",
+      "sha256": "d6cbb5a25f7cb275b1aa630d2d65914c14bbeb4df94ab5cf7c7adf87c1a3cc72",
+      "size_bytes": 111565,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.log",
+      "sha256": "94ea04b08ab6e763a1abcfe12aaf7b30226571a45b981dffdd8467319a0be869",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.json",
+      "sha256": "1d307a5482022df65bdc08c2b9fbeb57cf35a804f042b8794a5c80878224cfe1",
+      "size_bytes": 33612,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.log",
+      "sha256": "b74e441767e9b76962fa1b96c4f955811fd06286f3253c44c280e1ade3dbc3ec",
+      "size_bytes": 441,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.json",
+      "sha256": "2f907c758cf78e18b98fe83c56211f0c273cbd1fa5d322fb2070024ec36a2cd4",
+      "size_bytes": 121663,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.log",
+      "sha256": "d96877337b5096cdee693006e8d7f6b1cd317824e5c387c4a0534369f95b5260",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.json",
+      "sha256": "98f5d2791f2d9a822101fb94802bbd5531e532a939e44387ebdbbfcc9c157b2e",
+      "size_bytes": 210499,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.log",
+      "sha256": "d6af8d5aff0661f6a312db6051fb1c29d41f910329496187394720233c2bae83",
+      "size_bytes": 243,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-regression.json",
+      "sha256": "8a8ea33ab94206651e490822971506e8c407803e747b31bc0226f89d8078af36",
+      "size_bytes": 16301,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-regression.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/sequence-1-2-50-long/0001/stage-result.json",
+      "sha256": "1e9929c06208cb9d7b70ff0ec80c07ca7956b547bf7ae7a9b41f7ad22af046e2",
+      "size_bytes": 16577,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.json",
+      "sha256": "4949cb3206df127e5c205cbcb1eb47aa32c942da636947680a698b0a424650eb",
+      "size_bytes": 5359,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.log",
+      "sha256": "1a366924e77454dc5b441109ad941bac32e00615500cacf39f197c3a2d8b795e",
+      "size_bytes": 4650,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.log"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/verify-phase31-seal/0001/sealed-phase31-inputs.json",
+      "sha256": "c126a65f68e7196513c0981b5a2d9c71d8038c4cfa82f4eb86d63328cc0e957a",
+      "size_bytes": 13367,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/sealed-phase31-inputs.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/attempts/verify-phase31-seal/0001/stage-result.json",
+      "sha256": "9447c79af11198b16f403e70ca43babe7463ea612b7711f7f6bd296050df1516",
+      "size_bytes": 11868,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/stage-result.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/phase4-report.json",
+      "sha256": "51fd1d70dd276e6508250cc9761dff99819ef116ff72c5793dc1f348f2373bd7",
+      "size_bytes": 271171,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/phase4-report.json"
+    },
+    {
+      "origin": "remote_compact_archive",
+      "path": "run-complete-v5/phase4-state.json",
+      "sha256": "6fe406bcf39377642963cfdab159d20ae45a6208b85c98230fa72e783211d7fe",
+      "size_bytes": 453914,
+      "source_path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/phase4-state.json"
+    }
+  ],
+  "generated_at_utc": "2026-09-15T06:16:53.540411+00:00",
+  "kind": "tacker_phase4_compact_evidence_manifest",
+  "run_identity_sha256": "66cab463bd2682f3f330095f74afc37df4eeb257ba98083825172c40c150f39f",
+  "schema_version": 1,
+  "scope": {
+    "listed_file_count": 131,
+    "local_index_file_count": 1,
+    "manifest_self_excluded": true,
+    "remote_archive_file_count": 130
+  }
+}

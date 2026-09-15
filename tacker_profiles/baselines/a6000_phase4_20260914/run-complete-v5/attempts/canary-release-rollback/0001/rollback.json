@@ -1,0 +1,125 @@
+{
+  "drills": {
+    "current_tacker": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.json",
+          "--quiet",
+          "--tacker-profile",
+          "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_profiles/incumbents/current-v1.json"
+        ],
+        "argv_sha256": "c0e7ee7c39174d4d3f87f7207e86ce0102e5d42395c30856b7382b4dd013e129",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.log",
+          "sha256": "cd33df7c13b0cc3680acd057514a6806e30892ca392309ff68699d47343ade44",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "eligible": true,
+      "executed": true,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-current_tacker.json",
+        "sha256": "1fc3867204b51d1b88c40707e0f69170a89bd93cf4ee8e7dfcadd32ddf4fe8f0",
+        "size_bytes": 121527
+      },
+      "passed": true
+    },
+    "two_stream": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "two_stream",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.json",
+          "--quiet"
+        ],
+        "argv_sha256": "4c36677efcf40fabead8646f30afbce2ea753cf6c2d0205fe42f8a1244cc78ce",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.log",
+          "sha256": "576a7af65ce5fb08845b800622d3eb3a49f5d026020cfccba33c4f3318b91473",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "eligible": true,
+      "executed": true,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/canary-release-rollback/0001/rollback-two_stream.json",
+        "sha256": "86a4e923ceab274d39197c5e6060903258f2e73685050f1c7160b99e0718f043",
+        "size_bytes": 119824
+      },
+      "passed": true
+    }
+  },
+  "kind": "4dgaussians_tacker_phase4_rollback",
+  "loaded_rasterizer_sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+  "passed": true,
+  "policy": "replace_only_deployment_selection_or_profile",
+  "schema_version": 1,
+  "sha256": "9d83ca5216a8de2738c8f73a30da521e34653353c0e9ae42a6194fdaa8dcd529",
+  "targets": {
+    "current_tacker": {
+      "available": true,
+      "execution_mode": "tacker",
+      "profile": {
+        "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_profiles/incumbents/current-v1.json",
+        "sha256": "b2b8441300dc2527cfd9380624de5fa3b2368503794dd3d734632175a3f1acf1",
+        "size_bytes": 3202
+      },
+      "qualification_artifact": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/quality-50-view/0001/formal-correctness.json",
+        "sha256": "c898ce96e17a5580878eaee7c962a033839c9b2ccb119265d078cc3e246cab77",
+        "size_bytes": 11317
+      }
+    },
+    "two_stream": {
+      "available": true,
+      "execution_mode": "two_stream",
+      "profile": null
+    }
+  }
+}

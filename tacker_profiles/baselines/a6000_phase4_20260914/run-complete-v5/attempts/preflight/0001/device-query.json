@@ -1,0 +1,18 @@
+{
+  "compute_capability": [
+    8,
+    6
+  ],
+  "cuda_smoke_sum": 136.0,
+  "kind": "4dgaussians_tacker_phase4_device_query",
+  "logical_device": 0,
+  "multiprocessor_count": 84,
+  "name": "NVIDIA RTX A6000",
+  "passed": true,
+  "python_version": "3.10",
+  "schema_version": 1,
+  "torch_cuda": "12.4",
+  "torch_version": "2.4.1+cu124",
+  "total_memory_bytes": 50908823552,
+  "visible_device_count": 1
+}

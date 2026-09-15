@@ -1,0 +1,417 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "cmake",
+        "-S",
+        "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src",
+        "-B",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+        "-DTACKER_BUILD_LEGACY=OFF",
+        "-DTACKER_ENABLE_CUDA_BACKEND=ON",
+        "-DTACKER_BUILD_TESTS=ON",
+        "-DCMAKE_BUILD_TYPE=Release",
+        "-DCMAKE_CUDA_ARCHITECTURES=86",
+        "-DCMAKE_CUDA_COMPILER=/usr/local/cuda-12.4/bin/nvcc",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+      ],
+      "argv_sha256": "d79d6b59e466dd6d3da382284241a53362f03b2d337b27024fc5bd72ebc4b22c",
+      "label": "runtime-configure",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-configure.log",
+        "sha256": "7c20c178a34161fdb25de601f79ed178446cd5a5816de0b913bc7e6f98c9e8cf",
+        "size_bytes": 1320
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "cmake",
+        "--build",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+        "--parallel"
+      ],
+      "argv_sha256": "2c87e034507e2c11674bf704116628d28b57de61757e8ab8f03f63db476dbbcd",
+      "label": "runtime-build",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build.log",
+        "sha256": "7d4003f6ef6c0f8fa6f1483700cd59803292d8bad8c5d06dc2b30ca1b370d837",
+        "size_bytes": 818
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "ctest",
+        "--test-dir",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build",
+        "--output-on-failure"
+      ],
+      "argv_sha256": "528136beb929a017a5d7184dea7d121480ad3f22da30bb4c66fe44ebb14e73bf",
+      "label": "runtime-ctest",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-ctest.log",
+        "sha256": "e6b6bba4aa82433ad34b6af2c7c8e4d755ec88df3df77fa81c1ee9a7cc042685",
+        "size_bytes": 552
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "setup.py",
+        "build_ext",
+        "--inplace",
+        "--force",
+        "--build-temp",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/simple-knn-build"
+      ],
+      "argv_sha256": "a4e8480a64a031f1e4e651e0b22f44541a393d7676a05418e620c0f1dfe1854c",
+      "label": "simple-knn-build",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/simple-knn-build.log",
+        "sha256": "608d636dbef2b0e6e4cfd3770b3fa0a38fbaf43b2fdb0f3077d0e976a1cee9f0",
+        "size_bytes": 8275
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "setup.py",
+        "build_ext",
+        "--inplace",
+        "--force",
+        "--build-temp",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-build"
+      ],
+      "argv_sha256": "6ad5e9ed00ae0c23977efba3e06290070d50a50a9046633c0d47f3fa940e0cdb",
+      "label": "head-sm86-build",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-sm86-build.log",
+        "sha256": "6a64a0ef92fba821af40b179f3ad7b7b0eb364cd4f6f184f379d3417b27b9fb3",
+        "size_bytes": 10099
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "setup.py",
+        "build_ext",
+        "--inplace",
+        "--force",
+        "--build-temp",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build"
+      ],
+      "argv_sha256": "53c9159b7238f7aa25f61508fa304a0e1b60056193567da7cc59bcbb63cbd8fd",
+      "label": "raster-sm86-build",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-sm86-build.log",
+        "sha256": "9fadb0aaf73ade8f30b27dfb633b0566bb732eb2c7a758b90d98a37ac387e3e9",
+        "size_bytes": 83757
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "-m",
+        "unittest",
+        "tests.test_run_tacker_phase4",
+        "tests.test_tacker_qualification_script",
+        "tests.test_profile_render_modes",
+        "tests.test_tacker_admission",
+        "tests.test_tacker_pipeline",
+        "tests.test_tacker_leaf_profile",
+        "tests.test_benchmark_tacker_fps",
+        "tests.test_validate_tacker_modes",
+        "-v"
+      ],
+      "argv_sha256": "bcb714a1993b75ce93749a7ad6d80fd74b4daf48a2b51b19c5eb646e9f41b054",
+      "label": "phase4-cpu-contracts",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/phase4-cpu-contracts.log",
+        "sha256": "2da387b07fc53b32198486bc90e2b525a035a25b11bc18ddfa3774dd4c615280",
+        "size_bytes": 29681
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "argv_sha256": "393c4f322e27093c5a11c8d96db38aea114c47c77b2b8b952c02300cc5ca1b79",
+      "label": "head-cpu-contracts",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-cpu-contracts.log",
+        "sha256": "9f603137dcb24f7bb05071906fb744f875fb9ff40d5ebbd525c18059bc9cdc60",
+        "size_bytes": 6857
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/tests",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "argv_sha256": "84066f472df69398a6a1f6a722e6f9823207f2de4dc32e16ee33b4f5b5c6b322",
+      "label": "raster-cpu-contracts",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-cpu-contracts.log",
+        "sha256": "57bb9c360f43b455d47b20329d1ad6a380629ff35582a9d6f60a4bfd6d9d9ae3",
+        "size_bytes": 5113
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_tacker_phase4.py",
+        "_extension-query",
+        "--output",
+        "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/extension-binaries.json"
+      ],
+      "argv_sha256": "99d0425964365baa2a38e2d362bcdd7573b432c9d535e93b574b31ed05df28db",
+      "label": "extension-import-query",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/extension-import-query.log",
+        "sha256": "4f709ba0ce7562f244facfd885cce6a3d07f3a66a51c47e41f23a574a2c94f1e",
+        "size_bytes": 972
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "-m",
+        "unittest",
+        "tests.test_head_linear_cuda",
+        "tests.test_head_linear_v2_cuda",
+        "-v"
+      ],
+      "argv_sha256": "9ddeb3701082448199df4696cde380ee6d1f5716aac4cbc8a72d6c91428fce57",
+      "label": "head-cuda-tests",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/head-cuda-tests.log",
+        "sha256": "c3d8834a18f01e2c4d985be12dc2cfb6f87383331b41536ccb51e214a0d613b9",
+        "size_bytes": 2962
+      },
+      "returncode": 0
+    },
+    {
+      "argv": [
+        "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+        "-m",
+        "unittest",
+        "tests.test_tacker_mixed_cuda",
+        "tests.test_stream_aware_legacy_cuda",
+        "-v"
+      ],
+      "argv_sha256": "8d10e3cf1458a09be6189e0e30dddcf1cbb829a416b04a35697148bfa44bdf33",
+      "label": "raster-cuda-tests",
+      "log": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-cuda-tests.log",
+        "sha256": "fb766df04f308dfb16c6e6589959d3296828efb211da76f216dec4ba8f1ac38b",
+        "size_bytes": 2051
+      },
+      "returncode": 0
+    }
+  ],
+  "compile_commands": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/compile_commands.json",
+    "sha256": "8866151a10ddac459ec366db8b10ba715ce954086e5df0369870ed0fefc69031",
+    "size_bytes": 3578
+  },
+  "cuda_suites": {
+    "head_cuda": true,
+    "raster_abi1_4_cuda": true,
+    "runtime_ctest": true
+  },
+  "extension_binaries": {
+    "head": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/tacker_4dgs_head/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "f99bc3134ef9997d3a88f4772476a6641b219db275a522d67327048d3f2db3a5",
+      "size_bytes": 468608
+    },
+    "rasterizer": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+      "size_bytes": 2844464
+    },
+    "simple_knn": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/simple-knn/simple_knn/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "c04852b5c0d0db5cd2c76bdba106c81fca79f3502896dec2ed33e87ea48fdae8",
+      "size_bytes": 1804824
+    }
+  },
+  "kind": "4dgaussians_tacker_phase4_build_cuda",
+  "passed": true,
+  "ptxas_logs_present": true,
+  "runtime_identity": {
+    "git": {
+      "commit": "a6e84eef97b315424c9587cd534792583b609101",
+      "dirty": true,
+      "root": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4",
+      "status_entries": [
+        "?? build-runtime-a6000/CMakeCache.txt",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CMakeCCompiler.cmake",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CMakeCUDACompiler.cmake",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CMakeCXXCompiler.cmake",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CMakeSystem.cmake",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdC/CMakeCCompilerId.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/CMakeCUDACompilerId.cu",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/CMakeCUDACompilerId.cudafe1.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/CMakeCUDACompilerId.cudafe1.cpp",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/CMakeCUDACompilerId.cudafe1.stub.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/CMakeCUDACompilerId.fatbin.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/CMakeCUDACompilerId.module_id",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/a_dlink.fatbin.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCUDA/tmp/a_dlink.reg.c",
+        "?? build-runtime-a6000/CMakeFiles/3.22.1/CompilerIdCXX/CMakeCXXCompilerId.cpp",
+        "?? build-runtime-a6000/CMakeFiles/CMakeDirectoryInformation.cmake",
+        "?? build-runtime-a6000/CMakeFiles/Export/lib/cmake/TackerRuntime/TackerRuntimeTargets-release.cmake",
+        "?? build-runtime-a6000/CMakeFiles/Export/lib/cmake/TackerRuntime/TackerRuntimeTargets.cmake",
+        "?? build-runtime-a6000/CMakeFiles/Makefile.cmake",
+        "?? build-runtime-a6000/CMakeFiles/Makefile2",
+        "?? build-runtime-a6000/CMakeFiles/TargetDirectories.txt",
+        "?? build-runtime-a6000/CMakeFiles/cmake.check_cache",
+        "?? build-runtime-a6000/CMakeFiles/progress.marks",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/DependInfo.cmake",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/build.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/cmake_clean.cmake",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/compiler_depend.internal",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/compiler_depend.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/compiler_depend.ts",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/depend.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/flags.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/link.txt",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime.dir/progress.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/DependInfo.cmake",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/build.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/cmake_clean.cmake",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/compiler_depend.internal",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/compiler_depend.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/compiler_depend.ts",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/depend.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/flags.make",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/link.txt",
+        "?? build-runtime-a6000/CMakeFiles/tacker_runtime_tests.dir/progress.make",
+        "?? build-runtime-a6000/CTestTestfile.cmake",
+        "?? build-runtime-a6000/Makefile",
+        "?? build-runtime-a6000/TackerRuntimeConfig.cmake",
+        "?? build-runtime-a6000/TackerRuntimeConfigVersion.cmake",
+        "?? build-runtime-a6000/Testing/Temporary/CTestCostData.txt",
+        "?? build-runtime-a6000/cmake_install.cmake",
+        "?? build-runtime-a6000/compile_commands.json",
+        "?? build-runtime-a6000/libtacker_runtime.so.0",
+        "?? build-runtime-a6000/libtacker_runtime.so.0.4.0",
+        "?? build-runtime-a6000/tacker_runtime_tests"
+      ],
+      "status_sha256": "6d9f2416559ef3d591e935d788b4ebf2209f56c11bb8c4d3696f8a45f6f40a9a"
+    },
+    "root": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4",
+    "sources": {
+      "src/CMakeLists.txt": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/CMakeLists.txt",
+        "sha256": "4ff35cd228ff71b28aff08ef406b8556f2f6f5ef0fe2cf1e431e1429a4446be7",
+        "size_bytes": 4921
+      },
+      "src/runtime/CudaExecutionBackend.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/CudaExecutionBackend.cc",
+        "sha256": "c26f9684a7b372ce95281f0a7dc0a88f8d63d59b9204632483974107fa56e998",
+        "size_bytes": 6622
+      },
+      "src/runtime/CudaExecutionBackend.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/CudaExecutionBackend.h",
+        "sha256": "992df7bcd1eb44d623156e3d955275dd5d5c5e21d2c8092d04a24f7704f0520c",
+        "size_bytes": 1170
+      },
+      "src/runtime/ExecutionBackend.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/ExecutionBackend.h",
+        "sha256": "256145ef13c910472184a313277a21abf4bcef42779ec017c372f58e30c26c92",
+        "size_bytes": 1132
+      },
+      "src/runtime/Kernel.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Kernel.cc",
+        "sha256": "a14b32c8e905b5d29db3202d3942abc8440fe0a1f289a74d756dbfc0e64ac6ea",
+        "size_bytes": 1646
+      },
+      "src/runtime/Kernel.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Kernel.h",
+        "sha256": "2fc9470b0ad6a34126a2f7c9dd1906f4afd7f74bfa45d6389b64d9e162817c69",
+        "size_bytes": 3647
+      },
+      "src/runtime/Registry.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Registry.cc",
+        "sha256": "9460d401986a8264ea094423dbe062cd046c08de00326b786997812da29ba36e",
+        "size_bytes": 6050
+      },
+      "src/runtime/Registry.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Registry.h",
+        "sha256": "edbe7ea685dd8fe3d4b240840b5af0ff69826b8f17afb9ae652f580679f21d1c",
+        "size_bytes": 2479
+      },
+      "src/runtime/Runtime.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Runtime.h",
+        "sha256": "881b5a3403c1cc89bd40f10aaaec3efbb00b5f06c0a5e2228d2cf67ca9289776",
+        "size_bytes": 280
+      },
+      "src/runtime/Scheduler.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Scheduler.cc",
+        "sha256": "68264e066485e8802b1bdad3e50c342f25a80b29869e5347400f72347e173e17",
+        "size_bytes": 16478
+      },
+      "src/runtime/Scheduler.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Scheduler.h",
+        "sha256": "4e76cac0591b9e163583ff687bfad8532478b2ee4a7851e8f8c7ea9019d6fc05",
+        "size_bytes": 3753
+      },
+      "src/runtime/TaskGraph.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/TaskGraph.cc",
+        "sha256": "a15e0da9462676751ce8ce673a7366a313ce78c593ec9c1cd2bb4ca42320e318",
+        "size_bytes": 5755
+      },
+      "src/runtime/TaskGraph.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/TaskGraph.h",
+        "sha256": "622cb1bac6113857ba1bd2cf735c64dddef03c43710c3a8bf3774555f5d48c63",
+        "size_bytes": 2134
+      },
+      "src/runtime/Types.h": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/src/runtime/Types.h",
+        "sha256": "c749c585aa8f5337e1735b5a963e2d9c4fc46740b362e7f629b236f814b8eb3d",
+        "size_bytes": 1449
+      },
+      "tests/runtime/runtime_tests.cc": {
+        "path": "/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4/tests/runtime/runtime_tests.cc",
+        "sha256": "0a3d25bfa23b37e00f014071544db0024f4288cb0dce1056ed14ec25b5260cd4",
+        "size_bytes": 17275
+      }
+    }
+  },
+  "runtime_library": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so.0.4.0",
+    "sha256": "78f4d2b1f85eb91dccaed07fc71597a27babcafda93413f96dfc47bd3f8e0671",
+    "size_bytes": 164640
+  },
+  "runtime_library_link": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so",
+    "resolved_target": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so.0.4.0"
+  },
+  "schema_version": 1
+}

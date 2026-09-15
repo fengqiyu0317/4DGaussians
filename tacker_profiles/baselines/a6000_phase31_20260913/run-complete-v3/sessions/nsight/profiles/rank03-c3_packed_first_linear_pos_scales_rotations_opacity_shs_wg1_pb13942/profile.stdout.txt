@@ -1,0 +1,37 @@
+Looking for config file in /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args
+Config file found: /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args
+feature_dim: 32 [14/09 09:18:16]
+Loading trained model at iteration 14000 [14/09 09:18:16]
+meta data loaded, total image:6000 [14/09 09:18:17]
+meta data loaded, total image:300 [14/09 09:18:17]
+Capture range started in the application.
+Capture range ended in the application.
+Generating '/tmp/nsys-report-8d78.qdstrm'
+
+[1/1] [0%                          ] 4dgs_render_tacker.nsys-rep
+[1/1] [0%                          ] 4dgs_render_tacker.nsys-rep
+[1/1] [5%                          ] 4dgs_render_tacker.nsys-rep
+[1/1] [7%                          ] 4dgs_render_tacker.nsys-rep
+[1/1] [=====31%                    ] 4dgs_render_tacker.nsys-rep
+[1/1] [============55%             ] 4dgs_render_tacker.nsys-rep
+[1/1] [==================77%       ] 4dgs_render_tacker.nsys-rep
+[1/1] [=======================93%  ] 4dgs_render_tacker.nsys-rep
+[1/1] [=======================94%  ] 4dgs_render_tacker.nsys-rep
+[1/1] [========================100%] 4dgs_render_tacker.nsys-rep
+[1/1] [========================100%] 4dgs_render_tacker.nsys-rep
+origin points, 39082 [14/09 09:18:18]
+after points, 39082 [14/09 09:18:18]
+Loading Training Cameras [14/09 09:18:18]
+Loading Test Cameras [14/09 09:18:18]
+Loading Video Cameras [14/09 09:18:18]
+Deformation Net Set aabb [21.75732231 22.128479   41.26021957] [-26.54232979 -17.71076202   5.50146389] [14/09 09:18:18]
+Voxel Plane: set aabb= Parameter containing:
+tensor([[ 21.7573,  22.1285,  41.2602],
+        [-26.5423, -17.7108,   5.5015]]) [14/09 09:18:18]
+loading model from exists/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/point_cloud/iteration_14000 [14/09 09:18:18]
+Profiled 50 test frames in tacker mode at iteration 14000: 87.14 median FPS over 1 trial(s), 11.476 median ms/frame, 111525 Gaussians (1352x1014) [14/09 09:18:32]
+Generated:
+    /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker.nsys-rep
+Nsight report: /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker.nsys-rep
+CSV statistics: /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/4dgs_render_tacker_stats.csv
+Structured summary: /data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/sessions/nsight/profiles/rank03-c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942/tacker_summary.json

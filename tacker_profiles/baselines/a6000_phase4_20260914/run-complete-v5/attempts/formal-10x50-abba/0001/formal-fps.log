@@ -1,0 +1,2 @@
+argv_sha256=bc765d692d3a45adf109c6b39f11cacc5b8f0d8e4a9e5ca93c013e256274fc74
+FPS benchmark passed: c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440 is the experimental winner at median 100.508 FPS; deployment winner: c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440; report: /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/formal-10x50-abba/0001/formal-fps.json

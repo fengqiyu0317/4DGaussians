@@ -1,0 +1,20 @@
+{
+  "current_tacker": {
+    "actual_mode": "tacker",
+    "fallback_reason": null,
+    "quality_report_sha256": "87354b12a2b675e15bc590bbb7b291a9b763f0b195e3299add02af4c1dfc744b",
+    "valid": true
+  },
+  "serial": {
+    "actual_mode": "serial",
+    "fallback_reason": null,
+    "quality_report_sha256": "87354b12a2b675e15bc590bbb7b291a9b763f0b195e3299add02af4c1dfc744b",
+    "valid": true
+  },
+  "two_stream": {
+    "actual_mode": "two_stream",
+    "fallback_reason": null,
+    "quality_report_sha256": "87354b12a2b675e15bc590bbb7b291a9b763f0b195e3299add02af4c1dfc744b",
+    "valid": true
+  }
+}

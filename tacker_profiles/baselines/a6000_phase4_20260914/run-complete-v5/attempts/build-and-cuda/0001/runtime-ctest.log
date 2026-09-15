@@ -1,0 +1,9 @@
+argv_sha256=528136beb929a017a5d7184dea7d121480ad3f22da30bb4c66fe44ebb14e73bf
+Internal ctest changing into directory: /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build
+Test project /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build
+    Start 1: tacker_runtime_tests
+1/1 Test #1: tacker_runtime_tests .............   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.01 sec

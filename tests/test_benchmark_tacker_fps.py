@@ -55,6 +55,8 @@ def synthetic_metadata(candidate, contract, fps, fallback_reason=None):
         "mean_frame_ms": total_render_ms / frame_count,
         "cuda_event_total_render_ms": cuda_total,
         "cuda_event_mean_frame_ms": cuda_mean,
+        "cuda_peak_allocated_bytes": 123456.0,
+        "cuda_peak_reserved_bytes": 131072.0,
         "p50_frame_ms": p50,
         "p95_frame_ms": p95,
         "max_frame_ms": maximum,
@@ -143,6 +145,8 @@ def synthetic_metadata(candidate, contract, fps, fallback_reason=None):
         "mean_frame_ms": total_render_ms / frame_count,
         "cuda_event_total_render_ms": cuda_total,
         "cuda_event_mean_frame_ms": cuda_mean,
+        "cuda_peak_allocated_bytes": 123456.0,
+        "cuda_peak_reserved_bytes": 131072.0,
         "p50_frame_ms": p50,
         "p95_frame_ms": p95,
         "max_frame_ms": maximum,
@@ -379,6 +383,39 @@ class ScheduleTests(unittest.TestCase):
 
 
 class StatisticsTests(unittest.TestCase):
+    def test_formal_peak_memory_fills_missing_tie_break_conservatively(self):
+        names = ["serial", "two_stream", "current_tacker", "future"]
+        supplied = {
+            "serial": {"abi_complexity": 0.0},
+            "two_stream": {"abi_complexity": 1.0},
+            "current_tacker": {"abi_complexity": 2.0},
+            "future": {
+                "abi_complexity": 2.0,
+                "peak_memory_bytes": 777.0,
+            },
+        }
+        runs = [
+            {
+                "candidate_name": name,
+                "passed": True,
+                "metrics": {"cuda_peak_reserved_bytes": peak},
+            }
+            for name, peak in (
+                ("serial", 100.0),
+                ("serial", 120.0),
+                ("two_stream", 130.0),
+                ("current_tacker", 160.0),
+                ("future", 200.0),
+            )
+        ]
+        effective = BENCHMARK.selection_metadata_with_measured_peaks(
+            names, supplied, runs
+        )
+        self.assertEqual(effective["serial"]["peak_memory_bytes"], 120.0)
+        self.assertEqual(effective["current_tacker"]["peak_memory_bytes"], 160.0)
+        self.assertEqual(effective["future"]["peak_memory_bytes"], 777.0)
+        self.assertNotIn("peak_memory_bytes", supplied["serial"])
+
     def test_paired_bootstrap_is_deterministic_and_preserves_ratios(self):
         candidate = [110.0, 90.0, 120.0, 100.0]
         reference = [100.0, 100.0, 100.0, 100.0]
@@ -420,6 +457,8 @@ class StatisticsTests(unittest.TestCase):
                             "throughput_fps": fps,
                             "elapsed_seconds": 50.0 / fps,
                             "total_render_ms": 50000.0 / fps,
+                            "cuda_peak_allocated_bytes": 1000.0,
+                            "cuda_peak_reserved_bytes": 1200.0,
                             "profile_manifest_sha256": None,
                         },
                     }
@@ -1122,6 +1161,436 @@ class ContractTests(BenchmarkFixture):
 
 
 class ExecutionTests(BenchmarkFixture):
+    def test_hard_kill_in_first_child_resumes_from_empty_checkpoint(self):
+        session = self.root / "first-child-hard-kill-session"
+        partial_metadata = []
+
+        def interrupted_runner(command, **kwargs):
+            metadata_path = Path(self._option(command, "--metadata"))
+            metadata_path.write_text('{"partial":true}\n', encoding="utf-8")
+            partial_metadata.append(metadata_path)
+            raise KeyboardInterrupt()
+
+        with self.assertRaises(KeyboardInterrupt):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=21,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=interrupted_runner,
+            )
+
+        checkpoint_path = session / BENCHMARK.CHECKPOINT_FILE_NAME
+        checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        self.assertEqual(checkpoint["report"]["runs"], [])
+        self.assertTrue(partial_metadata[0].is_file())
+
+        resumed_calls = []
+
+        def resumed_runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            resumed_calls.append(candidate["name"])
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 0, stdout="ok", stderr="")
+
+        report = BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=21,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=resumed_runner,
+            resume=True,
+        )
+        self.assertTrue(report["passed"])
+        self.assertEqual(report["resume"]["recovered_execution_count"], 0)
+        self.assertEqual(len(resumed_calls), 8)
+
+    def test_interrupted_session_resumes_only_missing_schedule_suffix(self):
+        first_calls = []
+
+        def failing_runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            first_calls.append(candidate["name"])
+            if len(first_calls) == 2:
+                return subprocess.CompletedProcess(
+                    command, 19, stdout="partial", stderr="stop"
+                )
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 0, stdout="ok", stderr="")
+
+        session = self.root / "resumable-session"
+        failed = BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=23,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=failing_runner,
+        )
+        self.assertFalse(failed["passed"])
+        self.assertEqual(len(first_calls), 2)
+        self.assertTrue((session / BENCHMARK.CHECKPOINT_FILE_NAME).is_file())
+
+        resumed_calls = []
+
+        def resumed_runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            resumed_calls.append(candidate["name"])
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 0, stdout="ok", stderr="")
+
+        report = BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=23,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=resumed_runner,
+            resume=True,
+        )
+
+        self.assertTrue(report["passed"])
+        self.assertEqual(report["resume"]["recovered_execution_count"], 1)
+        self.assertEqual(len(resumed_calls), 7)
+        self.assertEqual(len(report["runs"]), 8)
+        self.assertEqual(
+            [item["candidate_name"] for item in report["runs"]],
+            [
+                item["candidate_name"]
+                for item in BENCHMARK.build_schedule(
+                    [item["name"] for item in self.candidates], 2, "abba", 23
+                )
+            ],
+        )
+
+    def test_resume_rejects_changed_recovered_metadata_before_running(self):
+        calls = []
+
+        def failing_runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            calls.append(candidate["name"])
+            if len(calls) == 2:
+                return subprocess.CompletedProcess(command, 7, stdout="", stderr="x")
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+        session = self.root / "tampered-resume-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="round_robin",
+            seed=4,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=failing_runner,
+        )
+        first_metadata = sorted(session.glob("*.metadata.json"))[0]
+        first_metadata.write_text("{}\n", encoding="utf-8")
+        resumed_runner = mock.Mock()
+
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "metadata artifact changed"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="round_robin",
+                seed=4,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=resumed_runner,
+                resume=True,
+            )
+        resumed_runner.assert_not_called()
+
+    def test_resume_rejects_schedule_identity_drift(self):
+        def runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+        session = self.root / "identity-resume-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=1,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=runner,
+        )
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "identity does not match"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=2,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=mock.Mock(),
+                resume=True,
+            )
+
+    def test_resume_cannot_reuse_stale_metadata_from_failed_attempt(self):
+        def first_runner(command, **kwargs):
+            candidate = self._candidate_for_command(command)
+            Path(self._option(command, "--metadata")).write_text(
+                json.dumps(synthetic_metadata(candidate, self.contract, 100.0)),
+                encoding="utf-8",
+            )
+            return subprocess.CompletedProcess(command, 6, stdout="", stderr="fail")
+
+        session = self.root / "stale-metadata-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=8,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=first_runner,
+        )
+
+        def writes_nothing(command, **kwargs):
+            return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+        resumed = BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=8,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=writes_nothing,
+            resume=True,
+        )
+        self.assertFalse(resumed["passed"])
+        self.assertIn("cannot read child metadata", resumed["errors"][0])
+
+    def test_resume_rejects_checkpoint_record_schema_drift(self):
+        def runner(command, **kwargs):
+            return subprocess.CompletedProcess(command, 3, stdout="", stderr="fail")
+
+        session = self.root / "record-schema-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=9,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=runner,
+        )
+        checkpoint_path = session / BENCHMARK.CHECKPOINT_FILE_NAME
+        checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+        checkpoint["report"]["runs"][0]["untrusted_extra"] = True
+        checkpoint_path.write_text(json.dumps(checkpoint), encoding="utf-8")
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "record schema changed"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=9,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=mock.Mock(),
+                resume=True,
+            )
+
+    def test_resume_identity_binds_selection_input_path_and_raw_bytes(self):
+        selection_input = self.root / "identity-correctness.json"
+        selection_input.write_text('{"same":true}\n', encoding="utf-8")
+
+        def identity():
+            return {
+                "correctness_json": {
+                    "path": str(selection_input.resolve()),
+                    "sha256": BENCHMARK.sha256_file(selection_input),
+                }
+            }
+
+        session = self.root / "selection-identity-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=13,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=lambda command, **kwargs: subprocess.CompletedProcess(
+                command, 2, stdout="", stderr=""
+            ),
+            selection_inputs=identity(),
+        )
+        selection_input.write_text('{ "same" : true }\n', encoding="utf-8")
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "identity does not match"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=13,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=mock.Mock(),
+                resume=True,
+                selection_inputs=identity(),
+            )
+
+    def test_resume_identity_binds_iteration_checkpoint_bytes(self):
+        checkpoint_file = (
+            self.model_path
+            / "point_cloud"
+            / "iteration_14000"
+            / "deformation.pth"
+        )
+        checkpoint_file.parent.mkdir(parents=True)
+        checkpoint_file.write_bytes(b"checkpoint-v1")
+        session = self.root / "workload-identity-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=17,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            runner=lambda command, **kwargs: subprocess.CompletedProcess(
+                command, 2, stdout="", stderr=""
+            ),
+        )
+        checkpoint_file.write_bytes(b"checkpoint-v2")
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "identity does not match"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=17,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                runner=mock.Mock(),
+                resume=True,
+            )
+
+    def test_resume_identity_binds_recursive_config_base_bytes(self):
+        base_config = self.root / "default.py"
+        base_config.write_text("base_value = 1\n", encoding="utf-8")
+        self.config_path.write_text(
+            "_base_ = './default.py'\nModelHiddenParams = {}\n",
+            encoding="utf-8",
+        )
+        session = self.root / "config-chain-identity-session"
+        BENCHMARK.run_interleaved_benchmark(
+            self.candidates,
+            self.contract,
+            trials=2,
+            strategy="abba",
+            seed=27,
+            bootstrap_resamples=100,
+            session_dir=session,
+            profile_render_path=self.profile_render,
+            project_root=self.root,
+            configs=self.config_path,
+            runner=lambda command, **kwargs: subprocess.CompletedProcess(
+                command, 2, stdout="", stderr=""
+            ),
+        )
+        base_config.write_text("base_value = 2\n", encoding="utf-8")
+        resumed_runner = mock.Mock()
+        with self.assertRaisesRegex(
+            BENCHMARK.BenchmarkContractError, "identity does not match"
+        ):
+            BENCHMARK.run_interleaved_benchmark(
+                self.candidates,
+                self.contract,
+                trials=2,
+                strategy="abba",
+                seed=27,
+                bootstrap_resamples=100,
+                session_dir=session,
+                profile_render_path=self.profile_render,
+                project_root=self.root,
+                configs=self.config_path,
+                runner=resumed_runner,
+                resume=True,
+            )
+        resumed_runner.assert_not_called()
+
     def test_cli_rejects_unknown_or_null_selection_metadata_before_running(self):
         cases = (
             ("unknown", {"serial": {"typo_memory": 1}}, "unknown fields"),
@@ -1276,6 +1745,14 @@ class ExecutionTests(BenchmarkFixture):
         )
         self.assertEqual(args.correctness_json, str(self.correctness_path))
         self.assertIsNone(args.selection_metadata_json)
+        profile_action = next(
+            action
+            for action in BENCHMARK._parser()._actions
+            if action.dest == "profile_render"
+        )
+        self.assertEqual(
+            Path(profile_action.default).name, "run_profile_render_sealed.py"
+        )
 
     def test_mocked_subprocess_runs_unique_metadata_and_aggregates(self):
         fps_by_name = {
@@ -1587,6 +2064,60 @@ class SourceContractTests(unittest.TestCase):
             self.assertEqual(
                 json.loads(target.read_text(encoding="utf-8")),
                 {"owner": "first"},
+            )
+
+    def test_compare_and_swap_rejects_changed_report(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "report.json"
+            target.write_text('{"owner":"first"}\n', encoding="utf-8")
+            stale_hash = BENCHMARK.sha256_file(target)
+            target.write_text('{"owner":"other"}\n', encoding="utf-8")
+            with self.assertRaisesRegex(
+                BENCHMARK.BenchmarkContractError, "compare-and-swap"
+            ):
+                BENCHMARK.atomic_write_json_compare_and_swap(
+                    target, {"owner": "second"}, stale_hash
+                )
+            self.assertEqual(
+                json.loads(target.read_text(encoding="utf-8")),
+                {"owner": "other"},
+            )
+
+    def test_resume_identity_covers_required_provenance_sources(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            paths = (
+                root / "profile_render.py",
+                root / "config.py",
+                root / "gaussian_renderer" / "__init__.py",
+                root / "gaussian_renderer" / "tacker_pipeline.py",
+                root
+                / "submodules"
+                / "depth-diff-gaussian-rasterization"
+                / "diff_gaussian_rasterization"
+                / "__init__.py",
+                root
+                / "submodules"
+                / "depth-diff-gaussian-rasterization"
+                / "diff_gaussian_rasterization"
+                / "_C.synthetic.so",
+            )
+            for index, path in enumerate(paths):
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("source {}\n".format(index), encoding="utf-8")
+            identity = BENCHMARK._required_source_identity(
+                paths[0], root, paths[1]
+            )
+            self.assertEqual(
+                set(identity), set(BENCHMARK.REQUIRED_PROVENANCE_SOURCE_FILES)
+            )
+            self.assertEqual(
+                identity["gaussian_renderer/tacker_pipeline.py"]["sha256"],
+                BENCHMARK.sha256_file(paths[3]),
+            )
+            self.assertEqual(
+                identity["diff_gaussian_rasterization._C"][0]["sha256"],
+                BENCHMARK.sha256_file(paths[5]),
             )
 
 

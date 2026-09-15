@@ -1,0 +1,411 @@
+{
+  "execution_mode": "tacker",
+  "kind": "4dgaussians_tacker_phase4_sequence_regression",
+  "loaded_rasterizer_sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+  "long_sequence_is_steady_state": true,
+  "output_order_compared_to_legacy": [
+    1,
+    2,
+    50
+  ],
+  "passed": true,
+  "profile": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+    "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+    "size_bytes": 102428
+  },
+  "records": {
+    "1": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "1",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "decd903ebf91eb8bfe7c96b1cfb2b61686a4dca39c3c428b2e17f1e59abb308e",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.log",
+          "sha256": "1a7b1b27774cb10465a54f0b7eef212cf00814d772b6c6d81a532ccff701d12a",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 817773568,
+      "cuda_peak_reserved_bytes": 2065694720,
+      "execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 1,
+        "mixed_launches": 0,
+        "outputs": 1,
+        "prefix": 0,
+        "selected_head_evaluations_per_head": 1,
+        "solo_raster": 1,
+        "suffix": 0
+      },
+      "max_frame_ms": 202.91583251953125,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1.json",
+        "sha256": "8cc16b6a83b78bf9a841590e2e60ec9149c70f753b7070093341f3c8e6c17496",
+        "size_bytes": 111361
+      },
+      "p50_frame_ms": 202.91583251953125,
+      "p95_frame_ms": 202.91583251953125,
+      "quality": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.json",
+        "sha256": "bcb51e900d8082dd4159d6dae2e4bb5e705f14061aa578a9d0e83ac08f26d0d9",
+        "size_bytes": 3835
+      },
+      "quality_command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/validate_tacker_modes.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--frames",
+          "1",
+          "--view-start",
+          "0",
+          "--view-stride",
+          "1",
+          "--modes",
+          "serial",
+          "tacker",
+          "--gpu",
+          "0",
+          "--output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "ea095c7e919fe0bc99825b01d18479c80eb390b143dec215a980f7dc6031c811",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-1-quality.log",
+          "sha256": "71bbf40eac8fbee231680e57983d49704ff82d2cc9e4a369f75d9ed74c88b31e",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      }
+    },
+    "2": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "2",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "1f26d805f69e8775a04b092f493af72ffd656375cfd9dbb11e68fe5a64fe2f31",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.log",
+          "sha256": "94ea04b08ab6e763a1abcfe12aaf7b30226571a45b981dffdd8467319a0be869",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 1280936960,
+      "cuda_peak_reserved_bytes": 2065694720,
+      "execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 2,
+        "mixed_launches": 1,
+        "outputs": 2,
+        "prefix": 1,
+        "selected_head_evaluations_per_head": 2,
+        "solo_raster": 1,
+        "suffix": 1
+      },
+      "max_frame_ms": 211.41708374023438,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2.json",
+        "sha256": "d6cbb5a25f7cb275b1aa630d2d65914c14bbeb4df94ab5cf7c7adf87c1a3cc72",
+        "size_bytes": 111565
+      },
+      "p50_frame_ms": 108.79488372802734,
+      "p95_frame_ms": 201.15486373901368,
+      "quality": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.json",
+        "sha256": "d98ed035d184b700cf041d0406f28140c6852165028c2453208a43352ac6c072",
+        "size_bytes": 4490
+      },
+      "quality_command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/validate_tacker_modes.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--frames",
+          "2",
+          "--view-start",
+          "0",
+          "--view-stride",
+          "1",
+          "--modes",
+          "serial",
+          "tacker",
+          "--gpu",
+          "0",
+          "--output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "ada9b593349a139b92b91778d829a2c2bbba3be9a8a57777acd8039b63b954ec",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-2-quality.log",
+          "sha256": "9218a6c7373c223350985b89ac15c22888c87828494e90c5d62dc555300f0fc3",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      }
+    },
+    "50": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "3d00f2e48ae5fc596c79336ce463cae7b48341c8a5bd197309ae9a90c7890052",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.log",
+          "sha256": "d96877337b5096cdee693006e8d7f6b1cd317824e5c387c4a0534369f95b5260",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 1280936960,
+      "cuda_peak_reserved_bytes": 2065694720,
+      "execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 50,
+        "mixed_launches": 49,
+        "outputs": 50,
+        "prefix": 49,
+        "selected_head_evaluations_per_head": 50,
+        "solo_raster": 1,
+        "suffix": 49
+      },
+      "max_frame_ms": 208.7587890625,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50.json",
+        "sha256": "2f907c758cf78e18b98fe83c56211f0c273cbd1fa5d322fb2070024ec36a2cd4",
+        "size_bytes": 121663
+      },
+      "p50_frame_ms": 9.813018798828125,
+      "p95_frame_ms": 10.097306823730468,
+      "quality": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.json",
+        "sha256": "1d307a5482022df65bdc08c2b9fbeb57cf35a804f042b8794a5c80878224cfe1",
+        "size_bytes": 33612
+      },
+      "quality_command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/validate_tacker_modes.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--scene-name",
+          "flame_steak",
+          "--frames",
+          "50",
+          "--view-start",
+          "0",
+          "--view-stride",
+          "1",
+          "--modes",
+          "serial",
+          "tacker",
+          "--gpu",
+          "0",
+          "--output",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "fde49e4d8e7e1d5629fa20db700e4ab492b266e72409a8e7ca4e2474a37eb17e",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-50-quality.log",
+          "sha256": "b74e441767e9b76962fa1b96c4f955811fd06286f3253c44c280e1ade3dbc3ec",
+          "size_bytes": 441
+        },
+        "returncode": 0
+      }
+    },
+    "500": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "500",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "234c23d3ad5b52a2b48193931a12506b33efdbad19198b97458ad78ad4b976e7",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.log",
+          "sha256": "d6af8d5aff0661f6a312db6051fb1c29d41f910329496187394720233c2bae83",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 1282750976,
+      "cuda_peak_reserved_bytes": 2124414976,
+      "execution_counts": {
+        "full_deformation": 1,
+        "input_frames": 500,
+        "mixed_launches": 499,
+        "outputs": 500,
+        "prefix": 499,
+        "selected_head_evaluations_per_head": 500,
+        "solo_raster": 1,
+        "suffix": 499
+      },
+      "max_frame_ms": 199.46905517578125,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-500.json",
+        "sha256": "98f5d2791f2d9a822101fb94802bbd5531e532a939e44387ebdbbfcc9c157b2e",
+        "size_bytes": 210499
+      },
+      "p50_frame_ms": 9.840576171875,
+      "p95_frame_ms": 9.891192626953124,
+      "quality": null,
+      "quality_command": null
+    }
+  },
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/sequence-1-2-50-long/0001/sequence-regression.json",
+    "sha256": "8a8ea33ab94206651e490822971506e8c407803e747b31bc0226f89d8078af36",
+    "size_bytes": 16301
+  },
+  "schema_version": 1,
+  "sequence_lengths": [
+    1,
+    2,
+    50,
+    500
+  ]
+}

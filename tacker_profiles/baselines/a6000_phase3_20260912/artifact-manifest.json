@@ -1,0 +1,128 @@
+{
+  "artifacts": [
+    {
+      "name": "baseline-correctness.json",
+      "sha256": "5d336668a56314b452cadf83967e5e19bb02b8abb4b18ef77d2ae185cfe87ade",
+      "size_bytes": 417,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/baseline-quality/0001/baseline-correctness.json"
+    },
+    {
+      "name": "baseline-quality.json",
+      "sha256": "ed73aea690269d6eeebca993aa15c5bdcd0170a84ad7b8df8fda1a6a7409a157",
+      "size_bytes": 28437,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/baseline-quality/0001/baseline-quality.json"
+    },
+    {
+      "name": "candidate-matrix.json",
+      "sha256": "f351c5819b239b9324082b056c232ccbd293005f6a2d699686bacfbac7d6e144",
+      "size_bytes": 192580,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/beam-h5/0001/matrix.json"
+    },
+    {
+      "name": "correctness-db.json",
+      "sha256": "7300d179632380b5d4dd7ff30fcc1fcae4df211b80663284c36041b02f4cad40",
+      "size_bytes": 2898,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/candidate-correctness/0001/correctness-db.json"
+    },
+    {
+      "name": "db-validate.json",
+      "sha256": "ff965d1b75e95c9b936295f68f0dbeb21fa38dce342feaed073ffa6bef3cfc9a",
+      "size_bytes": 20,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/postflight/db-validate.json"
+    },
+    {
+      "name": "dry-run-plan.json",
+      "sha256": "014e7aae092767603ccded3a246c4c14dbedf28edb7abb445d34751811596134",
+      "size_bytes": 5690,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/preflight/dry-run-plan-final.json"
+    },
+    {
+      "name": "formal-correctness.json",
+      "sha256": "bb7540c5cba0c7bae10126bcd24639f796b822c6c5f24934ad3a8dcb98c92a03",
+      "size_bytes": 2015,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-correctness.json"
+    },
+    {
+      "name": "formal-fps.json",
+      "sha256": "00ddc81069821d2a59df8cc31ee0fbaff0622c4958f9a83193f42835c4a1964d",
+      "size_bytes": 749615,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-fps.json"
+    },
+    {
+      "name": "formal-plan.json",
+      "sha256": "0b10b3b542e69d75bac4369f5046fb97e9164fd3dfdbd3c0ca3b7a140de3af4b",
+      "size_bytes": 8695,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/formal/formal-plan.json"
+    },
+    {
+      "name": "head-cuda-tests.log",
+      "sha256": "7ef4a8e2dc9a8525274bf76c13d140b06fef0ed482961967e2e4f34c2803616b",
+      "size_bytes": 6780,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/preflight/head-cuda-tests.log"
+    },
+    {
+      "name": "main-tests.log",
+      "sha256": "4fc9e66240b8a49fa1e21f4212886c527de4a4419bc044792b91297d06ba0bf4",
+      "size_bytes": 31364,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/preflight/main-tests-f317627.log"
+    },
+    {
+      "name": "nsight-first-attempt.stderr.log",
+      "sha256": "ae6cc5723f4adef43b8e579f1936c0f55e728130808b791cd191893ee8be7465",
+      "size_bytes": 229,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/runner.stderr.log"
+    },
+    {
+      "name": "nvidia-smi.txt",
+      "sha256": "5262d23ee2c8a7f32e056549d75b1ffd75fd09df67ca8bb76ce97fe6b2ac5b35",
+      "size_bytes": 25,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/preflight/0001/nvidia-smi.txt"
+    },
+    {
+      "name": "phase3-report.json",
+      "sha256": "4504e0721e8745381890157f517add9ffb168ce81d38908b35c749eccde21001",
+      "size_bytes": 11333,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/phase3-report.json"
+    },
+    {
+      "name": "raster-cuda-tests.log",
+      "sha256": "4c706323435ec851d068626365b66525d71fa1e360ef9f8cf72bf465f17ade6e",
+      "size_bytes": 3879,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/preflight/raster-cuda-tests.log"
+    },
+    {
+      "name": "reproducibility.json",
+      "sha256": "76f7765e0bb0afb3193faee9decdbf28b5ce72dd18aeb1bf1e272d8150d117c8",
+      "size_bytes": 2127,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/postflight/reproducibility.json"
+    },
+    {
+      "name": "resource-query.json",
+      "sha256": "d0bf3ea70549995819e4a64a9b4bb68f510ceff2454b35d70b3be05ee77d39e0",
+      "size_bytes": 10345,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/preflight/0001/resources.json"
+    },
+    {
+      "name": "screening-ranking.json",
+      "sha256": "88b1163bbf0177d7018305baeeb656cba843b4967a6d2d015a0e52d3933c4db0",
+      "size_bytes": 692046,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/screening-ranking/0001/ranking.json"
+    },
+    {
+      "name": "top3-nsight.json",
+      "sha256": "d2203031cd0e37784ba8f81e6fb750bff4e49b4d2c321911f08154c77713fa75",
+      "size_bytes": 24389,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/sessions/nsight/top3-nsight.json"
+    },
+    {
+      "name": "winner-qualification-profile.json",
+      "sha256": "8e0e0e7b0044dbbc79b4092311cceffbaf6c1c1d0252d8a5a88ea58fc9c3dd51",
+      "size_bytes": 6531,
+      "source": "/data/qyfeng/tacker_phase3_validation/20260911-codex-phase3/run-complete/attempts/profiles-h5/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json"
+    }
+  ],
+  "kind": "4dgaussians_tacker_phase3_evidence_manifest",
+  "run_identity_sha256": "b8f04b8fce967e4fd6a479b48265a59ea80a9cea9b05d546c7cf183a3cc0e8d8",
+  "schema_version": 1,
+  "source_commit": "f31762793604b66e7e4330d3b6254f053d73ab5b"
+}

@@ -1,0 +1,4 @@
+{
+  "physical_gpu": 1,
+  "stdout": "1, NVIDIA RTX A6000, 8.6\n"
+}

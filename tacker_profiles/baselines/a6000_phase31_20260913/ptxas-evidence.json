@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "kind": "4dgaussians_tacker_phase31_ptxas_evidence",
+  "passed": true,
+  "sm_target": "sm_86",
+  "binaries": {
+    "head_extension_sha256": "cf75c80f737169b6c9c96610cbde78ff7b2359691178b08d31e3ddb2c541f0d9",
+    "raster_extension_sha256": "ef1478ffd323df4d9707044f01af4249d2f940d54b37b01600c354155fce9fa7"
+  },
+  "source_logs": {
+    "head_v2": {
+      "path": "/data/qyfeng/tacker_phase2_validation/20260910-codex-phase2/logs/head-build.log",
+      "sha256": "96524d2ff763a1f75ade0238a4cbc5d4c1db66389ec5c1cf6af2a1ff9294c05b",
+      "size_bytes": 10000
+    },
+    "raster_abi1_4": {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-ptxas-full.log",
+      "sha256": "973a3f9a66b5f69f1b85e62c3e94473c0221e3c0db83e7e7a9b8f435dc0cfdb7",
+      "size_bytes": 6605
+    }
+  },
+  "kernels": {
+    "tacker_mix_render_head_v1": {
+      "accepted": true,
+      "registers_per_thread": 40,
+      "static_shared_bytes": 7168,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_mix_render_heads_v2": {
+      "accepted": true,
+      "registers_per_thread": 68,
+      "static_shared_bytes": 7376,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_mix_render_packed_heads_v3": {
+      "accepted": true,
+      "registers_per_thread": 70,
+      "static_shared_bytes": 7168,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_mix_render_whole_heads_v4": {
+      "accepted": true,
+      "registers_per_thread": 36,
+      "static_shared_bytes": 10016,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_head_linear_multi_solo_v2": {
+      "accepted": true,
+      "registers_per_thread": 48,
+      "static_shared_bytes": 0,
+      "local_bytes_per_thread": 200,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_head_linear_multi_gptb_v2": {
+      "accepted": true,
+      "registers_per_thread": 48,
+      "static_shared_bytes": 0,
+      "local_bytes_per_thread": 200,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_head_linear_packed_gptb_v2": {
+      "accepted": true,
+      "registers_per_thread": 48,
+      "static_shared_bytes": 0,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    },
+    "tacker_whole_head_gptb_v2": {
+      "accepted": true,
+      "registers_per_thread": 32,
+      "static_shared_bytes": 512,
+      "local_bytes_per_thread": 0,
+      "spill_store_bytes": 0,
+      "spill_load_bytes": 0
+    }
+  }
+}

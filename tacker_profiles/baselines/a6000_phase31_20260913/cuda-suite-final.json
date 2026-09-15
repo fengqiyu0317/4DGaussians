@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "kind": "4dgaussians_tacker_phase31_cuda_validation",
+  "generated_at_utc": "2026-09-13T03:40:00Z",
+  "passed": true,
+  "device": {
+    "physical_gpu": 1,
+    "logical_gpu": 0,
+    "name": "NVIDIA RTX A6000",
+    "compute_capability": [8, 6],
+    "cuda_toolkit": "12.4",
+    "pytorch": "2.4.1+cu124"
+  },
+  "abi": {
+    "head_v2_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+    "raster_v1_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+    "raster_v2_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+    "raster_v3_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+    "raster_v4_manifest_sha256": "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1"
+  },
+  "binaries": {
+    "head_extension_sha256": "cf75c80f737169b6c9c96610cbde78ff7b2359691178b08d31e3ddb2c541f0d9",
+    "raster_extension_sha256": "ef1478ffd323df4d9707044f01af4249d2f940d54b37b01600c354155fce9fa7"
+  },
+  "test_suites": {
+    "head_extension_cuda": {
+      "passed": 60,
+      "total": 60,
+      "scope": ["head_v2_cuda"],
+      "log_artifact": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/head-extension-cuda.log",
+        "sha256": "81e44586d93e33bcf314c4b079bd8736fc50ce6c299efd12ea531be49d543650",
+        "size_bytes": 6780
+      }
+    },
+    "raster_abi1_4_cuda": {
+      "passed": 44,
+      "total": 44,
+      "scope": ["raster_abi1", "raster_abi2", "raster_abi3", "raster_abi4"],
+      "log_artifact": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/raster-abi1-4-cuda.log",
+        "sha256": "0bc4624f07464aecd3466eade7841a71b7e45e20d5ffe8eaec0911da8275859f",
+        "size_bytes": 5036
+      }
+    },
+    "runtime_c3_c4_fallback": {
+      "passed": 48,
+      "total": 48,
+      "scope": ["runtime_c3", "runtime_c4", "runtime_fallback", "execution_counts"],
+      "log_artifact": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/runtime-c3-c4-fallback.log",
+        "sha256": "449a8a341e4f1d23d1e790b2dc7f8864c2bbbcf79900e02a9aa528f29ac24186",
+        "size_bytes": 5625
+      }
+    },
+    "phase31_cpu_contract": {
+      "passed": 271,
+      "total": 271,
+      "log_artifact": {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/phase31-cpu-contract.log",
+        "sha256": "a4ce707e575b880f51e5a7e58d98d17596355b6ed3a1199a70b2248e9bef7dc7",
+        "size_bytes": 754
+      }
+    }
+  },
+  "ptxas": {
+    "passed": true,
+    "sm_target": "sm_86",
+    "artifact": {
+      "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/ptxas-evidence.json",
+      "sha256": "d10f2340b0948e4019fad8b6c93281e28ef4f9ae8e9898d6575240d9143422de",
+      "size_bytes": 2709
+    },
+    "kernels": {
+      "tacker_mix_render_head_v1": {"accepted": true, "registers_per_thread": 40, "static_shared_bytes": 7168, "local_bytes_per_thread": 0},
+      "tacker_mix_render_heads_v2": {"accepted": true, "registers_per_thread": 68, "static_shared_bytes": 7376, "local_bytes_per_thread": 0},
+      "tacker_mix_render_packed_heads_v3": {"accepted": true, "registers_per_thread": 70, "static_shared_bytes": 7168, "local_bytes_per_thread": 0},
+      "tacker_mix_render_whole_heads_v4": {"accepted": true, "registers_per_thread": 36, "static_shared_bytes": 10016, "local_bytes_per_thread": 0},
+      "tacker_head_linear_multi_solo_v2": {"accepted": true, "registers_per_thread": 48, "static_shared_bytes": 0, "local_bytes_per_thread": 200},
+      "tacker_head_linear_multi_gptb_v2": {"accepted": true, "registers_per_thread": 48, "static_shared_bytes": 0, "local_bytes_per_thread": 200},
+      "tacker_head_linear_packed_gptb_v2": {"accepted": true, "registers_per_thread": 48, "static_shared_bytes": 0, "local_bytes_per_thread": 0},
+      "tacker_whole_head_gptb_v2": {"accepted": true, "registers_per_thread": 32, "static_shared_bytes": 512, "local_bytes_per_thread": 0}
+    }
+  }
+}

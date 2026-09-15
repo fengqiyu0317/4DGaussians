@@ -1,0 +1,159 @@
+{
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "cuda_runtime": "12.4",
+    "index": 0,
+    "name": "NVIDIA RTX A6000",
+    "pytorch_version": "2.4.1+cu124"
+  },
+  "extensions": {
+    "abi": {
+      "head_manifest": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/abi/head_linear_v1.json",
+      "mixed_manifest": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_head_v1.json"
+    },
+    "head": {
+      "capabilities": {
+        "abi_version": 1,
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "block_threads": 128,
+        "gptb_symbol": "tacker_head_linear_gptb_v1",
+        "head_features": 128,
+        "input_dtype": "float16",
+        "output_dtype": "float32",
+        "sm_target": "sm_86",
+        "solo_symbol": "tacker_head_linear_solo_v1",
+        "weight_dtype": "float16"
+      },
+      "cuda_global_symbols": [
+        "tacker_head_linear_solo_v1",
+        "tacker_head_linear_gptb_v1"
+      ],
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/tacker_4dgs_head/_C.cpython-310-x86_64-linux-gnu.so",
+      "python_symbols": [
+        "head_linear_solo",
+        "head_linear_solo_out",
+        "head_linear_gptb",
+        "head_linear_gptb_out",
+        "tacker_capabilities"
+      ]
+    },
+    "rasterizer": {
+      "capabilities": {
+        "head_descriptor_named_barrier_id": 2,
+        "head_features": 128,
+        "head_manifest_sha256": "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac",
+        "head_multi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "head_thread_base": 256,
+        "head_threads": 128,
+        "max_head_tasks": 5,
+        "max_mixed_heads": 5,
+        "max_worker_groups": 5,
+        "min_worker_groups": 1,
+        "mixed_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+        "mixed_multi_manifest": "abi/tacker_mixed_render_heads_v2.json",
+        "mixed_multi_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+        "mixed_multi_symbol": "tacker_mix_render_heads_v2",
+        "mixed_packed_family": "packed_first_linear_v3",
+        "mixed_packed_head_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "mixed_packed_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+        "mixed_packed_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+        "mixed_packed_symbol": "tacker_mix_render_packed_heads_v3",
+        "mixed_render_head": true,
+        "mixed_render_head_abi": 1,
+        "mixed_render_heads": true,
+        "mixed_render_heads_abi": 2,
+        "mixed_render_packed_heads": true,
+        "mixed_render_packed_heads_abi": 3,
+        "mixed_render_whole_heads": true,
+        "mixed_render_whole_heads_abi": 4,
+        "mixed_symbol": "tacker_mix_render_head_v1",
+        "mixed_threads": 384,
+        "mixed_threads_by_worker_groups": {
+          "1": 384,
+          "2": 512,
+          "3": 640,
+          "4": 768,
+          "5": 896
+        },
+        "mixed_whole_family": "whole_heads_v4",
+        "mixed_whole_head_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "mixed_whole_manifest": "abi/tacker_mixed_render_whole_heads_v4.json",
+        "mixed_whole_manifest_sha256": "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1",
+        "mixed_whole_symbol": "tacker_mix_render_whole_heads_v4",
+        "raster_named_barrier_id": 1,
+        "raster_threads": 256,
+        "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+        "resource_query": "tacker_resource_requirements",
+        "resource_query_family_aware": true,
+        "sm_target": "sm_86",
+        "stream_aware": true,
+        "supported_backend_families": [
+          "first_linear_heads_v2",
+          "packed_first_linear_v3",
+          "whole_heads_v4"
+        ],
+        "supported_mixed_abis": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "supported_worker_groups": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "whole_head_barrier_base_id": 2,
+        "whole_head_descriptor_named_barrier_id": 7,
+        "whole_head_named_barriers_per_worker_group": 1,
+        "whole_head_scratch_bytes_per_worker_group": 512,
+        "whole_head_tail_features_max": 128,
+        "whole_head_tail_features_min": 1,
+        "worker_group_threads": 128
+      },
+      "cuda_global_symbols": [
+        "tacker_mix_render_head_v1"
+      ],
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+      "python_symbols": [
+        "rasterize_gaussians",
+        "rasterize_gaussians_with_head",
+        "tacker_capabilities"
+      ]
+    }
+  },
+  "generated_at_utc": "2026-09-15T02:56:52.458672+00:00",
+  "kind": "4dgaussians_tacker_device",
+  "measurement_config": {
+    "persistent_blocks": 7000
+  },
+  "passed": true,
+  "schema_version": 1,
+  "workload": {
+    "current_view_indices": [
+      0,
+      1
+    ],
+    "gaussian_count": 111525,
+    "iteration": 14000,
+    "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+    "next_view_indices": [
+      1,
+      2
+    ],
+    "resolution": [
+      1352,
+      1014
+    ],
+    "scene": "flame_steak",
+    "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+    "split": "test"
+  }
+}

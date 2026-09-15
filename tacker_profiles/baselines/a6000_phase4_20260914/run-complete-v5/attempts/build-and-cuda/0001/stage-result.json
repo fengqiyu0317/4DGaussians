@@ -1,0 +1,29 @@
+{
+  "extension_binaries": {
+    "head": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/tacker_4dgs_head/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "f99bc3134ef9997d3a88f4772476a6641b219db275a522d67327048d3f2db3a5",
+      "size_bytes": 468608
+    },
+    "rasterizer": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+      "size_bytes": 2844464
+    },
+    "simple_knn": {
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/simple-knn/simple_knn/_C.cpython-310-x86_64-linux-gnu.so",
+      "sha256": "c04852b5c0d0db5cd2c76bdba106c81fca79f3502896dec2ed33e87ea48fdae8",
+      "size_bytes": 1804824
+    }
+  },
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/build-cuda.json",
+    "sha256": "973302800bb0e4ec4ab2883f4a30587e8989139ac0385ecd7c8144dc6e6a42cf",
+    "size_bytes": 19817
+  },
+  "runtime_library": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/runtime-build/libtacker_runtime.so.0.4.0",
+    "sha256": "78f4d2b1f85eb91dccaed07fc71597a27babcafda93413f96dfc47bd3f8e0671",
+    "size_bytes": 164640
+  }
+}

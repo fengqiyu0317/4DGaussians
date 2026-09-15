@@ -1,0 +1,250 @@
+{
+  "candidate_generation_allowed": false,
+  "command": {
+    "argv": [
+      "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+      "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/verify_tacker_phase31.py",
+      "--run-root",
+      "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3",
+      "--output",
+      "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.json",
+      "--python-executable",
+      "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10"
+    ],
+    "argv_sha256": "a011a28d9d880f34c0793a9111d51171e4696a2642c09a1384f79c1b67fec742",
+    "environment": {
+      "TACKER_PHASE31_PROJECT_ROOT": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31"
+    },
+    "log": {
+      "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.log",
+      "sha256": "1a366924e77454dc5b441109ad941bac32e00615500cacf39f197c3a2d8b795e",
+      "size_bytes": 4650
+    },
+    "returncode": 0
+  },
+  "inputs": {
+    "baselines": [
+      "serial",
+      "two_stream",
+      "current_tacker"
+    ],
+    "current_tacker_profile": {
+      "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_profiles/incumbents/current-v1.json",
+      "sha256": "b2b8441300dc2527cfd9380624de5fa3b2368503794dd3d734632175a3f1acf1",
+      "size_bytes": 3202
+    },
+    "finalists": [
+      {
+        "abi_family": "packed_first_linear_v3",
+        "candidate_sha256": "615594b32a83cea9eab03683487403dd27032ae15ea853dad744095dc5acb451",
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+          "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+          "size_bytes": 6910
+        },
+        "search_family": "c3"
+      },
+      {
+        "abi_family": "packed_first_linear_v3",
+        "candidate_sha256": "fd18a0b1f492086d6fa282d1481d36f1a2f78f3adf6bb0c115fdec1edd55f9d0",
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+          "sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+          "size_bytes": 6910
+        },
+        "search_family": "c3"
+      },
+      {
+        "abi_family": "packed_first_linear_v3",
+        "candidate_sha256": "b85d23d8496a13a0ad7024e55d273df21b3c1b1ca4ac4aa3b3e45a174f931294",
+        "name": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+          "sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+          "size_bytes": 6916
+        },
+        "search_family": "c3"
+      },
+      {
+        "abi_family": "packed_first_linear_v3",
+        "candidate_sha256": "4436c3e0e7d9823b5ec645a0ce19976e9e5e3781182f62fcbe3f92f1810acf55",
+        "name": "c3_packed_first_linear_pos_scales_opacity_wg1_pb7000",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.json",
+          "sha256": "95736179d8c6e4f2767d66dc7310f9e6ecccef71038ee5bc36a9016d3cf02f89",
+          "size_bytes": 6542
+        },
+        "search_family": "c3"
+      },
+      {
+        "abi_family": "packed_first_linear_v3",
+        "candidate_sha256": "8ee489cb888569113545ff774009671d4082efe70e04bb1a6e87870ee423e517",
+        "name": "c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.json",
+          "sha256": "83699ee679dcb607f5feff3d4476ca10f8a654a3134f46d2ee23283be4ce7856",
+          "size_bytes": 6578
+        },
+        "search_family": "c3"
+      },
+      {
+        "abi_family": "first_linear_heads_v2",
+        "candidate_sha256": "17062db9028370d1ca21e0aad4490ff03cd92ae5463408bf2c6a014fd893bd52",
+        "name": "c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+          "sha256": "07e666b8684123efca6fa26a0d220bb8290832432f195f5876ec49f70cff51ee",
+          "size_bytes": 6614
+        },
+        "search_family": "c2"
+      },
+      {
+        "abi_family": "legacy_pos_l1_v1",
+        "candidate_sha256": "5c836048011c3634b9a1f205870309aa869019bf3f7662fb47b6ba54693e7c4a",
+        "name": "c0_legacy_pos_l1_pb5440",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c0_legacy_pos_l1_pb5440.json",
+          "sha256": "3584e0cef124097b930c856ac97160c73ddb5986a2c230b1b99f8114a5f17063",
+          "size_bytes": 4946
+        },
+        "search_family": "c0"
+      },
+      {
+        "abi_family": "first_linear_heads_v2",
+        "candidate_sha256": "e5d8b285e3a1290fc50b48f8abd453b81d39a5e442ac026998d74526f31ce36d",
+        "name": "c1_opacity_l1_wg1_pb13942",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c1_opacity_l1_wg1_pb13942.json",
+          "sha256": "e48b361e04784ce23c273a2a8ac96e2fa2b5e5ec91e5417f179bc5e7f74b112a",
+          "size_bytes": 5892
+        },
+        "search_family": "c1"
+      },
+      {
+        "abi_family": "whole_heads_v4",
+        "candidate_sha256": "f7c76db66b2868021e4f1bc845581a7af39d3779702e0075e0ae1933330e64b6",
+        "name": "c4_whole_heads_opacity_wg1_pb5440",
+        "profile": {
+          "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c4_whole_heads_opacity_wg1_pb5440.json",
+          "sha256": "80439c008f4f2438e0051656313adcedba0083af0b82f80e50b28c5bb0b9f055",
+          "size_bytes": 6482
+        },
+        "search_family": "c4"
+      }
+    ],
+    "formal_set_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/formal-candidate-set/0001/formal-candidate-set.json",
+    "formal_set_sha256": "7c592726cb2edfeb9ea7c030b569d213b179c0917d31a9d1b4a56007abc54102",
+    "matrix_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json",
+    "matrix_sha256": "aa45c9dce881a5a71c9d86130fcd6b12070ee2773b83b44a538f2147bbde8577",
+    "phase31_deployment_winner": "c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440",
+    "phase31_identity_sha256": "0f16b7250611891db52cc59dada0f8bd77c40d735c26f98aed7c81047c14d8a2",
+    "sealed_artifacts": [
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/c4-matrix/0001/matrix.json",
+        "sha256": "0330f77ed995c81274b37bb2bd535d1d824f700967280139b822ffc7e31ed95c",
+        "size_bytes": 373547
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/formal-candidate-set/0001/formal-candidate-set.json",
+        "sha256": "cb7a34bee6bf35f5538a13fef88e8e975784f398d1f730918b2d17b5237721f9",
+        "size_bytes": 11090
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c0_legacy_pos_l1_pb5440.json",
+        "sha256": "3584e0cef124097b930c856ac97160c73ddb5986a2c230b1b99f8114a5f17063",
+        "size_bytes": 4946
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c1_opacity_l1_wg1_pb13942.json",
+        "sha256": "e48b361e04784ce23c273a2a8ac96e2fa2b5e5ec91e5417f179bc5e7f74b112a",
+        "size_bytes": 5892
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c2h5_pos_scales_rotations_opacity_shs_l1_wg1_pb5440.json",
+        "sha256": "07e666b8684123efca6fa26a0d220bb8290832432f195f5876ec49f70cff51ee",
+        "size_bytes": 6614
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_opacity_wg1_pb7000.json",
+        "sha256": "95736179d8c6e4f2767d66dc7310f9e6ecccef71038ee5bc36a9016d3cf02f89",
+        "size_bytes": 6542
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb13942.json",
+        "sha256": "f15e14ce3dc5bdd94338cd2961a09a8711484d24a097a4b71a6c79aa28382a2c",
+        "size_bytes": 6916
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440.json",
+        "sha256": "5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51",
+        "size_bytes": 6910
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb7000.json",
+        "sha256": "0bfc81f92076dcd435bd20c4248ab6e80e4a368b8efe057099fca30f8b5f4d10",
+        "size_bytes": 6910
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c3_packed_first_linear_scales_rotations_opacity_wg1_pb5440.json",
+        "sha256": "83699ee679dcb607f5feff3d4476ca10f8a654a3134f46d2ee23283be4ce7856",
+        "size_bytes": 6578
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/profiles-final/0001/profiles/c4_whole_heads_opacity_wg1_pb5440.json",
+        "sha256": "80439c008f4f2438e0051656313adcedba0083af0b82f80e50b28c5bb0b9f055",
+        "size_bytes": 6482
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/qualification-plan/0001/qualification-plan.json",
+        "sha256": "21e647dd18c9a9e7db0e84f119d49cada66cb4cc9e27d77f6b5a1ef8b6cd59bd",
+        "size_bytes": 33350
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/selection/0001/selection.json",
+        "sha256": "6ff8dc692a2e3d2153caeaf214dda1ec25176477eb3a3e43e17c0b4f00b9311a",
+        "size_bytes": 1529
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/phase31-report.json",
+        "sha256": "b24699941748fff134830bf59e0a0001bc64ac419ed119d10481bb894b956ea9",
+        "size_bytes": 54139
+      },
+      {
+        "path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/phase31-state.json",
+        "sha256": "da2fba8f33cb0938a40a57aa4af376e8c6cd9b1ad129b6ed4dc43c9337ef4758",
+        "size_bytes": 5213571
+      },
+      {
+        "path": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31/tacker_profiles/incumbents/current-v1.json",
+        "sha256": "b2b8441300dc2527cfd9380624de5fa3b2368503794dd3d734632175a3f1acf1",
+        "size_bytes": 3202
+      }
+    ],
+    "selection_path": "/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3/attempts/selection/0001/selection.json",
+    "selection_sha256": "1a91a02c2605ae442817bb060b7956ead5d3b940146d274b94a85e00849ec126",
+    "verification_summary": {
+      "family_candidate_counts": {
+        "c0": 6,
+        "c1": 30,
+        "c2": 450,
+        "c3": 84,
+        "c4": 91
+      },
+      "screening_terminal_count": 661,
+      "succeeded_stage_count": 49,
+      "unique_stage_artifact_count": 7354
+    }
+  },
+  "kind": "4dgaussians_tacker_phase4_sealed_phase31_inputs",
+  "passed": true,
+  "read_only": true,
+  "replay_project_root": "/home/qyfeng/tacker_phase31_code/20260913-codex-phase31",
+  "schema_version": 1,
+  "verifier": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/verify-phase31-seal/0001/phase31-postflight.json",
+    "sha256": "4949cb3206df127e5c205cbcb1eb47aa32c942da636947680a698b0a424650eb",
+    "size_bytes": 5359
+  }
+}

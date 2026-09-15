@@ -13,7 +13,10 @@
 - 1352 × 1014，test 视角 0–49；
 - NVIDIA RTX A6000，compute capability 8.6（`sm_86`）；
 - Rasterizer commit `e49506654e8e11ed8a62d22bcb693e943fdecacf`；
-- 当前已部署的 v1 ABI 为 384-thread CTA：Raster `[0,255]`，pos-L1 `[256,383]`；Phase 2 v2 qualification 候选根据 1–5 个 worker group 使用 384–896 threads；
+- 当前已部署的 v1 ABI 为 384-thread CTA：Raster `[0,255]`，pos-L1
+  `[256,383]`；Phase 2/3.1 qualification 同时覆盖 C1/C2 first-linear、
+  C3 packed first-linear 和 C4 whole-head，精确的 CTA、worker-group 与
+  `persistent_blocks` 从候选 ABI/profile 读取；
 - Raster named barrier ID 1，256 participants；head device adapter 内部不使用
   named barrier。v2 mixed wrapper 仍以 barrier ID 2、`128 * worker_groups`
   participants 广播 task descriptors。
@@ -22,9 +25,9 @@
 `flame_steak:14000:111525:1352x1014:sm_86`。任何 workload、设备、ABI 或
 profile 哈希不匹配都会 fail closed。
 
-## Phase 1 决策契约
+## 当前决策契约
 
-Phase 1 把两件事显式拆开：
+从 Phase 1 起，准入把两件事显式拆开：
 
 1. **Correctness qualification** 决定候选是否有资格参与测量和排名。
    Tacker 候选必须实际执行 `tacker`、无 fallback，并通过数值、画质、
@@ -81,11 +84,13 @@ profile 逐项比对；`qualification_mode` 必须与 profile 的 deployment
 状态互补。可空的 fallback/profile 证据也必须显式出现，缺字段不等于
 `null`。
 
-Phase 1 绑定 model/source 路径、iteration、shape 和 Gaussian 数量，但尚未对
-checkpoint 文件内容做 fingerprint；PLY/PTH 内容哈希属于 Phase 4 的完整
-发布验收，不应把本阶段报告解读为已绑定权重字节。
+Phase 1–3.1 封存证据绑定 model/source 路径、iteration、shape 和
+Gaussian 数量，但不得把这解读为已完成所有 checkpoint 字节的 Phase 4
+发布验收。Phase 4 的 workload file inventory、源码/config/候选二进制预快照、
+实际加载二进制绑定和 post-run 字节稳定性检查必须全部通过，否则不可
+发布。
 
-## Phase 2 候选 profile
+## Phase 2/3.1 候选 profile
 
 Phase 2 的通用 first-linear partition 使用同一套候选描述覆盖五个
 C1（`pos`、`scales`、`rotations`、`opacity`、`shs`）和一个
@@ -93,6 +98,11 @@ C1（`pos`、`scales`、`rotations`、`opacity`、`shs`）和一个
 
 - `tacker_ext/abi/head_linear_v2.json`：`9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f`；
 - `submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_heads_v2.json`：`310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056`。
+
+Phase 3.1 另加入两个 Raster ABI：
+
+- C3 packed v3：`c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40`；
+- C4 whole-head v4：`293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1`。
 
 在 A6000 上构建两个扩展后，以编译后的函数属性和 occupancy 生成
 C0 + 全部 C1 + 一个 C2 的 disabled qualification profile：
@@ -118,7 +128,13 @@ ABI 和画质证据，但不再重新执行旧 Raster QoS/leaf/E2E 性能否决�
 其完整 canonical SHA-256；任何修改或从新报告删字段都不能获得
 legacy 默认值。
 
-## 1. 准备 correctness 和 tie-break 输入
+## 手工复现构建块
+
+下列 1–3 节是 selector/admission 的底层手工构建块，便于独立审计中间
+证据。它们不会自动执行 Phase 4 的 seal 校验、TOCTOU、1/2/50+长序列、
+fallback、泛化评估或发布检查。完整 Phase 4 应使用后文的唯一编排入口。
+
+### 1. 准备 correctness 和 tie-break 输入
 
 FPS 驱动器的 `--correctness-json` 必须精确覆盖本次所有候选：
 
@@ -174,7 +190,7 @@ GPU child 启动前 fail closed，避免 producer 生成 admission 无法消费�
 
 该文档的候选名必须与 FPS 报告和 `--candidate-profile` 中的名字一致。
 
-## 2. 交错测量 whole-run FPS
+### 2. 交错测量 whole-run FPS
 
 `scripts/benchmark_tacker_fps.py` 每轮以 ABBA 或 round-robin 顺序交错启动
 `serial`、`two_stream`、`current_tacker` 和额外候选。关闭的 v2 candidate
@@ -210,7 +226,7 @@ python scripts/benchmark_tacker_fps.py \
 paired whole-run trial，且每个 trial 必须恰好包含 50 帧；不依赖报告中可删除的
 声明性字段放行。
 
-## 3. 生成准入报告和 winner profile
+### 3. 生成准入报告和 winner profile
 
 `scripts/benchmark_tacker_admission.py` 不启动 GPU 内核；它校验已存的设备、ABI、
 质量、leaf/Raster diagnostics 和 whole-run FPS 证据。当 benchmark 含额外
@@ -249,11 +265,13 @@ Tacker 候选会被标记为 correctness-invalid。
 报告/profile 路径不得相同，也不得覆盖 disabled template。建议每次运行使用新的
 winner 文件名，以便保留完整回滚记录。
 
-## Phase 0 封存基线
+## Phase 0 封存历史基线
 
 Phase 0 于 2026-09-10 在独占 RTX A6000 GPU 1 上完成。三种模式以 ABBA、
 seed 0 各执行 10 个 50-frame trial，warmup 10；30/30 次均通过物理模式、
 fallback、workload、计时边界、profile 哈希和 provenance 校验。
+这份证据只是历史 incumbent 参考，不包含 C3/C4，也不能代替 Phase 4
+准入或发布决定。
 
 | 排名 | 模式 | median FPS | median total | FPS 范围 |
 |---:|---|---:|---:|---:|
@@ -266,6 +284,207 @@ bootstrap 95% CI 为 `[1.0061090994, 1.0097120318]`。聚合报告、30 份原�
 JSON、哈希和复现说明位于
 `tacker_profiles/baselines/a6000_flame_steak_phase0_20260910/`。
 
+## Phase 3.1 封存输入
+
+Phase 3.1 的最终有效 `run-complete-v3` 已紧凑镜像到
+`tacker_profiles/baselines/a6000_phase31_20260913/`，完整 canonical run 保留在：
+
+```text
+/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3
+```
+
+它封存 661 个 C0–C4 候选、9 个 generated finalists 与 3 个 baseline。
+formal 协议为同一 GPU 1、视角 0–49、warmup 10、50 frames、10 trials、
+ABBA/seed 0，120/120 次成功。封存选择为：
+
+- winner：`c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440`；
+- median FPS：`100.9417269038`；
+- matrix SHA-256：`aa45c9dce881a5a71c9d86130fcd6b12070ee2773b83b44a538f2147bbde8577`；
+- formal-set SHA-256：`7c592726cb2edfeb9ea7c030b569d213b179c0917d31a9d1b4a56007abc54102`；
+- selection SHA-256：`1a91a02c2605ae442817bb060b7956ead5d3b940146d274b94a85e00849ec126`；
+- winner profile file SHA-256：`5c3c2031aabe8018d11f41a90e324f375b1a7a14cdfaaef2db730514ec027a51`；
+- winner canonical profile SHA-256：`f91e5f129708ee7612e4a45e95b00e23fe15a92eb1f1be376c2a85095379599e`。
+
+Phase 3.1 的 `promote_challenger` 只是 selector 结论。winner profile 仍为
+`deployment.enabled=false, valid=false`；它是 Phase 4 输入，不是已发布凭证。
+
+## Phase 4 fail-closed 编排
+
+`scripts/run_tacker_qualification.sh` 现为 Phase 4 入口，转发给
+`scripts/run_tacker_phase4.py`。编排器只消费上述 sealed finalists，并明确禁止
+候选生成、matrix 扩展或重排。它的 hash-bound/checkpointed stages 为：
+
+1. preflight 和扩展/runtime 构建、CPU/CUDA 回归；
+2. Phase 3.1 identity/matrix/formal-set/selection 的字节 seal 复核；
+3. 每个 sealed finalist 的资源、occupancy 和数值独立复验；
+4. 50-view 画质和 10 × 50 ABBA/seed 0 whole-run 复测；
+5. selector/admission 重算，及条件性 enabled profile 的常规非 qualification 复跑；
+6. 1/2/50 与长序列的输出顺序、prefill/steady-state/drain 计数；
+7. missing、stale-workload、hash-mismatch 三种可见 fallback smoke；
+8. 两个声明为不同 Raster/deformation mix、且 whole-run overlap proxy
+   可测地区分的泛化 workload，各自以独立 `workload_key` 报告结果，不宣称
+   全局 winner；
+9. 显式 canary、原子 release artifact 和 current-Tacker/two-stream rollback 复验。
+
+运行前可在相同环境向命令末尾添加 `--dry-run`，检查密封哈希、必填
+参数和完整 stage plan；dry-run 不调用任何子进程。
+
+### 最终 A6000 run 与精确命令
+
+2026-09-15 的唯一最终结论来自
+`/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5`。
+当次从隔离的 v8 源码树实际使用了以下命令：
+
+```bash
+cd /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8
+
+export TACKER_ROOT=/home/qyfeng/tacker_phase4_runtime/20260914-codex-phase4
+export PHASE31_RUN_ROOT=/data/qyfeng/tacker_phase31_validation/20260913-codex-phase31/run-complete-v3
+export OUTPUT_DIR=/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5
+export CUDA_VISIBLE_DEVICES=1
+export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libnvidia-ml.so.570.124.06
+export CUDA_HOME=/usr/local/cuda-12.4
+export TORCH_HOME=/data/qyfeng/cache/torch
+export PYTHON_BIN=/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10
+
+bash scripts/run_tacker_qualification.sh
+```
+
+这是 canonical run 的原始命令记录，不应就地覆盖或改写该证据目录。做独立
+复现时，只将 `OUTPUT_DIR` 改成一个新的、空的 run root；不得把 Phase 3.1
+canonical root 用作可写输出目录，也不得暴露多张 GPU。
+
+Phase 4 报告必须同时绑定主仓源文件、Raster 子模块、Tacker runtime
+源文件和实际 `libtacker_runtime.so`、CUDA/PyTorch/GPU、workload files、ABI、
+config/profile 与实际加载 Raster 二进制。预快照在 heavy import/配置解析前
+建立，import 后绑定实际二进制，并在最终报告发布前复核所有字节未变。
+任一缺失、不匹配或运行期改写都 fail closed。
+
+### 最终资格结果
+
+13/13 个 hash-bound stage 均为 `succeeded`。正式测量将 9 个 sealed
+finalist 与 serial、two-stream、current Tacker 组成 12-entry 集合，在
+warmup 10、50 frames、10 trials、ABBA/seed 0 下完成 120/120 次执行。
+
+| entry | median FPS | 相对 winner |
+|---|---:|---:|
+| `c3_packed_first_linear_pos_scales_rotations_opacity_shs_wg1_pb5440` | `100.5082562657` | `1.0` |
+| current Tacker | `87.3984074601` | winner/current `1.1500010033` |
+| two-stream | `86.3416638762` | winner/two-stream `1.1640759716` |
+
+winner/current 的 paired-bootstrap 95% CI 为
+`[1.1446137379, 1.1542292551]`，winner/two-stream 的 CI 为
+`[1.1596655823, 1.1687732974]`。实验 argmax 和 deployment selector 一致，
+决策为 `promote_challenger / promotion_gates_passed`。
+
+资源与画质证据为：
+
+- 10/10 份 Tacker 资源/数值记录有效，12/12 个 formal entry 的 50-view
+  correctness 有效，39 条 ptxas 记录均为 0 spill。
+- winner 的 mixed/solo-Raster/solo-head p50 为 `5.474816` / `4.174336` /
+  `1.435648 ms`；Raster slowdown `31.154%` 仅作 diagnostic，不是 QoS gate。
+- winner 的 Raster 物理配置是 70 registers/thread、7168 B static shared memory、
+  0 local bytes/thread、2 active blocks/SM、occupancy `0.5`；packed head 为
+  48 registers/thread、0 static shared memory、occupancy `0.8333333333`。
+- 50-view 平均差异为 PSNR drop `0.000209961 dB`、SSIM drop `1.3161e-6`、
+  LPIPS increase `6.7294e-7`，低于 `0.05 dB` / `1e-4` / `1e-4` 门禁。
+
+1/2/50/500 帧回归都完成；下表中 counts 顺序是
+`full/prefix/mixed/suffix/solo-raster/outputs/selected-head-per-head`：
+
+| 帧数 | p50 / p95 / max（ms） | allocated / reserved 峰值（B） | counts |
+|---:|---:|---:|---:|
+| 1 | `202.915833 / 202.915833 / 202.915833` | `817,773,568 / 2,065,694,720` | `1/0/0/0/1/1/1` |
+| 2 | `108.794884 / 201.154864 / 211.417084` | `1,280,936,960 / 2,065,694,720` | `1/1/1/1/1/2/2` |
+| 50 | `9.813019 / 10.097307 / 208.758789` | `1,280,936,960 / 2,065,694,720` | `1/49/49/49/1/50/50` |
+| 500 | `9.840576 / 9.891193 / 199.469055` | `1,282,750,976 / 2,124,414,976` | `1/499/499/499/1/500/500` |
+
+admission 生成的 enabled/valid profile 又在常规、非 qualification 路径完成
+10 × 50 复跑：`actual_execution_mode=tacker`、无 fallback，每次 50 帧的
+counts 为 `1/49/49/49/1/50/50`。该路径的 median throughput 为
+`72.7980424912 FPS`、median p50/p95 为 `9.788147/9.834361 ms`；它用于验证
+常规加载路径，不替代前述交错 formal selector 统计。本次整个 Phase 4
+观测到的最大 allocated/reserved 为 `1,284,494,848` / `2,124,414,976` B。
+
+missing、stale-workload、hash-mismatch 三个负向用例完成 3/3：它们都从
+请求的 `tacker` 可见地回退到 `two_stream`，并分别记录“预快照中 profile
+缺失”、“workload name 不匹配”与“manifest SHA-256 不匹配”的非空原因。
+
+泛化阶段严格限定为 baseline-only/evaluation-only：
+
+| workload | serial / split-serial / two-stream FPS | overlap proxy（split/serial，two/split） | 局部 winner |
+|---|---:|---:|---|
+| iteration 3000 native，1352×1014，92,999 Gaussians | `101.053316 / 101.206854 / 105.618013` | `1.001519 / 1.043586` | `two_stream` |
+| iteration 14000 scale-4，338×254，111,525 Gaussians | `113.757326 / 113.507657 / 121.374622` | `0.997805 / 1.069308` | `two_stream` |
+
+两个 workload 的 key 不同，proxy 可测地不同；本轮没有对它们评估主 workload
+Tacker variant，也没有复用 profile、生成候选或声称跨 workload winner。
+
+### provenance 与关键 artifact 哈希
+
+- 物理 GPU 1 为 NVIDIA RTX A6000（`sm_86`、84 SM），driver
+  `570.124.06`、CUDA 12.4、PyTorch `2.4.1+cu124`、Python 3.10。
+- Phase 4 identity：`66cab463bd2682f3f330095f74afc37df4eeb257ba98083825172c40c150f39f`；
+  顶层 report/state 文件 SHA-256：
+  `51fd1d70dd276e6508250cc9761dff99819ef116ff72c5793dc1f348f2373bd7` /
+  `6fe406bcf39377642963cfdab159d20ae45a6208b85c98230fa72e783211d7fe`。
+- 主仓/Raster/simple-knn commit：
+  `a6c475ee737341c28f88a8fda5fa04479e211592` /
+  `79975a092b027cfb374caa2651959942d9aae4f0` /
+  `b3554e0fee8a51b4f9201644577ab23c5bb10507`；Tacker runtime commit：
+  `a6e84eef97b315424c9587cd534792583b609101`。runtime 的源码集合和稳定
+  dirty-status 同样进入 identity，不会被解读为未记录的 clean tree。
+- 实际 runtime/head/Raster/simple-knn 二进制 SHA-256：
+  `78f4d2b1f85eb91dccaed07fc71597a27babcafda93413f96dfc47bd3f8e0671` /
+  `f99bc3134ef9997d3a88f4772476a6641b219db275a522d67327048d3f2db3a5` /
+  `cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c` /
+  `c04852b5c0d0db5cd2c76bdba106c81fca79f3502896dec2ed33e87ea48fdae8`。
+  所有实际执行都绑定同一 Raster binary，前后字节稳定性验证通过。
+- formal report 文件 SHA-256：
+  `8cc23567062e7eb0d43d420ba6d8f9128b80844e1c96d2f3b44769f065982777`；
+  admission report 文件 SHA-256：
+  `877d7a2af7983cc9bbbd2d0626693ca6e06766ff2ce7ac74df305cc6293289f6`。
+- enabled profile 文件/canonical/manifest SHA-256：
+  `43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e` /
+  `22e27f5ee9cf5f98b53cf4e790bb165163c1a61f9970775da4faabea0d9f22d6` /
+  `74ebfa63c3be7d8f3283b098fb9fd6155cf8e9d39ebdf0197ef473b587a4ea52`；
+  selected mixed ABI SHA-256：
+  `c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40`。
+- canary/rollback/release-selection 文件 SHA-256：
+  `f24e2d450cfeb77d3874c6b62103a918049f85bc1450b3e6c6a2a79c436f7e7c` /
+  `bd3b135bec857f1dfdcc7d76941063b16c5c564fb4abab23e596e99adabcdf99` /
+  `8886c50839549eaaa14bc6bd318500ed99218fd02296954fa149d21df5c7ee41`；
+  release canonical SHA-256：
+  `e7dd8d081d445b51dc92cccc74704690e9187863163ae2dd26b6fb43d5ba88d8`。
+
+紧凑镜像位于
+`tacker_profiles/baselines/a6000_phase4_20260914/run-complete-v5/`；所有上述结论应以
+该目录内的 JSON 和顶层 canonical run 为准。
+
+## canary、发布与回滚
+
+发布单位是一对哈希绑定的 `deployment selection + profile`，而不是对
+disabled template 的原地改写。
+
+1. admission 仅在 Tacker 候选真正获胜且所有门禁通过时生成新
+   enabled/valid profile。若 `serial` 或 `two_stream` 获胜，只发布 baseline
+   selection，不生成空 Tacker profile。
+2. 将新 profile 作为不可变 regular file 放入唯一 release 目录，用绝对路径
+   显式运行 canary；不更改默认执行模式。
+3. canary 通过后仍不自动切换生产默认项。只有获得明确运维授权后，
+   才先写完并 `fsync` profile/selection 新文件，再用 `os.replace` 原子
+   替换 deployment selection。不修改已加载 profile，不使用 symlink；新进程
+   重新加载 regular file 并验哈希。
+4. 回滚只需原子将 selection 指回封存的 current Tacker enabled profile，或
+   切到 `two_stream`。重启/重载后再验证 `actual_execution_mode`、无非预期
+   fallback 和 50-view 输出顺序。
+
+本次已完成显式 profile canary、current Tacker 与 two-stream 两项 rollback drill，
+并生成不可变 release-selection artifact。但它的状态是
+`ready_for_explicit_promotion`，`automatic_default_replacement_performed=false`；canary 也记录
+`scope=explicit_profile_only`、`default_profile_replaced=false`。因此当前默认生产
+selection/profile 尚未切换。
+
 ## CPU contract 回归
 
 ```bash
@@ -273,8 +492,12 @@ PYTHONDONTWRITEBYTECODE=1 python -m unittest \
   tests.test_tacker_pipeline \
   tests.test_profile_render_modes \
   tests.test_benchmark_tacker_fps \
-  tests.test_tacker_admission -v
+  tests.test_tacker_admission \
+  tests.test_validate_tacker_modes \
+  tests.test_tacker_qualification_script \
+  tests.test_run_tacker_phase4 -v
 ```
 
-`scripts/run_tacker_qualification.sh` 仍是 schema-v1 历史编排入口，不代表新的
-Phase 1 准入契约；将它串接到多候选 correctness/FPS 流程属于 Phase 4。
+`run-complete-v5` 中的远端回归计数为：Phase 4 主 CPU contract 241/241、
+head CPU 60/60、Raster CPU 44/44、head CUDA 16/16、Raster CUDA 16/16，
+Tacker runtime CTest 1/1。最终本地根目录完整回归为 412/412 tests passed。

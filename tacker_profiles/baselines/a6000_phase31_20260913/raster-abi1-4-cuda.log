@@ -1,0 +1,49 @@
+test_forward_and_backward_complete_on_nondefault_stream (test_stream_aware_legacy_cuda.StreamAwareLegacyCudaTest) ... ok
+test_c3_c4_bindings_methods_and_capabilities_are_exposed (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_c3_c4_cpp_validation_is_fail_closed (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_capability_manifest_hashes_match_exact_artifact_bytes (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_cpp_checks_head_contract_and_int32_rows (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_cpp_validates_complete_raster_contract_and_empty_shape_tags (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_inference_guard_and_no_backward_registration (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_legacy_forward_backward_and_visibility_use_current_stream (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_new_binding_and_capability_query_are_exposed (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_old_binding_and_forward_path_remain (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_rendered_count_cuda_api_errors_are_checked_without_debug (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_resource_query_is_abi_and_family_specific (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_setup_uses_absolute_paths_and_compiles_mixed_source (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_v1_symbol_binding_and_manifest_are_preserved_with_v2 (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_v2_binding_capabilities_and_resource_query_are_exposed (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_v2_cpp_validation_is_fail_closed (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_v2_resources_include_register_smem_and_occupancy (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_zero_gaussian_path_still_launches_head_wrapper (test_tacker_mixed_contract.ExtensionApiContractTest) ... ok
+test_c3_c4_manifests_preserve_old_abi_artifacts (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_c3_packed_wrapper_uses_adapter_without_backend_barrier (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_c4_whole_wrapper_has_exact_disjoint_barriers_and_scratch (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_manifest_matches_source_contract (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_thread_ranges_and_barrier_are_disjoint (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_v2_manifest_matches_source_and_covers_c1_c2 (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_v2_named_barriers_are_disjoint_and_never_cta_wide (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_v2_wrapper_supports_one_to_five_heads_and_dynamic_ctas (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_wrapper_calls_both_real_device_adapters (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_wrapper_is_one_real_384_thread_kernel (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_zero_policy_queries_device_and_launch_check_is_async (test_tacker_mixed_contract.MixedKernelContractTest) ... ok
+test_c3_c4_fail_closed_and_recover_on_non_default_stream (test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_c3_packed_empty_tail_and_parallel_heads_match_reference (test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_c4_single_multi_empty_and_variable_tail_widths_match_reference (test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_family_specific_resource_queries_and_mismatch_rejection (test_tacker_mixed_cuda.MixedC3C4CudaBoundaryTest) ... ok
+test_cpu_placeholder_is_rejected (test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_misaligned_mixed_head_input_is_rejected (test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_misaligned_mixed_head_weight_is_rejected (test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_zero_row_alternatives_remain_strictly_exclusive (test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_zero_row_ranked_alternatives_are_not_placeholders (test_tacker_mixed_cuda.MixedCudaBoundaryTest) ... ok
+test_dual_head_c2_serial_and_parallel_groups_agree (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_invalid_bundle_is_rejected_and_next_valid_launch_succeeds (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_misaligned_task_and_wrong_dtype_are_rejected (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_one_to_five_heads_all_worker_groups_match_fp32_reference (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_resource_query_covers_all_dynamic_cta_sizes (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+test_shared_read_only_input_alias_is_allowed_outputs_are_distinct (test_tacker_mixed_cuda.MixedV2CudaBoundaryTest) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 0.446s
+
+OK

@@ -1,0 +1,179 @@
+{
+  "all_executed_cases_fell_back_with_reason": true,
+  "cases": {
+    "hash_mismatch": {
+      "actual_execution_mode": "two_stream",
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "0",
+          "--frames",
+          "2",
+          "--trials",
+          "1",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash-mismatch-profile.json"
+        ],
+        "argv_sha256": "7c0f1ba4f789b895086bdada98e72689a54ce530e842caf411fcff78506c22c3",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.log",
+          "sha256": "63cadb4d9331334c86544245ebfe28356962d42fcbe2b2e088ccb01aa1ba6eef",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "fallback_reason": "invalid Tacker profile: profile manifest SHA-256 mismatch",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash_mismatch.json",
+        "sha256": "baceb1a78cb1c017129da6d9201e0133f5c80668b6fc4b1d49ba7be6554e169b",
+        "size_bytes": 109243
+      },
+      "source_profile": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/hash-mismatch-profile.json",
+        "sha256": "40903fde00943cce1ca6c83a523f4bee2b1e62aace878c98a3c1b6f0e9bf0c20",
+        "size_bytes": 102428
+      }
+    },
+    "missing": {
+      "actual_execution_mode": "two_stream",
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "0",
+          "--frames",
+          "2",
+          "--trials",
+          "1",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing-profile.json"
+        ],
+        "argv_sha256": "e5e2abdcc29174b57ac4c8d81a35bd902eda2abdeec2a949533347b69bbdaeba",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing.log",
+          "sha256": "a5cd2feeeacd84b654bfb39e43b60dc18b7c2c28f60b9b59436e3e05f45eb76f",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "fallback_reason": "invalid Tacker profile: cannot load Tacker profile /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing-profile.json: profile was absent from the sealed pre-import snapshot",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing.json",
+        "sha256": "5d23341a8d1c5168424ef22291c4d22df38034b186d2cfafdd0a794937000c01",
+        "size_bytes": 109257
+      },
+      "source_profile": {
+        "exists": false,
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/missing-profile.json"
+      }
+    },
+    "stale_workload": {
+      "actual_execution_mode": "two_stream",
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "0",
+          "--frames",
+          "2",
+          "--trials",
+          "1",
+          "--execution-mode",
+          "tacker",
+          "--workload-name",
+          "flame_steak-stale-profile-smoke",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stale_workload.json",
+          "--quiet",
+          "--tacker-profile",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json"
+        ],
+        "argv_sha256": "ec326ee8131074171b89630119173599e2e2778271d2bc4eaeb63fd262c4a6d4",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stale_workload.log",
+          "sha256": "af326b2d58c237dd52c0dada351f171d503753744846d5cd00df01ecbbe67ec4",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "fallback_reason": "workload name does not match the admitted profile",
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/stale_workload.json",
+        "sha256": "079fd771cbb2fab070a50022b445967508c6e84172cfcfd328fdfaac4abeab1e",
+        "size_bytes": 109679
+      },
+      "source_profile": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+        "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+        "size_bytes": 102428
+      }
+    }
+  },
+  "executed_case_count": 3,
+  "full_negative_matrix_executed": true,
+  "kind": "4dgaussians_tacker_phase4_fallback_smoke",
+  "loaded_rasterizer_sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+  "mutation_cases_unavailable_reason": null,
+  "passed": true,
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/fallback-smoke/0001/fallback-smoke.json",
+    "sha256": "d06626b28068e4fe6da5f7182d615223b33b39a32f361121099e2216dffabe20",
+    "size_bytes": 7861
+  },
+  "requested_case_count": 3,
+  "schema_version": 1,
+  "source_profile": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/selection-admission/0001/enabled-profile.json",
+    "sha256": "43ae401fc607b1ca7611f04d1e12a30a788fad5d647d3e37cd1d645789667d8e",
+    "size_bytes": 102428
+  },
+  "source_profile_qualification_mode": false
+}

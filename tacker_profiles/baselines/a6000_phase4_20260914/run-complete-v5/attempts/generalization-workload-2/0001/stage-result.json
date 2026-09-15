@@ -1,0 +1,222 @@
+{
+  "balance_proxy": {
+    "interpretation": "whole-run overlap sensitivity proxy; not a direct Raster/deformation kernel-time ratio",
+    "kind": "measured_overlap_balance_proxy",
+    "split_serial_to_serial_fps_ratio": 0.9978052446939051,
+    "two_stream_to_split_serial_fps_ratio": 1.069307791311009
+  },
+  "baseline_winner": "two_stream",
+  "candidate_generation_allowed": false,
+  "cross_workload_profile_reuse_allowed": false,
+  "evaluation_only": true,
+  "global_variant_claimed": false,
+  "kind": "4dgaussians_tacker_phase4_generalization_evaluation",
+  "loaded_rasterizer_sha256": "cd76862fee530e24a3a96be571d6decf479205caa3c128ed8e4ca84591af263c",
+  "modes": [
+    "serial",
+    "split_serial",
+    "two_stream"
+  ],
+  "passed": true,
+  "qualification_variant_evaluated": false,
+  "qualification_variant_exclusion_reason": "sealed Phase-3.1 Tacker profiles are bound to the primary workload key, dimensions, and Gaussian count; Phase 4 forbids candidate generation or cross-workload profile mutation",
+  "records": {
+    "serial": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "serial",
+          "--workload-name",
+          "flame_steak_iteration_14000_scale4",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/serial.json",
+          "--quiet",
+          "--resolution",
+          "4"
+        ],
+        "argv_sha256": "773c7bc03b998611c44250657f5ff903361fc26e74cdcf0f7798344780cbfa3c",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/serial.log",
+          "sha256": "532f46db7a6c6d324b9310dc768579cf9d8ab3691302589c4835d7054e3f5af7",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 299005952,
+      "cuda_peak_reserved_bytes": 371195904,
+      "max_frame_ms": 9.120767593383789,
+      "median_throughput_fps": 113.75732620769745,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/serial.json",
+        "sha256": "a4ee5752473b309eb69e014e55533472510cbeeeeac2f0bcd36dd2dfa9991e6a",
+        "size_bytes": 119695
+      },
+      "p50_frame_ms": 8.760337829589844,
+      "p95_frame_ms": 9.000089645385742,
+      "resolution": {
+        "argument": 4,
+        "original_resolution": [
+          1352,
+          1014
+        ],
+        "scale": 4
+      }
+    },
+    "split_serial": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "split_serial",
+          "--workload-name",
+          "flame_steak_iteration_14000_scale4",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/split_serial.json",
+          "--quiet",
+          "--resolution",
+          "4"
+        ],
+        "argv_sha256": "4fcd057eb1f5f9b3f93645b9afce2777d4117c8f5a6389f5f0cc5ca256299369",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/split_serial.log",
+          "sha256": "f8839557eb62e72d20a37599378bc5388e176d5b04a1da5c4eb828a4a1494e61",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 327187456,
+      "cuda_peak_reserved_bytes": 488636416,
+      "max_frame_ms": 9.007104873657227,
+      "median_throughput_fps": 113.50765671239593,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/split_serial.json",
+        "sha256": "83eb23d1071a2d3bc0658b0e256c654a9535ffe51b2384948674eb466f0ad33a",
+        "size_bytes": 119722
+      },
+      "p50_frame_ms": 8.802398681640625,
+      "p95_frame_ms": 8.83679428100586,
+      "resolution": {
+        "argument": 4,
+        "original_resolution": [
+          1352,
+          1014
+        ],
+        "scale": 4
+      }
+    },
+    "two_stream": {
+      "command": {
+        "argv": [
+          "/data/qyfeng/conda-envs/4dgaussians-flame-steak/bin/python3.10",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/scripts/run_profile_render_sealed.py",
+          "--model_path",
+          "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+          "--source_path",
+          "/data/qyfeng/datasets/n3dv/flame_steak",
+          "--configs",
+          "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/arguments/dynerf/flame_steak.py",
+          "--iteration",
+          "14000",
+          "--split",
+          "test",
+          "--warmup",
+          "10",
+          "--frames",
+          "50",
+          "--trials",
+          "3",
+          "--execution-mode",
+          "two_stream",
+          "--workload-name",
+          "flame_steak_iteration_14000_scale4",
+          "--metadata",
+          "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/two_stream.json",
+          "--quiet",
+          "--resolution",
+          "4"
+        ],
+        "argv_sha256": "6b356a33acf833bac5f01022c33315aced85426ce4d4269674a4b912b4cebb0b",
+        "log": {
+          "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/two_stream.log",
+          "sha256": "036b59518422b3420b9512a98c1716a47915497aba695e874aeb922687142dbc",
+          "size_bytes": 243
+        },
+        "returncode": 0
+      },
+      "cuda_peak_allocated_bytes": 380585472,
+      "cuda_peak_reserved_bytes": 677380096,
+      "max_frame_ms": 15.442943572998047,
+      "median_throughput_fps": 121.3746216960203,
+      "metadata": {
+        "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/two_stream.json",
+        "sha256": "11bcdce81acef78eb564a8aabe556a8567a47243f88bfbb546917ad77a034942",
+        "size_bytes": 119739
+      },
+      "p50_frame_ms": 8.162296295166016,
+      "p95_frame_ms": 9.188722229003908,
+      "resolution": {
+        "argument": 4,
+        "original_resolution": [
+          1352,
+          1014
+        ],
+        "scale": 4
+      }
+    }
+  },
+  "report": {
+    "path": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/generalization-workload-2/0001/generalization.json",
+    "sha256": "b54ec82160bf06e38c55d9517ca1b63209e5a06e8122e78cbd0d8986e6e1f22b",
+    "size_bytes": 8243
+  },
+  "schema_version": 1,
+  "selection_scope": "available_safe_baselines_for_unqualified_workload",
+  "workload": {
+    "gaussian_count": 111525,
+    "image_height": 254,
+    "image_width": 338,
+    "iteration": 14000,
+    "name": "flame_steak_iteration_14000_scale4",
+    "profile_args": [
+      "--resolution",
+      "4"
+    ],
+    "raster_deformation_mix": "deformation_heavy",
+    "workload_key": "dynerf/flame_steak/iteration_14000/test/338x254/resolution_4"
+  }
+}

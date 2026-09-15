@@ -1,0 +1,445 @@
+argv_sha256=53c9159b7238f7aa25f61508fa304a0e1b60056193567da7cc59bcbb63cbd8fd
+running build_ext
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/utils/cpp_extension.py:424: UserWarning: There are no g++ version bounds defined for CUDA version 12.4
+  warnings.warn(f'There are no {compiler_name} version bounds defined for CUDA version {cuda_str_version}')
+building 'diff_gaussian_rasterization._C' extension
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization
+creating /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer
+Emitting ninja build file /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/build.ninja...
+Compiling objects...
+Allowing ninja to set a default number of workers... (overridable by setting the environment variable MAX_JOBS=N)
+[1/6] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o.d -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.cu -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/auxiliary.h(151): warning #177-D: variable "p_proj" was declared but never referenced
+   float3 p_proj = { p_hom.x * p_w, p_hom.y * p_w, p_hom.z * p_w };
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+ptxas info    : 56 bytes gmem, 32 bytes cmem[4]
+ptxas info    : Compiling entry function 'tacker_mix_render_whole_heads_v4' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_whole_heads_v4
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 36 registers, 10016 bytes smem, 752 bytes cmem[0], 24 bytes cmem[2]
+ptxas info    : Compiling entry function 'tacker_mix_render_packed_heads_v3' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_packed_heads_v3
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 70 registers, 7168 bytes smem, 508 bytes cmem[0]
+ptxas info    : Compiling entry function 'tacker_mix_render_heads_v2' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_heads_v2
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 68 registers, 7376 bytes smem, 672 bytes cmem[0], 24 bytes cmem[2]
+ptxas info    : Compiling entry function 'tacker_mix_render_head_v1' for 'sm_86'
+ptxas info    : Function properties for tacker_mix_render_head_v1
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 40 registers, 7168 bytes smem, 504 bytes cmem[0]
+[2/6] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/forward.o.d -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/forward.cu -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/forward.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/auxiliary.h(151): warning #177-D: variable "p_proj" was declared but never referenced
+   float3 p_proj = { p_hom.x * p_w, p_hom.y * p_w, p_hom.z * p_w };
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+ptxas info    : 133 bytes gmem, 104 bytes cmem[4]
+ptxas info    : Compiling entry function '_Z14preprocessCUDAILi3EEviiiPKfPKN3glm3vecILi3EfLNS2_9qualifierE0EEEfPKNS3_ILi4EfLS4_0EEES1_S1_PbS1_S1_S1_S1_S7_iiffffPiP6float2PfSF_SF_P6float44dim3Pjb' for 'sm_86'
+ptxas info    : Function properties for _Z14preprocessCUDAILi3EEviiiPKfPKN3glm3vecILi3EfLNS2_9qualifierE0EEEfPKNS3_ILi4EfLS4_0EEES1_S1_PbS1_S1_S1_S1_S7_iiffffPiP6float2PfSF_SF_P6float44dim3Pjb
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 50 registers, 561 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z10renderCUDAILj3EEvPK5uint2PKjiiPK6float2PKfS9_PK6float4PfPjS9_SD_SD_' for 'sm_86'
+ptxas info    : Function properties for _Z10renderCUDAILj3EEvPK5uint2PKjiiPK6float2PKfS9_PK6float4PfPjS9_SD_SD_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 32 registers, 7168 bytes smem, 448 bytes cmem[0]
+[3/6] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/backward.o.d -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/backward.cu -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/backward.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/auxiliary.h(151): warning #177-D: variable "p_proj" was declared but never referenced
+   float3 p_proj = { p_hom.x * p_w, p_hom.y * p_w, p_hom.z * p_w };
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+ptxas info    : 63 bytes gmem, 88 bytes cmem[4]
+ptxas info    : Compiling entry function '_Z10renderCUDAILj3EEvPK5uint2PKjiiPKfPK6float2PK6float4S6_S6_S6_S4_S6_S6_P6float3PSA_PfSG_SG_' for 'sm_86'
+ptxas info    : Function properties for _Z10renderCUDAILj3EEvPK5uint2PKjiiPKfPK6float2PK6float4S6_S6_S6_S4_S6_S6_P6float3PSA_PfSG_SG_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 58 registers, 11264 bytes smem, 488 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z14preprocessCUDAILi3EEviiiPK6float3PKiPKfPKbPKN3glm3vecILi3EfLNS9_9qualifierE0EEEPKNSA_ILi4EfLSB_0EEEfS6_S6_SE_S2_PSC_PfSJ_SJ_SJ_SI_PSF_' for 'sm_86'
+ptxas info    : Function properties for _Z14preprocessCUDAILi3EEviiiPK6float3PKiPKfPKbPKN3glm3vecILi3EfLNS9_9qualifierE0EEEPKNSA_ILi4EfLSB_0EEEfS6_S6_SE_S2_PSC_PfSJ_SJ_SJ_SI_PSF_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 56 registers, 512 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z16computeCov2DCUDAiPK6float3PKiPKfffffS5_S5_PS_Pf' for 'sm_86'
+ptxas info    : Function properties for _Z16computeCov2DCUDAiPK6float3PKiPKfffffS5_S5_PS_Pf
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 48 registers, 432 bytes cmem[0]
+[4/6] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/rasterizer_impl.o.d -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/rasterizer_impl.cu -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/rasterizer_impl.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/auxiliary.h(151): warning #177-D: variable "p_proj" was declared but never referenced
+   float3 p_proj = { p_hom.x * p_w, p_hom.y * p_w, p_hom.z * p_w };
+          ^
+
+Remark: The warnings can be suppressed with "-diag-suppress <warning-number>"
+
+ptxas info    : 74 bytes gmem, 176 bytes cmem[4]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS29DeviceRadixSortOnesweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjjiiNS0_6detail21identity_decomposer_tEEEvPT5_S8_PT3_PKS9_PT1_PKSD_PT2_PKSH_T4_iiT6_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS29DeviceRadixSortOnesweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjjiiNS0_6detail21identity_decomposer_tEEEvPT5_S8_PT3_PKS9_PT1_PKSD_PT2_PKSH_T4_iiT6_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 56 registers, 31744 bytes smem, 429 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS33DeviceRadixSortExclusiveSumKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900EjEEvPT0_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS33DeviceRadixSortExclusiveSumKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900EjEEvPT0_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 23 registers, 1184 bytes smem, 360 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortHistogramKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjNS0_6detail21identity_decomposer_tEEEvPT2_PKT1_S7_iiT3_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortHistogramKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjNS0_6detail21identity_decomposer_tEEEvPT2_PKT1_S7_iiT3_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 55 registers, 8192 bytes smem, 381 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb1ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb1ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 159 registers, 47360 bytes smem, 445 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 97 registers, 45568 bytes smem, 445 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS23RadixSortScanBinsKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900EjEEvPT0_i' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS23RadixSortScanBinsKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900EjEEvPT0_i
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 78 registers, 47120 bytes smem, 364 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb1ELb0EmjNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb1ELb0EmjNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 40 registers, 16384 bytes smem, 421 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0ELb0EmjNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0ELb0EmjNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 51 registers, 32768 bytes smem, 421 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS31DeviceRadixSortSingleTileKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT1_PS7_PKT2_PSB_T3_iiT4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS31DeviceRadixSortSingleTileKernelINS0_21DeviceRadixSortPolicyImjjE9Policy900ELb0EmjjNS0_6detail21identity_decomposer_tEEEvPKT1_PS7_PKT2_PSB_T3_iiT4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 96 registers, 33856 bytes smem, 397 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS29DeviceRadixSortOnesweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmjyiiNS0_6detail21identity_decomposer_tEEEvPT5_S8_PT3_PKS9_PT1_PKSD_PT2_PKSH_T4_iiT6_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS29DeviceRadixSortOnesweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmjyiiNS0_6detail21identity_decomposer_tEEEvPT5_S8_PT3_PKS9_PT1_PKSD_PT2_PKSH_T4_iiT6_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 56 registers, 32768 bytes smem, 429 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS33DeviceRadixSortExclusiveSumKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900EyEEvPT0_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS33DeviceRadixSortExclusiveSumKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900EyEEvPT0_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 27 registers, 2336 bytes smem, 360 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortHistogramKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmyNS0_6detail21identity_decomposer_tEEEvPT2_PKT1_S7_iiT3_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortHistogramKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmyNS0_6detail21identity_decomposer_tEEEvPT2_PKT1_S7_iiT3_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 55 registers, 8192 bytes smem, 385 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb1ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb1ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 183 registers, 47616 bytes smem, 481 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS30DeviceRadixSortDownsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT2_PS7_PKT3_PSB_PT4_SF_iiNS0_13GridEvenShareISF_EET5_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 104 registers, 46080 bytes smem, 481 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS23RadixSortScanBinsKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900EyEEvPT0_i' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS23RadixSortScanBinsKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900EyEEvPT0_i
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 83 registers, 45072 bytes smem, 364 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb1ELb0EmyNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb1ELb0EmyNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 59 registers, 16384 bytes smem, 457 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0ELb0EmyNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS28DeviceRadixSortUpsweepKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0ELb0EmyNS0_6detail21identity_decomposer_tEEEvPKT2_PT3_SA_iiNS0_13GridEvenShareISA_EET4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 69 registers, 32768 bytes smem, 457 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS31DeviceRadixSortSingleTileKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT1_PS7_PKT2_PSB_T3_iiT4_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS31DeviceRadixSortSingleTileKernelINS0_21DeviceRadixSortPolicyImjyE9Policy900ELb0EmjyNS0_6detail21identity_decomposer_tEEEvPKT1_PS7_PKT2_PSB_T3_iiT4_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 96 registers, 33856 bytes smem, 401 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS16DeviceScanKernelINS0_16DeviceScanPolicyIjN4cuda3std3__44plusIvEEE9Policy900EPjSA_NS0_13ScanTileStateIjLb1EEES7_NS0_8NullTypeEijEEvT0_T1_T2_iT3_T4_T5_' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS16DeviceScanKernelINS0_16DeviceScanPolicyIjN4cuda3std3__44plusIvEEE9Policy900EPjSA_NS0_13ScanTileStateIjLb1EEES7_NS0_8NullTypeEijEEvT0_T1_T2_iT3_T4_T5_
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 56 registers, 7696 bytes smem, 388 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS20DeviceScanInitKernelINS0_13ScanTileStateIjLb1EEEEEvT_i' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS20DeviceScanInitKernelINS0_13ScanTileStateIjLb1EEEEEvT_i
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 10 registers, 364 bytes cmem[0]
+ptxas info    : Compiling entry function '_ZN3cub17CUB_200301_860_NS11EmptyKernelIvEEvv' for 'sm_86'
+ptxas info    : Function properties for _ZN3cub17CUB_200301_860_NS11EmptyKernelIvEEvv
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 4 registers, 352 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z18identifyTileRangesiPmP5uint2' for 'sm_86'
+ptxas info    : Function properties for _Z18identifyTileRangesiPmP5uint2
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 14 registers, 376 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z17duplicateWithKeysiPK6float2PKfPKjPmPjPi4dim3' for 'sm_86'
+ptxas info    : Function properties for _Z17duplicateWithKeysiPK6float2PKfPKjPmPjPi4dim3
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 36 registers, 420 bytes cmem[0]
+ptxas info    : Compiling entry function '_Z12checkFrustumiPKfS0_S0_Pb' for 'sm_86'
+ptxas info    : Function properties for _Z12checkFrustumiPKfS0_S0_Pb
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 18 registers, 392 bytes cmem[0]
+[5/6] c++ -MMD -MF /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/ext.o.d -pthread -B /data/qyfeng/conda-envs/4dgaussians-flame-steak/compiler_compat -Wno-unused-result -Wsign-compare -DNDEBUG -fwrapv -O2 -Wall -fPIC -O2 -isystem /data/qyfeng/conda-envs/4dgaussians-flame-steak/include -fPIC -O2 -isystem /data/qyfeng/conda-envs/4dgaussians-flame-steak/include -fPIC -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/ext.cpp -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/ext.o -O3 -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++17
+[6/6] /usr/local/cuda-12.4/bin/nvcc --generate-dependencies-with-compile --dependency-output /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.o.d -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/third_party/glm -I/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/torch/csrc/api/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/TH -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/THC -I/usr/local/cuda-12.4/include -I/data/qyfeng/conda-envs/4dgaussians-flame-steak/include/python3.10 -c -c /home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu -o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.o -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -O3 -lineinfo -Xptxas=-v -DTORCH_API_INCLUDE_EXTENSION_H '-DPYBIND11_COMPILER_TYPE="_gcc"' '-DPYBIND11_STDLIB="_libstdcpp"' '-DPYBIND11_BUILD_ABI="_cxxabi1011"' -DTORCH_EXTENSION_NAME=_C -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_86,code=sm_86 -std=c++17
+ptxas info    : 3 bytes gmem, 24 bytes cmem[4]
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu: In function ‘std::tuple<int, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor> RasterizeGaussiansCUDA(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, float, int, int, const at::Tensor&, int, const at::Tensor&, bool, bool)’:
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:140: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                            ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:186: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                          ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:264: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                        ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:304: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:455: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                       ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:498: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:541: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:580: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:655: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:697: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:739:733: warning: ‘T* at::Tensor::data() const [with T = int]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  739 |           rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu: In function ‘std::tuple<int, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor> RasterizeGaussiansWithHeadCUDA(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, float, int, int, const at::Tensor&, int, const at::Tensor&, bool, bool, const at::Tensor&, const at::Tensor&, const at::Tensor&, int64_t)’:
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:882:507: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  882 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:882:549: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  882 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:882:585: warning: ‘T* at::Tensor::data() const [with T = int]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+  882 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu: In function ‘std::tuple<int, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, std::vector<at::Tensor, std::allocator<at::Tensor> > > RasterizeGaussiansWithHeadsCUDA(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, float, int, int, const at::Tensor&, int, const at::Tensor&, bool, bool, const std::vector<at::Tensor>&, const std::vector<at::Tensor>&, const std::vector<at::Tensor>&, int64_t, int64_t)’:
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1099:507: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1099 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1099:549: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1099 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1099:585: warning: ‘T* at::Tensor::data() const [with T = int]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1099 |                 rendered = CudaRasterizer::Rasterizer::forward(
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu: In function ‘std::tuple<at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor, at::Tensor> RasterizeGaussiansBackwardCUDA(const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, const at::Tensor&, const at::Tensor&, const at::Tensor&, float, float, const at::Tensor&, const at::Tensor&, const at::Tensor&, int, const at::Tensor&, const at::Tensor&, int, const at::Tensor&, const at::Tensor&, bool)’:
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:101: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                              ~~                                     ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:147: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                   ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:182: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                      ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:221: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                             ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:342: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                      ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:385: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                 ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:428: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                            ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:467: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:523: warning: ‘T* at::Tensor::data() const [with T = int]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:768: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:814: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:858: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:900: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:944: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:987: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1030: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1074: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1116: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1155: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1198: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1470:1244: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1470 |           CudaRasterizer::Rasterizer::backward(P, degree, M, R,
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu: In function ‘at::Tensor markVisible(at::Tensor&, at::Tensor&, at::Tensor&)’:
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1523:94: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1523 |                 CudaRasterizer::Rasterizer::markVisible(P,
+      |                                                          ~                                   ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1523:137: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1523 |                 CudaRasterizer::Rasterizer::markVisible(P,
+      |                                                                                                                                         ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1523:180: warning: ‘T* at::Tensor::data() const [with T = float]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1523 |                 CudaRasterizer::Rasterizer::markVisible(P,
+      |                                                                                                                                                                                    ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.cu:1523:219: warning: ‘T* at::Tensor::data() const [with T = bool]’ is deprecated: Tensor.data<T>() is deprecated. Please use Tensor.data_ptr<T>() instead. [-Wdeprecated-declarations]
+ 1523 |                 CudaRasterizer::Rasterizer::markVisible(P,
+      |                                                                                                                                                                                                                           ^ 
+/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/include/ATen/core/TensorBody.h:247:1: note: declared here
+  247 |   T * data() const {
+      | ^ ~~
+creating build
+creating build/lib.linux-x86_64-cpython-310
+creating build/lib.linux-x86_64-cpython-310/diff_gaussian_rasterization
+g++ -pthread -B /data/qyfeng/conda-envs/4dgaussians-flame-steak/compiler_compat -shared -Wl,-rpath,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath-link,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -Wl,-rpath-link,/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/backward.o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/forward.o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/rasterizer_impl.o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/cuda_rasterizer/tacker_mixed.o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/ext.o /data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/build-and-cuda/0001/raster-build/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/rasterize_points.o -L/data/qyfeng/conda-envs/4dgaussians-flame-steak/lib/python3.10/site-packages/torch/lib -L/usr/local/cuda-12.4/lib64 -lc10 -ltorch -ltorch_cpu -ltorch_python -lcudart -lc10_cuda -ltorch_cuda -o build/lib.linux-x86_64-cpython-310/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so
+copying build/lib.linux-x86_64-cpython-310/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so -> diff_gaussian_rasterization

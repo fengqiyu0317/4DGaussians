@@ -1,0 +1,186 @@
+Generating SQLite file /data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite from /data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.nsys-rep
+Processing [/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite] with [/usr/local/cuda-12.4/nsight-systems-2023.4.4/host-linux-x64/reports/nvtx_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Style,Range
+30.3,657752920,1,657752920.0,657752920.0,657752920,657752920,0.0,PushPop,profile/render_loop
+11.2,241981860,50,4839637.2,4884677.0,2546270,5120786,346418.0,PushPop,renderer/rasterization
+9.5,206377783,50,4127555.7,3876370.5,3832202,12366930,1261124.1,PushPop,renderer/deformation
+9.0,196125223,50,3922504.5,3967239.5,1215842,4078371,392425.7,PushPop,renderer/setup
+5.4,117245028,50,2344900.6,2204209.0,2163544,7148662,737874.0,PushPop,deformation/hexplane_feature_sampling
+2.9,63600690,50,1272013.8,1200300.0,1171146,3695909,366908.6,PushPop,deformation/heads_and_residuals
+0.8,16785985,1,16785985.0,16785985.0,16785985,16785985,0.0,PushPop,profile/frame_0000
+0.7,15894044,50,317880.9,295080.5,282778,948365,103660.1,PushPop,deformation/positional_encoding
+0.7,15627176,1,15627176.0,15627176.0,15627176,15627176,0.0,PushPop,profile/frame_0001
+0.6,13438349,1,13438349.0,13438349.0,13438349,13438349,0.0,PushPop,profile/frame_0002
+0.6,13354473,1,13354473.0,13354473.0,13354473,13354473,0.0,PushPop,profile/frame_0007
+0.6,13335210,1,13335210.0,13335210.0,13335210,13335210,0.0,PushPop,profile/frame_0003
+0.6,13282666,1,13282666.0,13282666.0,13282666,13282666,0.0,PushPop,profile/frame_0005
+0.6,13239393,1,13239393.0,13239393.0,13239393,13239393,0.0,PushPop,profile/frame_0004
+0.6,13235831,1,13235831.0,13235831.0,13235831,13235831,0.0,PushPop,profile/frame_0006
+0.6,13067195,1,13067195.0,13067195.0,13067195,13067195,0.0,PushPop,profile/frame_0031
+0.6,13052761,1,13052761.0,13052761.0,13052761,13052761,0.0,PushPop,profile/frame_0015
+0.6,13045201,1,13045201.0,13045201.0,13045201,13045201,0.0,PushPop,profile/frame_0027
+0.6,13024549,1,13024549.0,13024549.0,13024549,13024549,0.0,PushPop,profile/frame_0038
+0.6,13023189,1,13023189.0,13023189.0,13023189,13023189,0.0,PushPop,profile/frame_0035
+0.6,13021378,1,13021378.0,13021378.0,13021378,13021378,0.0,PushPop,profile/frame_0023
+0.6,13017056,1,13017056.0,13017056.0,13017056,13017056,0.0,PushPop,profile/frame_0019
+0.6,13015843,1,13015843.0,13015843.0,13015843,13015843,0.0,PushPop,profile/frame_0042
+0.6,13014719,1,13014719.0,13014719.0,13014719,13014719,0.0,PushPop,profile/frame_0039
+0.6,13014383,1,13014383.0,13014383.0,13014383,13014383,0.0,PushPop,profile/frame_0048
+0.6,13012191,1,13012191.0,13012191.0,13012191,13012191,0.0,PushPop,profile/frame_0045
+0.6,13010013,1,13010013.0,13010013.0,13010013,13010013,0.0,PushPop,profile/frame_0047
+0.6,12994643,1,12994643.0,12994643.0,12994643,12994643,0.0,PushPop,profile/frame_0020
+0.6,12987249,1,12987249.0,12987249.0,12987249,12987249,0.0,PushPop,profile/frame_0034
+0.6,12987109,1,12987109.0,12987109.0,12987109,12987109,0.0,PushPop,profile/frame_0016
+0.6,12985765,1,12985765.0,12985765.0,12985765,12985765,0.0,PushPop,profile/frame_0040
+0.6,12977675,1,12977675.0,12977675.0,12977675,12977675,0.0,PushPop,profile/frame_0044
+0.6,12975447,1,12975447.0,12975447.0,12975447,12975447,0.0,PushPop,profile/frame_0037
+0.6,12975224,1,12975224.0,12975224.0,12975224,12975224,0.0,PushPop,profile/frame_0033
+0.6,12972184,1,12972184.0,12972184.0,12972184,12972184,0.0,PushPop,profile/frame_0036
+0.6,12969390,1,12969390.0,12969390.0,12969390,12969390,0.0,PushPop,profile/frame_0043
+0.6,12964981,1,12964981.0,12964981.0,12964981,12964981,0.0,PushPop,profile/frame_0041
+0.6,12964432,1,12964432.0,12964432.0,12964432,12964432,0.0,PushPop,profile/frame_0008
+0.6,12960409,1,12960409.0,12960409.0,12960409,12960409,0.0,PushPop,profile/frame_0046
+0.6,12958573,1,12958573.0,12958573.0,12958573,12958573,0.0,PushPop,profile/frame_0025
+0.6,12957988,1,12957988.0,12957988.0,12957988,12957988,0.0,PushPop,profile/frame_0014
+0.6,12956722,1,12956722.0,12956722.0,12956722,12956722,0.0,PushPop,profile/frame_0030
+0.6,12954918,1,12954918.0,12954918.0,12954918,12954918,0.0,PushPop,profile/frame_0032
+0.6,12953766,1,12953766.0,12953766.0,12953766,12953766,0.0,PushPop,profile/frame_0029
+0.6,12953223,1,12953223.0,12953223.0,12953223,12953223,0.0,PushPop,profile/frame_0049
+0.6,12947883,1,12947883.0,12947883.0,12947883,12947883,0.0,PushPop,profile/frame_0028
+0.6,12944624,1,12944624.0,12944624.0,12944624,12944624,0.0,PushPop,profile/frame_0017
+0.6,12944079,1,12944079.0,12944079.0,12944079,12944079,0.0,PushPop,profile/frame_0013
+0.6,12938161,1,12938161.0,12938161.0,12938161,12938161,0.0,PushPop,profile/frame_0018
+0.6,12933239,1,12933239.0,12933239.0,12933239,12933239,0.0,PushPop,profile/frame_0021
+0.6,12932801,1,12932801.0,12932801.0,12932801,12932801,0.0,PushPop,profile/frame_0026
+0.6,12926145,1,12926145.0,12926145.0,12926145,12926145,0.0,PushPop,profile/frame_0011
+0.6,12920620,1,12920620.0,12920620.0,12920620,12920620,0.0,PushPop,profile/frame_0012
+0.6,12919130,1,12919130.0,12919130.0,12919130,12919130,0.0,PushPop,profile/frame_0024
+0.6,12915849,1,12915849.0,12915849.0,12915849,12915849,0.0,PushPop,profile/frame_0022
+0.6,12889138,1,12889138.0,12889138.0,12889138,12889138,0.0,PushPop,profile/frame_0010
+0.6,12874157,1,12874157.0,12874157.0,12874157,12874157,0.0,PushPop,profile/frame_0009
+0.4,7806714,50,156134.3,149770.0,140498,424319,40529.6,PushPop,renderer/activation
+0.2,4085130,50,81702.6,76262.0,74214,254138,25855.9,PushPop,deformation/backbone_mlp
+
+Processing [/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite] with [/usr/local/cuda-12.4/nsight-systems-2023.4.4/host-linux-x64/reports/nvtx_gpu_proj_sum.py]... 
+Range,Style,Total Proj Time (ns),Total Range Time (ns),Range Instances,Proj Avg (ns),Proj Med (ns),Proj Min (ns),Proj Max (ns),Proj StdDev (ns),Total GPU Ops,Avg GPU Ops,Avg Range Lvl,Avg Num Child
+profile/render_loop,PushPop,661313403,657752920,1,661313403.0,661313403.0,661313403,661313403,0.0,7400,7400.0,0.0,50.0
+renderer/deformation,PushPop,437094451,206377783,50,8741889.0,8535569.0,8465697,14731402,931466.2,5300,106.0,2.0,4.0
+deformation/heads_and_residuals,PushPop,293306822,63600690,50,5866136.4,5838347.0,5801419,6132362,77592.8,1800,36.0,3.0,0.0
+renderer/rasterization,PushPop,206924170,241981860,50,4138483.4,4128480.5,4088561,4255441,39598.0,1400,28.0,2.0,0.0
+deformation/hexplane_feature_sampling,PushPop,113640253,117245028,50,2272805.1,2129864.0,2093560,6934918,716667.2,2800,56.0,3.0,0.0
+profile/frame_0000,PushPop,20228150,16785985,1,20228150.0,20228150.0,20228150,20228150,0.0,148,148.0,1.0,4.0
+deformation/positional_encoding,PushPop,18214110,15894044,50,364282.2,349406.5,346559,853469,78224.4,600,12.0,3.0,0.0
+profile/frame_0001,PushPop,15762470,15627176,1,15762470.0,15762470.0,15762470,15762470,0.0,148,148.0,1.0,4.0
+renderer/setup,PushPop,15566145,196125223,50,311322.9,287423.0,280511,1100156,119593.9,400,8.0,2.0,0.0
+profile/frame_0002,PushPop,13587470,13438349,1,13587470.0,13587470.0,13587470,13587470,0.0,148,148.0,1.0,4.0
+profile/frame_0003,PushPop,13332719,13335210,1,13332719.0,13332719.0,13332719,13332719,0.0,148,148.0,1.0,4.0
+profile/frame_0007,PushPop,13318031,13354473,1,13318031.0,13318031.0,13318031,13318031,0.0,148,148.0,1.0,4.0
+profile/frame_0005,PushPop,13279856,13282666,1,13279856.0,13279856.0,13279856,13279856,0.0,148,148.0,1.0,4.0
+profile/frame_0006,PushPop,13259343,13235831,1,13259343.0,13259343.0,13259343,13259343,0.0,148,148.0,1.0,4.0
+profile/frame_0004,PushPop,13259119,13239393,1,13259119.0,13259119.0,13259119,13259119,0.0,148,148.0,1.0,4.0
+profile/frame_0031,PushPop,13084912,13067195,1,13084912.0,13084912.0,13084912,13084912,0.0,148,148.0,1.0,4.0
+profile/frame_0015,PushPop,13068336,13052761,1,13068336.0,13068336.0,13068336,13068336,0.0,148,148.0,1.0,4.0
+profile/frame_0027,PushPop,13050224,13045201,1,13050224.0,13050224.0,13050224,13050224,0.0,148,148.0,1.0,4.0
+profile/frame_0035,PushPop,13037456,13023189,1,13037456.0,13037456.0,13037456,13037456,0.0,148,148.0,1.0,4.0
+profile/frame_0019,PushPop,13036304,13017056,1,13036304.0,13036304.0,13036304,13036304,0.0,148,148.0,1.0,4.0
+profile/frame_0039,PushPop,13034192,13014719,1,13034192.0,13034192.0,13034192,13034192,0.0,148,148.0,1.0,4.0
+profile/frame_0038,PushPop,13031344,13024549,1,13031344.0,13031344.0,13031344,13031344,0.0,148,148.0,1.0,4.0
+profile/frame_0045,PushPop,13024912,13012191,1,13024912.0,13024912.0,13024912,13024912,0.0,148,148.0,1.0,4.0
+profile/frame_0048,PushPop,13017040,13014383,1,13017040.0,13017040.0,13017040,13017040,0.0,148,148.0,1.0,4.0
+profile/frame_0043,PushPop,13012688,12969390,1,13012688.0,13012688.0,13012688,13012688,0.0,148,148.0,1.0,4.0
+profile/frame_0023,PushPop,13011823,13021378,1,13011823.0,13011823.0,13011823,13011823,0.0,148,148.0,1.0,4.0
+profile/frame_0033,PushPop,13008048,12975224,1,13008048.0,13008048.0,13008048,13008048,0.0,148,148.0,1.0,4.0
+profile/frame_0042,PushPop,13003024,13015843,1,13003024.0,13003024.0,13003024,13003024,0.0,148,148.0,1.0,4.0
+profile/frame_0047,PushPop,13000944,13010013,1,13000944.0,13000944.0,13000944,13000944,0.0,148,148.0,1.0,4.0
+profile/frame_0016,PushPop,13000816,12987109,1,13000816.0,13000816.0,13000816,13000816,0.0,148,148.0,1.0,4.0
+profile/frame_0041,PushPop,12997713,12964981,1,12997713.0,12997713.0,12997713,12997713,0.0,148,148.0,1.0,4.0
+profile/frame_0034,PushPop,12992432,12987249,1,12992432.0,12992432.0,12992432,12992432,0.0,148,148.0,1.0,4.0
+profile/frame_0044,PushPop,12989232,12977675,1,12989232.0,12989232.0,12989232,12989232,0.0,148,148.0,1.0,4.0
+profile/frame_0037,PushPop,12986032,12975447,1,12986032.0,12986032.0,12986032,12986032,0.0,148,148.0,1.0,4.0
+profile/frame_0036,PushPop,12984112,12972184,1,12984112.0,12984112.0,12984112,12984112,0.0,148,148.0,1.0,4.0
+profile/frame_0046,PushPop,12975696,12960409,1,12975696.0,12975696.0,12975696,12975696,0.0,148,148.0,1.0,4.0
+profile/frame_0049,PushPop,12975600,12953223,1,12975600.0,12975600.0,12975600,12975600,0.0,148,148.0,1.0,4.0
+profile/frame_0040,PushPop,12973488,12985765,1,12973488.0,12973488.0,12973488,12973488,0.0,148,148.0,1.0,4.0
+profile/frame_0028,PushPop,12969328,12947883,1,12969328.0,12969328.0,12969328,12969328,0.0,148,148.0,1.0,4.0
+profile/frame_0029,PushPop,12962992,12953766,1,12962992.0,12962992.0,12962992,12962992,0.0,148,148.0,1.0,4.0
+profile/frame_0018,PushPop,12962928,12938161,1,12962928.0,12962928.0,12962928,12962928,0.0,148,148.0,1.0,4.0
+profile/frame_0012,PushPop,12962544,12920620,1,12962544.0,12962544.0,12962544,12962544,0.0,148,148.0,1.0,4.0
+profile/frame_0020,PushPop,12962512,12994643,1,12962512.0,12962512.0,12962512,12962512,0.0,148,148.0,1.0,4.0
+profile/frame_0026,PushPop,12962481,12932801,1,12962481.0,12962481.0,12962481,12962481,0.0,148,148.0,1.0,4.0
+profile/frame_0014,PushPop,12961776,12957988,1,12961776.0,12961776.0,12961776,12961776,0.0,148,148.0,1.0,4.0
+profile/frame_0025,PushPop,12955600,12958573,1,12955600.0,12955600.0,12955600,12955600,0.0,148,148.0,1.0,4.0
+profile/frame_0032,PushPop,12955184,12954918,1,12955184.0,12955184.0,12955184,12955184,0.0,148,148.0,1.0,4.0
+profile/frame_0030,PushPop,12953841,12956722,1,12953841.0,12953841.0,12953841,12953841,0.0,148,148.0,1.0,4.0
+profile/frame_0017,PushPop,12949584,12944624,1,12949584.0,12949584.0,12949584,12949584,0.0,148,148.0,1.0,4.0
+profile/frame_0013,PushPop,12947664,12944079,1,12947664.0,12947664.0,12947664,12947664,0.0,148,148.0,1.0,4.0
+profile/frame_0022,PushPop,12947440,12915849,1,12947440.0,12947440.0,12947440,12947440,0.0,148,148.0,1.0,4.0
+profile/frame_0021,PushPop,12946576,12933239,1,12946576.0,12946576.0,12946576,12946576,0.0,148,148.0,1.0,4.0
+profile/frame_0011,PushPop,12944913,12926145,1,12944913.0,12944913.0,12944913,12944913,0.0,148,148.0,1.0,4.0
+profile/frame_0024,PushPop,12939633,12919130,1,12939633.0,12939633.0,12939633,12939633,0.0,148,148.0,1.0,4.0
+profile/frame_0010,PushPop,12902192,12889138,1,12902192.0,12902192.0,12902192,12902192,0.0,148,148.0,1.0,4.0
+profile/frame_0009,PushPop,12889361,12874157,1,12889361.0,12889361.0,12889361,12889361,0.0,148,148.0,1.0,4.0
+profile/frame_0008,PushPop,12879280,12964432,1,12879280.0,12879280.0,12879280,12879280,0.0,148,148.0,1.0,4.0
+deformation/backbone_mlp,PushPop,6515210,4085130,50,130304.2,129743.5,127424,135840,1962.0,50,1.0,3.0,0.0
+renderer/activation,PushPop,1260733,7806714,50,25214.7,25136.0,24640,26208,410.6,250,5.0,2.0,0.0
+
+Processing [/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite] with [/usr/local/cuda-12.4/nsight-systems-2023.4.4/host-linux-x64/reports/cuda_api_sum.py]... 
+Time (%),Total Time (ns),Num Calls,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+48.2,221460979,50,4429219.6,4488190.0,1705712,4722224,412028.3,cudaMemcpy
+39.2,180015422,800,225019.3,3626.0,1811,3719977,866797.9,cudaStreamSynchronize
+9.3,42576258,6000,7096.0,6620.0,4450,60189,2346.2,cudaLaunchKernel
+1.5,7066474,850,8313.5,7224.5,4290,51564,3846.1,cudaMemcpyAsync
+0.8,3722724,1,3722724.0,3722724.0,3722724,3722724,0.0,cudaDeviceSynchronize
+0.5,2277078,450,5060.2,4997.5,415,14054,2088.9,cudaMemsetAsync
+0.2,936032,2250,416.0,347.0,267,7084,230.9,cuKernelGetFunction
+0.1,430076,50,8601.5,8127.5,7497,26998,2734.5,cuLaunchKernel
+0.1,422158,400,1055.4,972.0,755,4471,373.7,cudaOccupancyMaxActiveBlocksPerMultiprocessor
+0.1,313224,50,6264.5,5819.0,5521,11685,1309.8,cudaMemset
+0.0,6435,1,6435.0,6435.0,6435,6435,0.0,cuProfilerStart
+
+Processing [/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite] with [/usr/local/cuda-12.4/nsight-systems-2023.4.4/host-linux-x64/reports/cuda_gpu_kern_sum.py]... 
+Time (%),Total Time (ns),Instances,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Name
+25.8,145138896,250,580555.6,575822.0,560382,616414,13105.6,ampere_sgemm_128x64_tn
+21.4,120743361,50,2414867.2,2406535.0,2373687,2493239,29311.0,"void renderCUDA<(unsigned int)3>(const uint2 *, const unsigned int *, int, int, const float2 *, const float *, const float *, const float4 *, float *, unsigned int *, const float *, float *, float *)"
+15.0,84367453,550,153395.4,168575.0,1567,171424,48040.3,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::<unnamed>::launch_clamp_scalar(at::TensorIteratorBase &, c10::Scalar, c10::Scalar, at::native::detail::ClampLimits)::[lambda() (instance 1)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+8.6,48690859,300,162302.9,161455.5,159679,170016,2236.7,"void cub::CUB_200301_860_NS::DeviceRadixSortOnesweepKernel<cub::CUB_200301_860_NS::DeviceRadixSortPolicy<unsigned long, unsigned int, unsigned int>::Policy900, (bool)0, unsigned long, unsigned int, unsigned int, int, int, cub::CUB_200301_860_NS::detail::identity_decomposer_t>(T7 *, T7 *, T5 *, const T5 *, T3 *, const T3 *, T4 *, const T4 *, T6, int, int, T8)"
+8.1,45687695,200,228438.5,158656.0,150783,460478,122850.4,ampere_sgemm_32x128_tn
+4.2,23545000,50,470900.0,469166.5,460446,490846,7035.4,"duplicateWithKeys(int, const float2 *, const float *, const unsigned int *, unsigned long *, unsigned int *, int *, dim3)"
+2.9,16270300,550,29582.4,32191.0,2977,33504,8370.9,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>, at::detail::Array<char *, (int)3>>(int, T2, T3)"
+2.2,12324896,600,20541.5,19168.0,14976,33696,4348.6,"void at::native::<unnamed>::grid_sampler_2d_kernel<float, int>(T2, at::cuda::detail::TensorInfo<const T1, T2>, at::cuda::detail::TensorInfo<const T1, T2>, at::cuda::detail::TensorInfo<T1, T2>, at::native::detail::GridSamplerInterpolation, at::native::detail::GridSamplerPadding, bool)"
+1.7,9832513,200,49162.6,40032.0,5632,112799,38237.4,"void at::native::<unnamed>::CatArrayBatchedCopy_aligned16_contig<at::native::<unnamed>::OpaqueType<(unsigned int)4>, unsigned int, (int)2, (int)128, (int)1>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)"
+1.2,6724240,350,19212.1,10720.0,3231,67104,20272.9,"void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)"
+1.2,6515210,50,130304.2,129743.5,127424,135840,1962.0,void cutlass::Kernel2<cutlass_80_simt_sgemm_128x32_8x5_tn_align1>(T1::Params)
+0.9,5318087,200,26590.4,4320.0,1696,97279,40152.7,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctor_add<float>, at::detail::Array<char *, (int)3>>(int, T2, T3)"
+0.7,4109422,50,82188.4,82192.0,81855,82624,186.5,"std::enable_if<!T7, void>::type internal::gemvx::kernel<int, int, float, float, float, float, (bool)0, (bool)1, (bool)1, (bool)0, (int)5, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float>>(T13)"
+0.7,3929780,600,6549.6,6656.0,4640,7488,566.7,"void at::native::index_elementwise_kernel<(int)128, (int)4, void at::native::gpu_index_kernel<void at::native::index_kernel_impl<at::native::OpaqueType<(int)4>>(at::TensorIteratorBase &, c10::ArrayRef<long>, c10::ArrayRef<long>)::[lambda(char *, const char *, long) (instance 1)]>(at::TensorIteratorBase &, c10::ArrayRef<long>, c10::ArrayRef<long>, const T1 &)::[lambda(int) (instance 1)]>(long, T3)"
+0.7,3925390,50,78507.8,78527.5,77664,79744,410.3,"void at::native::<unnamed>::CatArrayBatchedCopy_aligned16_contig<at::native::<unnamed>::OpaqueType<(unsigned int)4>, unsigned int, (int)3, (int)128, (int)1>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)"
+0.7,3697242,450,8216.1,2048.0,1151,30880,10451.1,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::FillFunctor<float>, at::detail::Array<char *, (int)1>>(int, T2, T3)"
+0.5,2948885,150,19659.2,11840.0,5824,41888,15350.9,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::cos_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.5,2861430,50,57228.6,57024.0,56480,59200,652.0,"void cub::CUB_200301_860_NS::DeviceRadixSortHistogramKernel<cub::CUB_200301_860_NS::DeviceRadixSortPolicy<unsigned long, unsigned int, unsigned int>::Policy900, (bool)0, unsigned long, unsigned int, cub::CUB_200301_860_NS::detail::identity_decomposer_t>(T4 *, const T3 *, T4, int, int, T5)"
+0.5,2792534,50,55850.7,55744.0,54208,58080,1068.4,"void preprocessCUDA<(int)3>(int, int, int, const float *, const glm::vec<(int)3, float, (glm::qualifier)0> *, float, const glm::vec<(int)4, float, (glm::qualifier)0> *, const float *, const float *, bool *, const float *, const float *, const float *, const float *, const glm::vec<(int)3, float, (glm::qualifier)0> *, int, int, float, float, float, float, int *, float2 *, float *, float *, float *, float4 *, dim3, unsigned int *, bool)"
+0.5,2760787,50,55215.7,55200.0,54975,55424,109.1,"identifyTileRanges(int, unsigned long *, uint2 *)"
+0.4,2498816,150,16658.8,4832.0,3552,41664,17268.7,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::sin_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.4,2457428,50,49148.6,49136.0,48640,49759,250.5,"void at::native::<unnamed>::CatArrayBatchedCopy<at::native::<unnamed>::OpaqueType<(unsigned int)4>, unsigned int, (int)2, (int)64, (int)64>(T1 *, at::native::<unnamed>::CatArrInputTensorMetadata<T1, T2, T4, T5>, at::native::<unnamed>::TensorSizeStride<T2, (unsigned int)4>, int, T2)"
+0.4,2185745,150,14571.6,20992.0,1311,21696,9389.2,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::AUnaryFunctor<float, float, float, at::native::binary_internal::MulFunctor<float>>, at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.2,1240159,100,12401.6,12448.0,11712,12992,242.2,"void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::CUDAFunctor_add<float>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)"
+0.1,425465,50,8509.3,8464.0,8223,8896,164.3,"void at::native::reduce_kernel<(int)512, (int)1, at::native::ReduceOp<float, at::native::NormTwoOps<float, float, float>, unsigned int, float, (int)4>>(T3)"
+0.1,344162,150,2294.4,2240.0,1760,2977,422.1,"void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::direct_copy_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 3)]::operator ()() const::[lambda() (instance 7)]::operator ()() const::[lambda(float) (instance 1)]>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)"
+0.0,278784,50,5575.7,5536.5,5184,5887,140.8,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::exp_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.0,229183,50,4583.7,4576.0,4351,4864,102.8,"void cub::CUB_200301_860_NS::DeviceScanKernel<cub::CUB_200301_860_NS::DeviceScanPolicy<unsigned int, cuda::std::__4::plus<void>>::Policy900, unsigned int *, unsigned int *, cub::CUB_200301_860_NS::ScanTileState<unsigned int, (bool)1>, cuda::std::__4::plus<void>, cub::CUB_200301_860_NS::NullType, int, unsigned int>(T2, T3, T4, int, T5, T6, T7)"
+0.0,202654,100,2026.5,2032.0,1888,2272,98.4,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::CUDAFunctorOnSelf_add<float>, at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.0,200100,50,4002.0,3968.0,3871,4225,96.9,"void at::native::elementwise_kernel<(int)128, (int)2, void at::native::gpu_kernel_impl_nocast<at::native::BinaryFunctor<float, float, float, at::native::binary_internal::DivFunctor<float>>>(at::TensorIteratorBase &, const T1 &)::[lambda(int) (instance 1)]>(int, T3)"
+0.0,136834,50,2736.7,2720.0,2592,3040,87.8,"void at::native::vectorized_elementwise_kernel<(int)4, void at::native::compare_scalar_kernel<int>(at::TensorIteratorBase &, at::native::<unnamed>::OpType, T1)::[lambda(int) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.0,129216,50,2584.3,2560.0,2400,2816,103.8,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::sigmoid_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 2)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.0,100734,50,2014.7,2015.5,1888,2272,64.0,"void cub::CUB_200301_860_NS::DeviceRadixSortExclusiveSumKernel<cub::CUB_200301_860_NS::DeviceRadixSortPolicy<unsigned long, unsigned int, unsigned int>::Policy900, unsigned int>(T2 *)"
+0.0,91775,50,1835.5,1824.0,1632,1985,50.9,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::reciprocal_kernel_cuda(at::TensorIteratorBase &)::[lambda() (instance 1)]::operator ()() const::[lambda() (instance 2)]::operator ()() const::[lambda(float) (instance 1)], at::detail::Array<char *, (int)2>>(int, T2, T3)"
+0.0,85378,50,1707.6,1712.0,1568,1920,84.4,"void at::native::unrolled_elementwise_kernel<at::native::CUDAFunctor_add<float>, at::detail::Array<char *, (int)3>, TrivialOffsetCalculator<(int)2, unsigned int>, TrivialOffsetCalculator<(int)1, unsigned int>, at::native::memory::LoadWithoutCast, at::native::memory::StoreWithoutCast>(int, T1, T2, T3, T4, T5, T6)"
+0.0,75516,50,1510.3,1504.0,1471,1600,39.9,"void at::native::vectorized_elementwise_kernel<(int)4, at::native::FillFunctor<int>, at::detail::Array<char *, (int)1>>(int, T2, T3)"
+0.0,75327,50,1506.5,1504.0,1408,1696,53.7,"void cub::CUB_200301_860_NS::DeviceScanInitKernel<cub::CUB_200301_860_NS::ScanTileState<unsigned int, (bool)1>>(T1, int)"
+
+Processing [/data/qyfeng/4DGaussians-flame-steak-full/nsight_reports/flame_steak_iter14000_test_50/4dgs_render.sqlite] with [/usr/local/cuda-12.4/nsight-systems-2023.4.4/host-linux-x64/reports/cuda_gpu_mem_time_sum.py]... 
+Time (%),Total Time (ns),Count,Avg (ns),Med (ns),Min (ns),Max (ns),StdDev (ns),Operation
+64.1,2182098,50,43642.0,43616.0,43264,44096,191.2,[CUDA memcpy Device-to-Device]
+23.9,814844,450,1810.8,2000.0,864,2400,379.4,[CUDA memset]
+10.2,346919,800,433.6,448.0,415,481,17.0,[CUDA memcpy Host-to-Device]
+1.8,62048,50,1241.0,1248.0,1183,1376,31.2,[CUDA memcpy Device-to-Host]
+

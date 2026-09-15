@@ -1,0 +1,342 @@
+{
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_runtime": "12.4",
+    "index": 0,
+    "name": "NVIDIA RTX A6000",
+    "pytorch_version": "2.4.1+cu124",
+    "sm_count": 84
+  },
+  "families": {
+    "first_linear_heads_v2": {
+      "worker_groups": {
+        "1": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 2,
+          "active_warps_per_multiprocessor": 24,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 384,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 1
+        },
+        "2": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 1,
+          "active_warps_per_multiprocessor": 16,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.3333333333333333,
+          "physical_threads": 512,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 2
+        },
+        "3": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 1,
+          "active_warps_per_multiprocessor": 20,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.4166666666666667,
+          "physical_threads": 640,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 3
+        },
+        "4": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 1,
+          "active_warps_per_multiprocessor": 24,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5,
+          "physical_threads": 768,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 4
+        },
+        "5": {
+          "abi_version": 2,
+          "active_blocks_per_multiprocessor": 1,
+          "active_warps_per_multiprocessor": 28,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 896,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41776,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 0.5833333333333334,
+          "physical_threads": 896,
+          "registers_per_thread": 68,
+          "static_shared_bytes": 7376,
+          "warp_size": 32,
+          "worker_groups": 5
+        }
+      }
+    },
+    "legacy_pos_l1_v1": {
+      "worker_groups": {
+        "1": {
+          "abi_version": 1,
+          "active_blocks_per_multiprocessor": 4,
+          "active_warps_per_multiprocessor": 48,
+          "compute_capability_major": 8,
+          "compute_capability_minor": 6,
+          "device_max_threads_per_block": 1024,
+          "device_max_threads_per_multiprocessor": 1536,
+          "device_ordinal": 0,
+          "kernel_max_threads_per_block": 384,
+          "launch_supported": true,
+          "local_bytes_per_thread": 0,
+          "max_dynamic_shared_bytes": 41984,
+          "max_warps_per_multiprocessor": 48,
+          "multiprocessor_count": 84,
+          "occupancy": 1.0,
+          "physical_threads": 384,
+          "registers_per_thread": 40,
+          "static_shared_bytes": 7168,
+          "warp_size": 32,
+          "worker_groups": 1
+        }
+      }
+    }
+  },
+  "head_v2": {
+    "capabilities": {
+      "abi_version": 2,
+      "canonical_variants": [
+        {
+          "family": "C1",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 1,
+          "variant_id": "c1_position_first_linear",
+          "worker_groups": 1
+        },
+        {
+          "family": "C1",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 1,
+          "variant_id": "c1_scale_first_linear",
+          "worker_groups": 1
+        },
+        {
+          "family": "C1",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 1,
+          "variant_id": "c1_rotation_first_linear",
+          "worker_groups": 1
+        },
+        {
+          "family": "C1",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 1,
+          "variant_id": "c1_opacity_first_linear",
+          "worker_groups": 1
+        },
+        {
+          "family": "C1",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 1,
+          "variant_id": "c1_sh_first_linear",
+          "worker_groups": 1
+        },
+        {
+          "family": "C2",
+          "symbol": "tacker_head_linear_multi_gptb_v2",
+          "task_count": 2,
+          "variant_id": "c2_position_scale_first_linear_wg2",
+          "worker_groups": 2
+        }
+      ],
+      "device_adapters": {
+        "multi": "tacker_4dgs::head_linear_multi_gptb_device",
+        "packed": "tacker_4dgs::head_linear_packed_gptb_device",
+        "whole_head": "tacker_4dgs::whole_head_multi_gptb_device"
+      },
+      "first_linear_dynamic_shared_memory_bytes": 0,
+      "first_linear_named_barrier_ids": [],
+      "global_kernel_symbols": {
+        "multi_gptb": "tacker_head_linear_multi_gptb_v2",
+        "multi_solo": "tacker_head_linear_multi_solo_v2",
+        "packed_gptb": "tacker_head_linear_packed_gptb_v2",
+        "whole_head_gptb": "tacker_whole_head_gptb_v2"
+      },
+      "head_features": 128,
+      "manifest": "abi/head_linear_v2.json",
+      "max_backend_threads": 640,
+      "max_head_tasks": 5,
+      "max_mixed_cta_threads": 896,
+      "max_worker_groups": 5,
+      "resource_query": "tacker_resources_v2",
+      "sm_target": "sm_86",
+      "supported_head_roles": [
+        "position",
+        "scale",
+        "rotation",
+        "opacity",
+        "sh"
+      ],
+      "supported_task_counts": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "supported_worker_groups": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "whole_head": {
+        "named_barriers_per_worker_group": 1,
+        "operation": "Linear(128,128,float16) -> ReLU -> Linear(128,O,float32)",
+        "scratch_bytes_per_worker_group": 512,
+        "tail_features_max": 128,
+        "tail_features_min": 1
+      },
+      "worker_group_threads": 128
+    },
+    "resources": {
+      "abi_version": 2,
+      "kernels": {
+        "tacker_head_linear_multi_gptb_v2": {
+          "active_blocks_per_sm": [
+            10,
+            5,
+            3,
+            2,
+            2
+          ],
+          "binary_version": 86,
+          "local_memory_bytes": 200,
+          "max_threads_per_block": 640,
+          "ptx_version": 86,
+          "registers_per_thread": 48,
+          "static_shared_memory_bytes": 0,
+          "worker_group_threads": [
+            128,
+            256,
+            384,
+            512,
+            640
+          ]
+        },
+        "tacker_head_linear_multi_solo_v2": {
+          "active_blocks_per_sm": [
+            10,
+            5,
+            3,
+            2,
+            2
+          ],
+          "binary_version": 86,
+          "local_memory_bytes": 200,
+          "max_threads_per_block": 640,
+          "ptx_version": 86,
+          "registers_per_thread": 48,
+          "static_shared_memory_bytes": 0,
+          "worker_group_threads": [
+            128,
+            256,
+            384,
+            512,
+            640
+          ]
+        },
+        "tacker_head_linear_packed_gptb_v2": {
+          "active_blocks_per_sm": [
+            10,
+            5,
+            3,
+            2,
+            2
+          ],
+          "binary_version": 86,
+          "local_memory_bytes": 0,
+          "max_threads_per_block": 640,
+          "ptx_version": 86,
+          "registers_per_thread": 48,
+          "static_shared_memory_bytes": 0,
+          "worker_group_threads": [
+            128,
+            256,
+            384,
+            512,
+            640
+          ]
+        },
+        "tacker_whole_head_gptb_v2": {
+          "active_blocks_per_sm": [
+            12
+          ],
+          "binary_version": 86,
+          "local_memory_bytes": 0,
+          "max_threads_per_block": 128,
+          "ptx_version": 86,
+          "registers_per_thread": 32,
+          "static_shared_memory_bytes": 512,
+          "worker_group_threads": [
+            128
+          ]
+        }
+      }
+    }
+  },
+  "kind": "tacker_phase3_a6000_resource_query",
+  "passed": true,
+  "schema_version": 1
+}

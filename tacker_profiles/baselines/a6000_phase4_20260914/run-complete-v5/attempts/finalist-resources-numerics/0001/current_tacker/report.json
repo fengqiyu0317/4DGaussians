@@ -1,0 +1,306 @@
+{
+  "device": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "cuda_runtime": "12.4",
+    "index": 0,
+    "name": "NVIDIA RTX A6000",
+    "pytorch_version": "2.4.1+cu124"
+  },
+  "errors": [],
+  "extensions": {
+    "abi": {
+      "head_manifest": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/abi/head_linear_v1.json",
+      "mixed_manifest": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/abi/tacker_mixed_render_head_v1.json"
+    },
+    "head": {
+      "capabilities": {
+        "abi_version": 1,
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "block_threads": 128,
+        "gptb_symbol": "tacker_head_linear_gptb_v1",
+        "head_features": 128,
+        "input_dtype": "float16",
+        "output_dtype": "float32",
+        "sm_target": "sm_86",
+        "solo_symbol": "tacker_head_linear_solo_v1",
+        "weight_dtype": "float16"
+      },
+      "cuda_global_symbols": [
+        "tacker_head_linear_solo_v1",
+        "tacker_head_linear_gptb_v1"
+      ],
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/tacker_ext/tacker_4dgs_head/_C.cpython-310-x86_64-linux-gnu.so",
+      "python_symbols": [
+        "head_linear_solo",
+        "head_linear_solo_out",
+        "head_linear_gptb",
+        "head_linear_gptb_out",
+        "tacker_capabilities"
+      ]
+    },
+    "rasterizer": {
+      "capabilities": {
+        "head_descriptor_named_barrier_id": 2,
+        "head_features": 128,
+        "head_manifest_sha256": "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac",
+        "head_multi_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "head_thread_base": 256,
+        "head_threads": 128,
+        "max_head_tasks": 5,
+        "max_mixed_heads": 5,
+        "max_worker_groups": 5,
+        "min_worker_groups": 1,
+        "mixed_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+        "mixed_multi_manifest": "abi/tacker_mixed_render_heads_v2.json",
+        "mixed_multi_manifest_sha256": "310b15957c5920773bb03a61a37c5771f6d4570393061ece4e1805fd20989056",
+        "mixed_multi_symbol": "tacker_mix_render_heads_v2",
+        "mixed_packed_family": "packed_first_linear_v3",
+        "mixed_packed_head_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "mixed_packed_manifest": "abi/tacker_mixed_render_packed_heads_v3.json",
+        "mixed_packed_manifest_sha256": "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40",
+        "mixed_packed_symbol": "tacker_mix_render_packed_heads_v3",
+        "mixed_render_head": true,
+        "mixed_render_head_abi": 1,
+        "mixed_render_heads": true,
+        "mixed_render_heads_abi": 2,
+        "mixed_render_packed_heads": true,
+        "mixed_render_packed_heads_abi": 3,
+        "mixed_render_whole_heads": true,
+        "mixed_render_whole_heads_abi": 4,
+        "mixed_symbol": "tacker_mix_render_head_v1",
+        "mixed_threads": 384,
+        "mixed_threads_by_worker_groups": {
+          "1": 384,
+          "2": 512,
+          "3": 640,
+          "4": 768,
+          "5": 896
+        },
+        "mixed_whole_family": "whole_heads_v4",
+        "mixed_whole_head_manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+        "mixed_whole_manifest": "abi/tacker_mixed_render_whole_heads_v4.json",
+        "mixed_whole_manifest_sha256": "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1",
+        "mixed_whole_symbol": "tacker_mix_render_whole_heads_v4",
+        "raster_named_barrier_id": 1,
+        "raster_threads": 256,
+        "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+        "resource_query": "tacker_resource_requirements",
+        "resource_query_family_aware": true,
+        "sm_target": "sm_86",
+        "stream_aware": true,
+        "supported_backend_families": [
+          "first_linear_heads_v2",
+          "packed_first_linear_v3",
+          "whole_heads_v4"
+        ],
+        "supported_mixed_abis": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "supported_worker_groups": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "whole_head_barrier_base_id": 2,
+        "whole_head_descriptor_named_barrier_id": 7,
+        "whole_head_named_barriers_per_worker_group": 1,
+        "whole_head_scratch_bytes_per_worker_group": 512,
+        "whole_head_tail_features_max": 128,
+        "whole_head_tail_features_min": 1,
+        "worker_group_threads": 128
+      },
+      "cuda_global_symbols": [
+        "tacker_mix_render_head_v1"
+      ],
+      "path": "/home/qyfeng/tacker_phase4_code/20260914-codex-phase4-v8/submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/_C.cpython-310-x86_64-linux-gnu.so",
+      "python_symbols": [
+        "rasterize_gaussians",
+        "rasterize_gaussians_with_head",
+        "tacker_capabilities"
+      ]
+    }
+  },
+  "generated_at_utc": "2026-09-15T02:56:52.458730+00:00",
+  "kind": "4dgaussians_tacker_leaf_profile_report",
+  "measurement_output_sha256": {
+    "device": "8e3fffb4d81fb1ed8e7252d14acc73318fbffef125938c41a67385186a0eaac9",
+    "leaf": "c7df01f248d8200cf17b63e40ca2c1791f0e068813cacd5a3fcfbb44841f0de8",
+    "raster": "667109168bb69eba8ea5034964aa84ba38e1074787095ad3ef49460df89a3fa6"
+  },
+  "measurement_outputs_written": true,
+  "measurements": {
+    "mixed_p50_ms": 4.343296051025391,
+    "mixed_raster_p50_ms": 4.343296051025391,
+    "solo_head_p50_ms": 0.2611199915409088,
+    "solo_raster_p50_ms": 4.15231990814209
+  },
+  "numerics": {
+    "errors": [],
+    "passed": true,
+    "per_view_pair": [
+      {
+        "checks": {
+          "legacy_vs_mixed_color": true,
+          "legacy_vs_mixed_depth": true,
+          "legacy_vs_mixed_radii": true,
+          "mixed_vs_quantized_fp32_reference": true,
+          "solo_vs_mixed_head": true,
+          "solo_vs_quantized_fp32_reference": true
+        },
+        "current_view_index": 0,
+        "head": {
+          "fp16_operand_quantization_vs_original_fp32": {
+            "max_abs": 0.002082347869873047,
+            "mean_abs": 8.250391147157643e-06,
+            "relative_l2": 0.00014454555639531463,
+            "rmse": 2.7971533199888654e-05
+          },
+          "kernel_reference": "real FP16 input/weight converted to FP32, FP32 bias, TF32 disabled",
+          "mixed_vs_quantized_fp32_reference": {
+            "max_abs": 4.76837158203125e-06,
+            "mean_abs": 9.574155690472708e-09,
+            "relative_l2": 2.1538913586027775e-07,
+            "rmse": 4.1680920048747794e-08
+          },
+          "solo_vs_mixed": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "solo_vs_quantized_fp32_reference": {
+            "max_abs": 4.76837158203125e-06,
+            "mean_abs": 9.574155690472708e-09,
+            "relative_l2": 2.1538913586027775e-07,
+            "rmse": 4.1680920048747794e-08
+          }
+        },
+        "legacy_vs_mixed": {
+          "color": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "depth": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "radii_mismatch_count": 0
+        },
+        "next_view_index": 1,
+        "passed": true
+      },
+      {
+        "checks": {
+          "legacy_vs_mixed_color": true,
+          "legacy_vs_mixed_depth": true,
+          "legacy_vs_mixed_radii": true,
+          "mixed_vs_quantized_fp32_reference": true,
+          "solo_vs_mixed_head": true,
+          "solo_vs_quantized_fp32_reference": true
+        },
+        "current_view_index": 1,
+        "head": {
+          "fp16_operand_quantization_vs_original_fp32": {
+            "max_abs": 0.0023986101150512695,
+            "mean_abs": 8.29548662295565e-06,
+            "relative_l2": 0.00014410520088858902,
+            "rmse": 2.7857320674229413e-05
+          },
+          "kernel_reference": "real FP16 input/weight converted to FP32, FP32 bias, TF32 disabled",
+          "mixed_vs_quantized_fp32_reference": {
+            "max_abs": 4.76837158203125e-06,
+            "mean_abs": 9.61114388076112e-09,
+            "relative_l2": 2.1481461942585156e-07,
+            "rmse": 4.1526426741711475e-08
+          },
+          "solo_vs_mixed": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "solo_vs_quantized_fp32_reference": {
+            "max_abs": 4.76837158203125e-06,
+            "mean_abs": 9.61114388076112e-09,
+            "relative_l2": 2.1481461942585156e-07,
+            "rmse": 4.1526426741711475e-08
+          }
+        },
+        "legacy_vs_mixed": {
+          "color": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "depth": {
+            "max_abs": 0.0,
+            "mean_abs": 0.0,
+            "relative_l2": 0.0,
+            "rmse": 0.0
+          },
+          "radii_mismatch_count": 0
+        },
+        "next_view_index": 2,
+        "passed": true
+      }
+    ],
+    "reference_policy": "Kernel accuracy is judged only against FP16 operands evaluated with FP32 math and TF32 disabled; original-FP32 error is reported separately as quantization diagnostics.",
+    "thresholds": {
+      "head_kernel_atol": 0.002,
+      "head_kernel_rtol": 0.002,
+      "raster_color_max_abs": 1e-05,
+      "raster_depth_max_abs": 1e-05,
+      "raster_radii_mismatch_count": 0
+    }
+  },
+  "output_paths": {
+    "device": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/device.json",
+    "leaf": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/leaf.json",
+    "raster": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/raster.json",
+    "report": "/data/qyfeng/tacker_phase4_validation/20260914-codex-phase4/run-complete-v5/attempts/finalist-resources-numerics/0001/current_tacker/report.json"
+  },
+  "parameters": {
+    "persistent_blocks": 7000,
+    "profile_gptb": false,
+    "repetitions_per_view": 50,
+    "warmup_rounds": 5
+  },
+  "passed": true,
+  "publication_policy": "strict_no_clobber_measurements_then_report",
+  "schema_version": 1,
+  "workload": {
+    "current_view_indices": [
+      0,
+      1
+    ],
+    "gaussian_count": 111525,
+    "iteration": 14000,
+    "model_path": "/data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak",
+    "next_view_indices": [
+      1,
+      2
+    ],
+    "resolution": [
+      1352,
+      1014
+    ],
+    "scene": "flame_steak",
+    "source_path": "/data/qyfeng/datasets/n3dv/flame_steak",
+    "split": "test"
+  }
+}

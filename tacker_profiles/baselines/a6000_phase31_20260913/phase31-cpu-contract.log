@@ -1,0 +1,11 @@
+FPS benchmark failed closed; report: /tmp/tmp_2ky3s_k/unknown-report.json
+  candidate_selection_metadata['serial'] contains unknown fields: ['typo_memory']
+FPS benchmark failed closed; report: /tmp/tmp_2ky3s_k/null-report.json
+  candidate_selection_metadata['serial'].peak_memory_bytes must be finite and >= 0
+refusing to overwrite FPS benchmark report created during run: /tmp/tmpy__bbh4i/raced-report.json
+refusing to overwrite existing FPS benchmark report: /tmp/tmpplzggi7_/current.json
+----------------------------------------------------------------------
+Ran 271 tests in 41.582s
+
+OK
+FPS benchmark passed: current_tacker is the experimental winner at median 100.000 FPS; deployment winner: current_tacker; report: /tmp/tmppcdhurgw/cli-report.json

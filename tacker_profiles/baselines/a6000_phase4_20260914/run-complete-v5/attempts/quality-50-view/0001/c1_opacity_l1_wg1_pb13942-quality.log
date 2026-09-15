@@ -1,0 +1,5 @@
+argv_sha256=8539fa8b42a1a9068a4bf9c0b492543121db9165a2987dea63ffffd7870b127a
+Looking for config file in /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args
+Config file found: /data/qyfeng/4DGaussians-flame-steak-full/outputs/n3dv_flame_steak/cfg_args
+  0%|          | 0/6000 [00:00<?, ?it/s]100%|██████████| 6000/6000 [00:00<00:00, 250985.60it/s]
+0it [00:00, ?it/s]300it [00:00, 57075.71it/s]
