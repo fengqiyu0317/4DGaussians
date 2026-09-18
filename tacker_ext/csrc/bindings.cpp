@@ -6,6 +6,7 @@
 
 #include "head_linear.h"
 #include "head_linear_v2.h"
+#include "deform_mlp.h"
 
 namespace {
 
@@ -114,6 +115,21 @@ pybind11::dict TackerResourcesV2() {
 }  // namespace
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+    module.def(
+        "deform_mlp_delta_v1", &deform_mlp_delta_v1_cuda,
+        "One kernel: FP32 backbone, ReLU, five WMMA heads, ReLU, FP32 tails",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"), pybind11::arg("tail_weights"),
+        pybind11::arg("tail_biases"), pybind11::arg("persistent_blocks") = 0);
+    module.def(
+        "deform_mlp_delta_out_v1", &deform_mlp_delta_out_v1_cuda,
+        "Fused deformation MLP into five caller-owned delta tensors",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"), pybind11::arg("tail_weights"),
+        pybind11::arg("tail_biases"), pybind11::arg("outputs"),
+        pybind11::arg("persistent_blocks") = 0);
     module.def(
         "tacker_capabilities",
         &TackerHeadCapabilities,

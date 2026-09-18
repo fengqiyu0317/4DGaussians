@@ -1,0 +1,29 @@
+{
+  "abi_version": 1,
+  "name": "4dgs_full_deform_mlp_delta",
+  "cuda_arch": "sm_86",
+  "global_kernel_symbol": "tacker_deform_mlp_delta_v1",
+  "device_adapter": "tacker_4dgs::deform_mlp_gptb_device_v1",
+  "threads": 128,
+  "rows_per_tile": 16,
+  "static_shared_scratch_bytes": 14592,
+  "input": {
+    "features": {"dtype": "float32", "shape": ["N", 32]},
+    "backbone_weight": {"dtype": "float32", "shape": [32, 128]},
+    "backbone_bias": {"dtype": "float32", "shape": [128]},
+    "first_weights": {"dtype": "float16", "shape": [5, 128, 128]},
+    "first_biases": {"dtype": "float32", "shape": [5, 128]},
+    "tail_weights": {"dtype": "float32", "shape": [59, 128]},
+    "tail_biases": {"dtype": "float32", "shape": [59]}
+  },
+  "outputs": {
+    "order": ["position", "scale", "rotation", "opacity", "sh"],
+    "dtype": "float32",
+    "widths": [3, 3, 4, 1, 48],
+    "semantics": "delta"
+  },
+  "synchronization": {
+    "standalone": "CTA-wide",
+    "mixed": "caller-provided named barrier with exactly 128 participants"
+  }
+}

@@ -24,6 +24,7 @@ setup(
                 str(ROOT / "csrc" / "bindings.cpp"),
                 str(ROOT / "csrc" / "head_linear.cu"),
                 str(ROOT / "csrc" / "head_linear_v2.cu"),
+                str(ROOT / "csrc" / "deform_mlp.cu"),
             ],
             include_dirs=[str(ROOT / "include")],
             extra_compile_args={

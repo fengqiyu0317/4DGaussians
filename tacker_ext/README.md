@@ -19,6 +19,74 @@ its matching CUDA toolkit, and a C++17 compiler must already be installed.
 
 ## API and layout
 
+### Full deformation MLP: five sequential stages in one kernel
+
+`deform_mlp_delta_v1` implements the standalone `32 -> 128 -> five heads`
+inference path. The CUDA entrypoint is `tacker_deform_mlp_delta_v1` in
+`csrc/deform_mlp.cu`; the readable device sequence is `deform_mlp_device_v1`
+in `include/deform_mlp_device.cuh`:
+
+```text
+backbone Linear -> ReLU -> head Linear -> ReLU -> tail Linear
+```
+
+The backbone and its activation are shared by all five heads. One 128-thread
+block processes 16 Gaussians at a time, using 14 KiB of shared scratch. The
+backbone and tails use FP32, while head first-layer WMMA operands and the shared
+backbone activation use FP16 with FP32 accumulation. This is an explicit
+mixed-precision inference path, not bit-identical to an all-FP32 network.
+
+After rebuilding the extension, pack the weights once and call under no-grad:
+
+```python
+import torch
+from tacker_4dgs_head import deform_mlp_delta_v1, deform_mlp_delta_out_v1
+
+net = pc._deformation.deformation_net
+heads = [net.pos_deform, net.scales_deform, net.rotations_deform,
+         net.opacity_deform, net.shs_deform]
+assert len(net.feature_out) == 1
+with torch.no_grad():
+    # Immutable inference snapshot. Repack after changing/loading weights.
+    params = (
+        net.feature_out[0].weight.detach().float().t().contiguous(),
+        net.feature_out[0].bias.detach().float().clone(),
+        torch.stack([h[1].weight.detach().half() for h in heads]),
+        torch.stack([h[1].bias.detach().float() for h in heads]),
+        torch.cat([h[3].weight.detach().float() for h in heads]),
+        torch.cat([h[3].bias.detach().float() for h in heads]),
+    )
+    features = net.grid(xyz, times).contiguous()  # FP32 [N,32]
+    dx, ds, dr, do, dsh = deform_mlp_delta_v1(features, *params)
+    # Optional: reuse five independently owned contiguous output buffers.
+    deform_mlp_delta_out_v1(features, *params, (dx, ds, dr, do, dsh))
+```
+
+Output order/shapes are position `[N,3]`, scale `[N,3]`, rotation `[N,4]`,
+opacity `[N,1]`, SH `[N,48]`. These are **deltas**; sampling, residuals,
+exp/sigmoid/quaternion normalization and rendering remain outside this kernel.
+The caller must check the model's configuration (32 input features, width 128,
+one backbone Linear, all five heads enabled) before using it as a replacement.
+The low-level API checks tensor shapes/dtypes/devices/alignment/aliasing.
+
+`persistent_blocks=0` launches the full logical grid, with one block per
+16-row tile. This is the measured A6000 default: the former one-block-per-SM
+policy exposed only four active warps per SM for this barrier-heavy kernel. An
+explicit positive value selects a persistent grid size capped by `ceil(N/16)`.
+`N=0` returns empty outputs without launching a kernel. The current stream is
+used; callers must manage cross-stream dependencies and storage lifetime.
+
+This first version uses full-block barriers and is **standalone only**. It is
+not registered as a Tacker mixed candidate and does not change renderer defaults.
+
+Run its CUDA tests on `4A6000` (including the single-kernel profiler assertion):
+
+```bash
+PYTHONPATH=. python -m unittest tests.test_deform_mlp_cuda -v
+```
+
+### Existing head APIs
+
 ```python
 from tacker_4dgs_head import (
     head_linear_gptb,

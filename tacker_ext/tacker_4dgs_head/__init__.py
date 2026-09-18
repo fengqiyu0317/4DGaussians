@@ -28,6 +28,8 @@ from .validation import (
 )
 
 __all__ = [
+    "deform_mlp_delta_v1",
+    "deform_mlp_delta_out_v1",
     "HEAD_FEATURES",
     "MAX_HEAD_TASKS",
     "WORKER_GROUP_THREADS",
@@ -149,6 +151,46 @@ def _validate_persistent_blocks(persistent_blocks: int) -> None:
         raise TypeError("persistent_blocks must be an int")
     if persistent_blocks < 0:
         raise ValueError("persistent_blocks must be >= 0")
+
+
+def deform_mlp_delta_v1(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    tail_weights, tail_biases, persistent_blocks=0,
+):
+    """Run the five-stage MLP in one kernel; return pos/scale/rotation/opacity/SH deltas.
+
+    Input is FP32 [N,32]. Backbone weight is FP32 [32,128] (transposed).
+    First weights/biases are FP16 [5,128,128] / FP32 [5,128]. Concatenated
+    tail weights/biases are FP32 [59,128] / [59]. ReLU(backbone) is rounded to
+    FP16; all matrix accumulations and tail outputs are FP32. Inference only.
+    No HexPlane sampling, residuals, or renderer activations are performed.
+    ``persistent_blocks=0`` launches one block per 16-row tile; a positive
+    value caps the grid and enables the explicit persistent-block mode.
+    """
+    _validate_persistent_blocks(persistent_blocks)
+    return tuple(_extension().deform_mlp_delta_v1(
+        features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+        tail_weights, tail_biases, persistent_blocks,
+    ))
+
+
+def deform_mlp_delta_out_v1(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    tail_weights, tail_biases, outputs, persistent_blocks=0,
+):
+    """Write fused MLP deltas into contiguous FP32 [N,3/3/4/1/48] outputs.
+
+    The caller must keep input/parameter/output storage alive on every stream
+    using it and wait for prior readers before reusing an output buffer.
+    ``persistent_blocks=0`` launches one block per 16-row tile; a positive
+    value caps the grid and enables the explicit persistent-block mode.
+    """
+    _validate_persistent_blocks(persistent_blocks)
+    outputs = _tensor_sequence("outputs", outputs)
+    return tuple(_extension().deform_mlp_delta_out_v1(
+        features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+        tail_weights, tail_biases, outputs, persistent_blocks,
+    ))
 
 
 def head_linear_solo(input: Any, weight: Any, bias: Any):
