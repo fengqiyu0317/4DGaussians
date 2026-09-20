@@ -374,8 +374,9 @@ class RuntimeFailClosedTest(unittest.TestCase):
                     module.FIRST_LINEAR_ABI_FAMILY,
                     module.PACKED_FIRST_LINEAR_ABI_FAMILY,
                     module.WHOLE_HEAD_ABI_FAMILY,
+                    module.FULL_MLP_ABI_FAMILY,
                 ],
-                "supported_mixed_abis": [1, 2, 3, 4],
+                "supported_mixed_abis": [1, 2, 3, 4, 5],
                 "resource_query_family_aware": True,
             }
         )

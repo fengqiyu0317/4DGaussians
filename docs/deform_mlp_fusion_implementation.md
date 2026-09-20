@@ -508,7 +508,7 @@ submodules/depth-diff-gaussian-rasterization/
 
 已修改的接线位置：`tacker_ext/csrc/bindings.cpp`、`tacker_ext/setup.py`、`tacker_ext/tacker_4dgs_head/__init__.py`。
 
-ABI v5 已接通 rasterizer 的 CUDA/C++/Python 直接调用入口；`persistent_blocks=0` 表示完整 logical grid，尚未缩减为 persistent grid。后续仍需要新增 `tests/test_full_mlp_partition.py`，并修改 `gaussian_renderer/__init__.py`、`gaussian_renderer/tacker_pipeline.py` 以接入两槽跨帧调度。离线枚举/资格验证入口仍需在 `scripts/tacker_autotune.py`、`profile_tacker_leaves.py` 及相应 benchmark 工具中扩展。
+ABI v5 现已通过 `FullMlpPartition` 接入 `gaussian_renderer/tacker_pipeline.py` 的两槽跨帧调度：变形流生成 `HexPlane(t+1)` 特征，raster 流执行 `Raster(t) + full MLP(t+1)`，变形流再完成残差和激活。`tests/test_full_mlp_partition.py` 覆盖参数打包、Python MLP 节点不重复执行、ABI/模型失配回退以及 1/2/N 帧调度计数；`tests/test_full_mlp_partition_cuda.py` 在真实 CUDA stream 上验证参数 cache 依赖、feature-only prefix、mixed launch、suffix 数值以及 Python MLP 零调用。`persistent_blocks=0` 仍表示完整 logical grid；正数才显式选择 persistent grid。离线枚举/资格验证入口仍需在 `scripts/tacker_autotune.py`、`profile_tacker_leaves.py` 及相应 benchmark 工具中扩展。
 
 ### 10.2 每阶段的完成条件
 

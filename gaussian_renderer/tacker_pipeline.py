@@ -10,11 +10,11 @@ When any part of that contract is missing, :class:`TackerRenderer` delegates
 the complete sequence to ``TwoStreamRenderer`` and exposes the reason.
 
 Schema-v1 and the deployed Phase-1 candidate still use the original positional
-head ABI.  Schema-v2 candidates may instead select the first ``Linear(128,
-128)`` from any non-empty subset of the five deformation heads.  A partition
-object owns the prefix, physical mixed launch, parallel work, suffix, and
-stream-lifetime contract, so selected Linear nodes are never executed a second
-time by PyTorch.
+head ABI.  Schema-v2 candidates may select the first ``Linear(128, 128)``, a
+complete subset of deformation heads, or the full backbone-plus-five-head MLP.
+A partition object owns the prefix, physical mixed launch, parallel work,
+suffix, and stream-lifetime contract, so fused nodes are never executed a
+second time by PyTorch.
 """
 
 from copy import deepcopy
@@ -88,22 +88,33 @@ MIXED_MULTI_ABI_VERSION = 2
 FIRST_LINEAR_PARTITION_KIND = "first_linear_heads"
 PACKED_FIRST_LINEAR_PARTITION_KIND = "packed_first_linear_heads"
 WHOLE_HEAD_PARTITION_KIND = "whole_heads"
+FULL_MLP_PARTITION_KIND = "full_mlp"
 FIRST_LINEAR_ABI_FAMILY = "first_linear_heads_v2"
 PACKED_FIRST_LINEAR_ABI_FAMILY = "packed_first_linear_v3"
 WHOLE_HEAD_ABI_FAMILY = "whole_heads_v4"
+FULL_MLP_ABI_FAMILY = "full_deform_mlp_v5"
 FIRST_LINEAR_BACKEND = "first_linear"
 PACKED_FIRST_LINEAR_BACKEND = "packed_first_linear"
 WHOLE_HEAD_BACKEND = "whole_head"
+FULL_MLP_BACKEND = "full_deform_mlp"
 PACKED_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_packed_heads_v3.json"
 WHOLE_HEAD_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_whole_heads_v4.json"
+FULL_MLP_MIXED_ABI_MANIFEST = "abi/tacker_mixed_render_deform_mlp_v5.json"
 PACKED_MIXED_ABI_SHA256 = (
     "c98ed90853308179443146d3022e5da072c4f507975193f7a01f4fbe4400cf40"
 )
 WHOLE_HEAD_MIXED_ABI_SHA256 = (
     "293b8471fc9397070f1d1ebbe1297420f24f49e6882369e2e6cf8dcd9d49b7a1"
 )
+FULL_MLP_MIXED_ABI_SHA256 = (
+    "0472fca3de2ff8c6c37a70220a3e751918603203b0367bf321fb67f35c09c531"
+)
+DEFORM_MLP_ABI_SHA256 = (
+    "1c8112a30ce8c5075689d3bd5ed03b8aaadbdcdf29f86cf92ee0a725af3b4900"
+)
 PACKED_MIXED_ABI_VERSION = 3
 WHOLE_HEAD_MIXED_ABI_VERSION = 4
+FULL_MLP_MIXED_ABI_VERSION = 5
 PARTITION_KIND_REGISTRY = {}
 HEAD_ORDER = ("pos", "scales", "rotations", "opacity", "shs")
 HEAD_MODULES = {
@@ -383,6 +394,10 @@ def _first_linear_node(head_name):
 
 def _full_head_node(head_name):
     return "deformation.{}".format(HEAD_MODULES[head_name])
+
+
+def _backbone_node():
+    return "deformation.feature_out[0].linear_32x128"
 
 
 def _suffix_head_nodes(head_name):
@@ -981,6 +996,111 @@ def whole_head_candidate_contract(
     }
 
 
+def full_mlp_candidate_contract(
+    variant_id,
+    selected_heads=HEAD_ORDER,
+    worker_groups=1,
+    persistent_blocks=0,
+    resources=None,
+    backend=FULL_MLP_BACKEND,
+):
+    """Build the deterministic Raster + complete deformation-MLP contract."""
+
+    names = _validate_phase31_builder_arguments(
+        variant_id, selected_heads, worker_groups, persistent_blocks
+    )
+    if names != HEAD_ORDER:
+        raise ValueError("full MLP partition requires all heads in canonical order")
+    if worker_groups != 1:
+        raise ValueError("full MLP partition requires worker_groups == 1")
+    if backend != FULL_MLP_BACKEND:
+        raise ValueError(
+            "full MLP backend must be {!r}".format(FULL_MLP_BACKEND)
+        )
+    return {
+        "variant_id": variant_id,
+        "execution_mode": "tacker",
+        "abi_family": FULL_MLP_ABI_FAMILY,
+        "partition": {
+            "kind": FULL_MLP_PARTITION_KIND,
+            "selected_heads": list(names),
+            "worker_groups": 1,
+            "backend": backend,
+        },
+        "fused_nodes": ["raster.render_leaf", _backbone_node()]
+        + [_full_head_node(name) for name in names],
+        "parallel_nodes": [],
+        "suffix_nodes": ["deformation.apply_residuals"],
+        "skipped_python_nodes": [_backbone_node()]
+        + [_full_head_node(name) for name in names],
+        "required_outputs": [
+            "raster.color",
+            "raster.depth",
+            "raster.radii",
+        ]
+        + [HEAD_DELTA_OUTPUTS[name] for name in names],
+        "stream_lifetimes": [
+            "deform_features:deform_prefix->mixed_done",
+            "full_mlp_parameters:cache_ready->mixed_done",
+            "deform_deltas:mixed_done->residual_ready",
+            "render_state:residual_ready->raster_done",
+        ],
+        "backend_named_barriers": [
+            {
+                "id": 2,
+                "participants": 128,
+                "purpose": "full_deform_mlp",
+            }
+        ],
+        "backend_shared_scratch_bytes": 14592,
+        "cuda_symbol": "tacker_mix_render_deform_mlp_v5",
+        "abi_manifest": FULL_MLP_MIXED_ABI_MANIFEST,
+        "abi_manifest_sha256": FULL_MLP_MIXED_ABI_SHA256,
+        "deform_mlp_abi_manifest_sha256": DEFORM_MLP_ABI_SHA256,
+        "tensor_contract": {
+            "feature_dtype": "float32",
+            "feature_width": 32,
+            "backbone_weight_dtype": "float32",
+            "backbone_weight_layout": "input_output",
+            "first_weight_dtype": "float16",
+            "first_bias_dtype": "float32",
+            "tail_weight_dtype": "float32",
+            "tail_bias_dtype": "float32",
+            "output_dtype": "float32",
+            "output_widths": [HEAD_OUTPUT_WIDTHS[name] for name in names],
+            "head_order": list(names),
+        },
+        "physical_cta_threads": 384,
+        "raster_threads": 256,
+        "raster_thread_range_inclusive": [0, 255],
+        "raster_named_barrier_id": 1,
+        "backend_subgroups": [
+            {
+                "name": "full_deform_mlp",
+                "thread_range_inclusive": [256, 383],
+                "threads": 128,
+                "named_barrier_ids": [2],
+            }
+        ],
+        "persistent_blocks": persistent_blocks,
+        "persistent_blocks_zero_policy": "direct_logical_grid",
+        "tile_shape": [16, 16],
+        "resources": deepcopy(resources),
+        "capability_requirements": {
+            "cuda_arch": "sm_86",
+            "compute_capability": [8, 6],
+            "mixed_render_deform_mlp_abi": FULL_MLP_MIXED_ABI_VERSION,
+            "backend_family": FULL_MLP_ABI_FAMILY,
+            "deform_mlp_threads": 128,
+            "deform_mlp_named_barrier_id": 2,
+            "direct_grid_default": True,
+        },
+        "correctness": {"valid": False},
+        "performance": None,
+        "diagnostics": None,
+    }
+
+
 _CANDIDATE_MEASUREMENT_KEYS = ("correctness", "performance", "diagnostics")
 
 
@@ -1048,6 +1168,36 @@ def _validate_whole_head_v2_candidate(candidate):
     )
 
 
+def _validate_full_mlp_v2_candidate(candidate):
+    section = "candidate {}".format(candidate.get("variant_id", "<unknown>"))
+    partition = candidate.get("partition")
+    if not isinstance(partition, dict):
+        raise TackerProfileError("{}.partition must be an object".format(section))
+    _require_exact(
+        partition, "kind", FULL_MLP_PARTITION_KIND, "{}.partition".format(section)
+    )
+    selected_heads = _canonical_head_names(
+        partition.get("selected_heads"), "{}.partition".format(section)
+    )
+    try:
+        expected = full_mlp_candidate_contract(
+            candidate["variant_id"],
+            selected_heads,
+            worker_groups=partition.get("worker_groups"),
+            persistent_blocks=candidate.get("persistent_blocks"),
+            resources=candidate.get("resources"),
+            backend=partition.get("backend"),
+        )
+    except ValueError as error:
+        raise TackerProfileError("{}: {}".format(section, error))
+    _validate_deterministic_candidate_contract(candidate, expected, section)
+    _validate_candidate_resources(
+        candidate,
+        section,
+        require_measured=bool(candidate.get("correctness", {}).get("valid")),
+    )
+
+
 PARTITION_KIND_REGISTRY.update(
     {
         FIRST_LINEAR_PARTITION_KIND: {
@@ -1069,6 +1219,13 @@ PARTITION_KIND_REGISTRY.update(
             "backend": WHOLE_HEAD_BACKEND,
             "abi_version": WHOLE_HEAD_MIXED_ABI_VERSION,
             "validator": _validate_whole_head_v2_candidate,
+            "partition_class": None,
+        },
+        FULL_MLP_PARTITION_KIND: {
+            "abi_family": FULL_MLP_ABI_FAMILY,
+            "backend": FULL_MLP_BACKEND,
+            "abi_version": FULL_MLP_MIXED_ABI_VERSION,
+            "validator": _validate_full_mlp_v2_candidate,
             "partition_class": None,
         },
     }
@@ -2176,6 +2333,7 @@ def _query_rasterizer_variant_resources(worker_groups, abi_version=2, family=Non
         if family in (
             PACKED_FIRST_LINEAR_ABI_FAMILY,
             WHOLE_HEAD_ABI_FAMILY,
+            FULL_MLP_ABI_FAMILY,
         ):
             return _runtime_resource_mapping(
                 provider(abi_version, worker_groups, family)
@@ -2254,6 +2412,27 @@ def _head_structure_reason(network):
     return None
 
 
+def _full_mlp_structure_reason(network):
+    """Validate the exact feature/backbone shape consumed by mixed ABI v5."""
+
+    if bool(getattr(network, "no_grid", False)):
+        return "full MLP partition requires HexPlane features"
+    if getattr(network, "grid_pe", 0) != 0:
+        return "full MLP partition requires grid_pe == 0"
+    if bool(getattr(network.args, "static_mlp", False)):
+        return "full MLP partition does not support static_mlp masks"
+    feature_out = getattr(network, "feature_out", None)
+    if feature_out is None or _module_name(feature_out) != "Sequential":
+        return "feature_out must be an exact Sequential backbone"
+    try:
+        modules = list(feature_out)
+    except TypeError:
+        return "feature_out is not iterable"
+    if len(modules) != 1:
+        return "full MLP partition requires one 32x128 backbone Linear"
+    return _linear_shape_reason(modules[0], 32, 128, "feature_out[0]")
+
+
 def _rasterizer_capability_contract_reason(
     capabilities, selected_candidate, variant, manifest
 ):
@@ -2324,6 +2503,55 @@ def _rasterizer_capability_contract_reason(
             return "GaussianRasterizer.forward_with_head is unavailable"
         return None
 
+    if variant.backend == FULL_MLP_BACKEND:
+        capability = selected_candidate["capability_requirements"]
+        expected = {
+            "resource_query": "tacker_resource_requirements",
+            "resource_query_family_aware": True,
+            "mixed_render_deform_mlp_abi": FULL_MLP_MIXED_ABI_VERSION,
+            "mixed_render_deform_mlp": True,
+            "mixed_deform_mlp_family": FULL_MLP_ABI_FAMILY,
+            "mixed_deform_mlp_symbol": variant.cuda_symbol,
+            "mixed_deform_mlp_manifest": selected_candidate["abi_manifest"],
+            "mixed_deform_mlp_manifest_sha256": expected_mixed_hash,
+            "deform_mlp_manifest_sha256": selected_candidate[
+                "deform_mlp_abi_manifest_sha256"
+            ],
+            "deform_mlp_threads": capability["deform_mlp_threads"],
+            "deform_mlp_named_barrier_id": capability[
+                "deform_mlp_named_barrier_id"
+            ],
+            "deform_mlp_direct_grid_default": capability[
+                "direct_grid_default"
+            ],
+            "supported_backend_families": [
+                FIRST_LINEAR_ABI_FAMILY,
+                PACKED_FIRST_LINEAR_ABI_FAMILY,
+                WHOLE_HEAD_ABI_FAMILY,
+                FULL_MLP_ABI_FAMILY,
+            ],
+            "supported_mixed_abis": [1, 2, 3, 4, 5],
+        }
+        for key, value in expected.items():
+            if not _capability_matches(
+                _capability_value(capabilities, key, None), value
+            ):
+                return "rasterizer capability {} does not match {}".format(
+                    key, value
+                )
+        subgroup = selected_candidate["backend_subgroups"][0]
+        if subgroup["thread_range_inclusive"] != [256, 383]:
+            return "sealed full MLP worker range disagrees with compiled capabilities"
+        if subgroup["named_barrier_ids"] != [
+            capability["deform_mlp_named_barrier_id"]
+        ]:
+            return "sealed full MLP worker barrier contract changed"
+        if not callable(
+            getattr(GaussianRasterizer, "forward_with_deform_mlp", None)
+        ):
+            return "GaussianRasterizer.forward_with_deform_mlp is unavailable"
+        return None
+
     tensor_contract = selected_candidate["tensor_contract"]
     max_heads = tensor_contract["max_heads"]
     worker_threads = selected_candidate["backend_subgroups"][0]["threads"]
@@ -2368,8 +2596,9 @@ def _rasterizer_capability_contract_reason(
                     FIRST_LINEAR_ABI_FAMILY,
                     PACKED_FIRST_LINEAR_ABI_FAMILY,
                     WHOLE_HEAD_ABI_FAMILY,
+                    FULL_MLP_ABI_FAMILY,
                 ],
-                "supported_mixed_abis": [1, 2, 3, 4],
+                "supported_mixed_abis": [1, 2, 3, 4, 5],
                 "resource_query_family_aware": True,
             }
         )
@@ -2403,8 +2632,9 @@ def _rasterizer_capability_contract_reason(
                     FIRST_LINEAR_ABI_FAMILY,
                     PACKED_FIRST_LINEAR_ABI_FAMILY,
                     WHOLE_HEAD_ABI_FAMILY,
+                    FULL_MLP_ABI_FAMILY,
                 ],
-                "supported_mixed_abis": [1, 2, 3, 4],
+                "supported_mixed_abis": [1, 2, 3, 4, 5],
                 "resource_query_family_aware": True,
             }
         )
@@ -2495,6 +2725,7 @@ def _rasterizer_resource_contract_reason(
     if variant.family in (
         PACKED_FIRST_LINEAR_ABI_FAMILY,
         WHOLE_HEAD_ABI_FAMILY,
+        FULL_MLP_ABI_FAMILY,
     ):
         exact_runtime["backend_family"] = variant.family
         exact_runtime["backend_abi_version"] = variant.abi_version
@@ -2618,6 +2849,10 @@ def tacker_support_reason(
     structure_reason = _head_structure_reason(network)
     if structure_reason is not None:
         return structure_reason
+    if variant.backend == FULL_MLP_BACKEND:
+        structure_reason = _full_mlp_structure_reason(network)
+        if structure_reason is not None:
+            return structure_reason
 
     xyz_shape = tuple(getattr(getattr(pc, "get_xyz", None), "shape", ()))
     expected_count = manifest["gaussian_count"]
@@ -2816,6 +3051,14 @@ class FusionTask:
     whole_tail_biases: object = None
     whole_head_outputs: object = None
     output_widths: object = None
+    deform_features: object = None
+    backbone_weight: object = None
+    backbone_bias: object = None
+    full_first_weights: object = None
+    full_first_biases: object = None
+    full_tail_weights: object = None
+    full_tail_biases: object = None
+    full_mlp_outputs: object = None
 
     def record_stream(self, stream):
         for field in fields(self):
@@ -2883,6 +3126,42 @@ def _cache_whole_head_parameters(pc, head_names):
         tuple(first_biases),
         tuple(tail_weights),
         tuple(tail_biases),
+    )
+
+
+def _cache_full_mlp_parameters(pc):
+    """Pack ABI-v5 parameters once, in its exact device tensor layouts."""
+
+    network = pc._deformation.deformation_net
+    backbone = network.feature_out[0]
+    backbone_weight = (
+        backbone.weight.detach().to(dtype=torch.float32).t().contiguous()
+    )
+    backbone_bias = backbone.bias.detach().to(dtype=torch.float32).contiguous()
+
+    first_weights, first_biases = _cache_head_parameters(pc, HEAD_ORDER)
+    first_weights = torch.stack(first_weights, dim=0).contiguous()
+    first_biases = torch.stack(first_biases, dim=0).contiguous()
+
+    tail_weights = []
+    tail_biases = []
+    for head_name in HEAD_ORDER:
+        tail = getattr(network, HEAD_MODULES[head_name])[3]
+        tail_weights.append(
+            tail.weight.detach().to(dtype=torch.float32).contiguous()
+        )
+        tail_biases.append(
+            tail.bias.detach().to(dtype=torch.float32).contiguous()
+        )
+    tail_weights = torch.cat(tail_weights, dim=0).contiguous()
+    tail_biases = torch.cat(tail_biases, dim=0).contiguous()
+    return (
+        backbone_weight,
+        backbone_bias,
+        first_weights,
+        first_biases,
+        tail_weights,
+        tail_biases,
     )
 
 
@@ -3176,6 +3455,84 @@ def prepare_whole_head_task(
     return task
 
 
+def prepare_full_mlp_task(
+    context,
+    pc,
+    deform_stream,
+    variant,
+    cached_parameters,
+    prefix_ready=None,
+):
+    """Produce only HexPlane features; ABI v5 owns backbone and all heads."""
+
+    if variant.selected_heads != HEAD_ORDER or variant.worker_groups != 1:
+        raise ValueError("full MLP task requires all five heads and one worker group")
+    if prefix_ready is None:
+        prefix_ready = torch.cuda.Event(blocking=False)
+    if len(cached_parameters) != 6:
+        raise ValueError("cached full MLP parameter tuple must contain six tensors")
+    (
+        backbone_weight,
+        backbone_bias,
+        first_weights,
+        first_biases,
+        tail_weights,
+        tail_biases,
+    ) = cached_parameters
+
+    network = pc._deformation.deformation_net
+    if bool(getattr(network.args, "static_mlp", False)):
+        raise RuntimeError("full MLP partition does not support static_mlp masks")
+    with torch.cuda.stream(deform_stream):
+        point_emb = context.means3D
+        scales_emb = context.scales
+        rotations_emb = context.rotations
+        deform_features = network.grid(
+            point_emb[:, :3], context.timestamp[:, :1]
+        ).to(dtype=torch.float32).contiguous()
+        # Raster only consumes the feature tensor.  Record its dependency edge
+        # before mask work so an optional empty-voxel branch can overlap the
+        # physical mixed launch on the other stream.
+        prefix_ready.record(deform_stream)
+
+        if bool(getattr(network.args, "empty_voxel", False)):
+            mask = network.empty_voxel(point_emb[:, :3])
+        else:
+            mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
+
+    task = FusionTask(
+        context=context,
+        variant=variant,
+        point_emb=point_emb,
+        scales_emb=scales_emb,
+        rotations_emb=rotations_emb,
+        opacity_emb=context.opacity,
+        shs_emb=context.shs,
+        hidden=None,
+        mask=mask,
+        head_inputs=(),
+        head_weights=(),
+        head_biases=(),
+        parallel_outputs={},
+        prefix_ready=prefix_ready,
+        skipped_python_nodes=tuple(
+            [_backbone_node()]
+            + [_full_head_node(name) for name in HEAD_ORDER]
+        ),
+        executed_python_nodes=[],
+        deform_features=deform_features,
+        backbone_weight=backbone_weight,
+        backbone_bias=backbone_bias,
+        full_first_weights=first_weights,
+        full_first_biases=first_biases,
+        full_tail_weights=tail_weights,
+        full_tail_biases=tail_biases,
+        output_widths=tuple(HEAD_OUTPUT_WIDTHS[name] for name in HEAD_ORDER),
+    )
+    task.assert_selected_nodes_not_executed_by_python()
+    return task
+
+
 def prepare_pos_head_task(
     context,
     pc,
@@ -3248,7 +3605,10 @@ def _validate_head_output(task, head_name, value, output_width=128):
                 head_name, output_width
             )
         )
-    hidden_shape = tuple(getattr(task.hidden, "shape", ()))
+    row_reference = task.hidden
+    if row_reference is None:
+        row_reference = getattr(task, "deform_features", None)
+    hidden_shape = tuple(getattr(row_reference, "shape", ()))
     if shape and hidden_shape and shape[0] != hidden_shape[0]:
         raise ValueError("mixed head output row count changed")
 
@@ -3352,6 +3712,22 @@ def finish_whole_head_task(task, pc, head_outputs):
     task.shs_delta = deltas.get("shs")
     task.assert_selected_nodes_not_executed_by_python()
     return _render_state_from_deltas(task, pc, deltas)
+
+
+def finish_full_mlp_task(task, pc, head_outputs):
+    """Apply residuals to ABI-v5 deltas without re-running any MLP node."""
+
+    outputs = _normalise_whole_head_outputs(task, head_outputs)
+    if tuple(outputs) != HEAD_ORDER:
+        raise ValueError("full MLP outputs changed canonical head order")
+    task.mixed_outputs = outputs
+    task.full_mlp_outputs = outputs
+    task.scale_delta = outputs["scales"]
+    task.rotation_delta = outputs["rotations"]
+    task.opacity_delta = outputs["opacity"]
+    task.shs_delta = outputs["shs"]
+    task.assert_selected_nodes_not_executed_by_python()
+    return _render_state_from_deltas(task, pc, outputs)
 
 
 def _render_state_from_deltas(task, pc, deltas):
@@ -3502,6 +3878,34 @@ def _forward_with_whole_heads(context, state, task, persistent_blocks):
         rotations=state.rotations,
         cov3D_precomp=context.cov3D_precomp,
         worker_groups=task.variant.worker_groups,
+        persistent_blocks=persistent_blocks,
+    )
+
+
+def _forward_with_deform_mlp(context, state, task, persistent_blocks):
+    """Adapter around the ABI-v5 Raster + complete deformation MLP binding."""
+
+    method = getattr(context.rasterizer, "forward_with_deform_mlp", None)
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.forward_with_deform_mlp is unavailable"
+        )
+    return method(
+        means3D=state.means3D,
+        means2D=context.means2D,
+        opacities=state.opacities,
+        deform_features=task.deform_features,
+        backbone_weight=task.backbone_weight,
+        backbone_bias=task.backbone_bias,
+        first_weights=task.full_first_weights,
+        first_biases=task.full_first_biases,
+        tail_weights=task.full_tail_weights,
+        tail_biases=task.full_tail_biases,
+        shs=state.shs,
+        colors_precomp=context.colors_precomp,
+        scales=state.scales,
+        rotations=state.rotations,
+        cov3D_precomp=context.cov3D_precomp,
         persistent_blocks=persistent_blocks,
     )
 
@@ -3690,6 +4094,37 @@ class WholeHeadPartition(FusionPartition):
         return finish_whole_head_task(task, pc, head_outputs)
 
 
+class FullMlpPartition(FusionPartition):
+    """ABI-v5 partition: HexPlane prefix, physical full MLP, residual suffix."""
+
+    def cache_parameters(self, pc):
+        return _cache_full_mlp_parameters(pc)
+
+    def cached_tensors(self, cached):
+        return tuple(cached)
+
+    def prepare(self, context, pc, deform_stream, cached, prefix_ready):
+        return prepare_full_mlp_task(
+            context,
+            pc,
+            deform_stream,
+            self.variant,
+            cached,
+            prefix_ready=prefix_ready,
+        )
+
+    def launch_mixed(self, context, state, task):
+        return _forward_with_deform_mlp(
+            context, state, task, self.variant.persistent_blocks
+        )
+
+    def result_from_mixed(self, context, mixed_outputs):
+        return _result_from_mixed_heads(context, mixed_outputs, len(HEAD_ORDER))
+
+    def finish(self, task, pc, head_outputs):
+        return finish_full_mlp_task(task, pc, head_outputs)
+
+
 PARTITION_KIND_REGISTRY[FIRST_LINEAR_PARTITION_KIND][
     "partition_class"
 ] = FusionPartition
@@ -3699,6 +4134,9 @@ PARTITION_KIND_REGISTRY[PACKED_FIRST_LINEAR_PARTITION_KIND][
 PARTITION_KIND_REGISTRY[WHOLE_HEAD_PARTITION_KIND][
     "partition_class"
 ] = WholeHeadPartition
+PARTITION_KIND_REGISTRY[FULL_MLP_PARTITION_KIND][
+    "partition_class"
+] = FullMlpPartition
 
 
 def resolve_fusion_partition(candidate):
@@ -3731,7 +4169,7 @@ class _TackerSlot:
 
 
 class TackerRenderer:
-    """Two-slot physical pipeline for ``R(t) + head(t+1)``.
+    """Two-slot physical pipeline for ``R(t) + deformation partition(t+1)``.
 
     Unsupported or unmeasured configurations run through a real
     ``TwoStreamRenderer`` instance.  ``last_fallback_reason`` distinguishes
