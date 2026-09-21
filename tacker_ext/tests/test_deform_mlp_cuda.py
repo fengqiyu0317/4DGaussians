@@ -8,7 +8,12 @@ try:
 except ImportError:
     torch = None
 
-from tacker_4dgs_head import deform_mlp_delta_v1, deform_mlp_delta_out_v1
+from tacker_4dgs_head import (
+    deform_mlp_delta_v1,
+    deform_mlp_delta_out_v1,
+    deform_mlp_sliced_out_v2,
+    deform_mlp_sliced_v2,
+)
 
 
 WIDTHS = (3, 3, 4, 1, 48)
@@ -46,6 +51,33 @@ class DeformMlpCudaTest(unittest.TestCase):
             lo, hi = OFFSETS[head:head + 2]
             outputs.append(hidden @ tails[lo:hi].t() + tail_bias[lo:hi])
         return outputs
+
+    @staticmethod
+    def sliced_reference(args):
+        features, w0, b0, weights, biases, tails, _tail_bias = args
+        activated = torch.relu(features @ w0 + b0).half()
+        partials = []
+        for slice_index in range(8):
+            lo_hidden = slice_index * 16
+            hi_hidden = lo_hidden + 16
+            packed = torch.empty(
+                (features.shape[0], 59), device=features.device,
+                dtype=torch.float32)
+            for head in range(5):
+                hidden = torch.relu(
+                    activated.float()
+                    @ weights[head, lo_hidden:hi_hidden].float().t()
+                    + biases[head, lo_hidden:hi_hidden]
+                )
+                lo_output, hi_output = OFFSETS[head:head + 2]
+                packed[:, lo_output:hi_output] = (
+                    hidden
+                    @ tails[
+                        lo_output:hi_output, lo_hidden:hi_hidden
+                    ].t()
+                )
+            partials.append(packed)
+        return activated, torch.stack(partials, dim=0)
 
     def assert_outputs(self, actual, expected):
         self.assertEqual(len(actual), 5)
@@ -171,6 +203,89 @@ class DeformMlpCudaTest(unittest.TestCase):
                        if event.device_type == torch.autograd.DeviceType.CUDA]
             self.assertEqual(len(kernels), 1, kernels)
             self.assertIn("tacker_deform_mlp_delta_v1", kernels[0])
+
+    def test_sliced_v2_partial_tiles_and_reduction(self):
+        with torch.no_grad():
+            for rows in (0, 1, 15, 16, 17, 33):
+                with self.subTest(rows=rows):
+                    args = self.case(rows)
+                    activated, partials = deform_mlp_sliced_v2(*args[:-1])
+                    expected_activated, expected_partials = (
+                        self.sliced_reference(args)
+                    )
+                    self.assertEqual(activated.shape, (rows, 128))
+                    self.assertEqual(activated.dtype, torch.float16)
+                    self.assertEqual(partials.shape, (8, rows, 59))
+                    self.assertEqual(partials.dtype, torch.float32)
+                    torch.testing.assert_close(
+                        activated, expected_activated, rtol=2e-3, atol=5e-4)
+                    torch.testing.assert_close(
+                        partials, expected_partials, rtol=2e-3, atol=5e-4)
+
+                    packed = partials.sum(dim=0) + args[-1]
+                    outputs = tuple(
+                        packed[:, lo:hi].contiguous()
+                        for lo, hi in zip(OFFSETS[:-1], OFFSETS[1:])
+                    )
+                    self.assert_outputs(outputs, self.reference(args))
+
+    def test_sliced_v2_out_buffers_and_two_kernel_contract(self):
+        with torch.no_grad():
+            args = self.case(33)
+            activated = torch.empty(
+                (33, 128), device="cuda", dtype=torch.float16)
+            partials = torch.empty(
+                (8, 33, 59), device="cuda", dtype=torch.float32)
+            returned = deform_mlp_sliced_out_v2(
+                *args[:-1], activated, partials)
+            self.assertEqual(returned[0].data_ptr(), activated.data_ptr())
+            self.assertEqual(returned[1].data_ptr(), partials.data_ptr())
+            torch.cuda.synchronize()
+
+            with torch.profiler.profile(
+                activities=[
+                    torch.profiler.ProfilerActivity.CPU,
+                    torch.profiler.ProfilerActivity.CUDA,
+                ]
+            ) as prof:
+                deform_mlp_sliced_out_v2(
+                    *args[:-1], activated, partials)
+                torch.cuda.synchronize()
+            kernels = [
+                event.name
+                for event in prof.events()
+                if event.device_type == torch.autograd.DeviceType.CUDA
+            ]
+            self.assertEqual(len(kernels), 2, kernels)
+            self.assertIn("tacker_deform_mlp_backbone_v2", kernels[0])
+            self.assertIn("tacker_deform_mlp_sliced_heads_v2", kernels[1])
+
+    def test_sliced_v2_validation_rejects_bad_outputs(self):
+        with torch.no_grad():
+            args = self.case(17)
+            activated = torch.empty(
+                (17, 128), device="cuda", dtype=torch.float16)
+            partials = torch.empty(
+                (8, 17, 59), device="cuda", dtype=torch.float32)
+            with self.assertRaisesRegex(RuntimeError, "activated.*shape"):
+                deform_mlp_sliced_out_v2(
+                    *args[:-1],
+                    torch.empty(
+                        (17, 127), device="cuda", dtype=torch.float16),
+                    partials)
+            with self.assertRaisesRegex(RuntimeError, "partials.*shape"):
+                deform_mlp_sliced_out_v2(
+                    *args[:-1], activated,
+                    torch.empty(
+                        (8, 17, 58), device="cuda", dtype=torch.float32))
+
+            storage = torch.empty(8 * 17 * 59, device="cuda")
+            aliased_args = list(args[:-1])
+            aliased_args[0] = storage[:17 * 32].view(17, 32)
+            partial_alias = storage.view(8, 17, 59)
+            with self.assertRaisesRegex(RuntimeError, "partials.*overlap"):
+                deform_mlp_sliced_out_v2(
+                    *aliased_args, activated, partial_alias)
 
 
 if __name__ == "__main__":

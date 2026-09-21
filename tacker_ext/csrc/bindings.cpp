@@ -116,6 +116,19 @@ pybind11::dict TackerResourcesV2() {
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
     module.def(
+        "deform_mlp_sliced_v2", &deform_mlp_sliced_v2_cuda,
+        "Two kernels: common FP16 backbone then eight sliced head-tail blocks",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"), pybind11::arg("tail_weights"));
+    module.def(
+        "deform_mlp_sliced_out_v2", &deform_mlp_sliced_out_v2_cuda,
+        "Two sliced deformation kernels into caller-owned activation/partials",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"), pybind11::arg("tail_weights"),
+        pybind11::arg("activated"), pybind11::arg("partials"));
+    module.def(
         "deform_mlp_delta_v1", &deform_mlp_delta_v1_cuda,
         "One kernel: FP32 backbone, ReLU, five WMMA heads, ReLU, FP32 tails",
         pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),

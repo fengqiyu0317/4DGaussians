@@ -1,0 +1,36 @@
+{
+  "abi_version": 2,
+  "name": "4dgs_sliced_deform_mlp_partials",
+  "cuda_arch": "sm_86",
+  "global_kernel_symbols": [
+    "tacker_deform_mlp_backbone_v2",
+    "tacker_deform_mlp_sliced_heads_v2"
+  ],
+  "launches": 2,
+  "rows_per_tile": 16,
+  "slices": 8,
+  "hidden_features_per_slice": 16,
+  "threads_per_block": 128,
+  "input": {
+    "features": {"dtype": "float32", "shape": ["N", 32]},
+    "backbone_weight": {"dtype": "float32", "shape": [32, 128]},
+    "backbone_bias": {"dtype": "float32", "shape": [128]},
+    "first_weights": {"dtype": "float16", "shape": [5, 128, 128]},
+    "first_biases": {"dtype": "float32", "shape": [5, 128]},
+    "tail_weights": {"dtype": "float32", "shape": [59, 128]}
+  },
+  "outputs": {
+    "activated": {"dtype": "float16", "shape": ["N", 128]},
+    "partials": {
+      "dtype": "float32",
+      "shape": [8, "N", 59],
+      "layout": "slice_row_output",
+      "semantics": "tail partial without tail bias"
+    }
+  },
+  "finalization": {
+    "packed_delta": "partials.sum(axis=0) + tail_bias",
+    "output_offsets": [0, 3, 6, 10, 11, 59],
+    "head_order": ["position", "scale", "rotation", "opacity", "sh"]
+  }
+}

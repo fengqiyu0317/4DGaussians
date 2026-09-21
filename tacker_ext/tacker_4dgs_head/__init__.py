@@ -30,6 +30,8 @@ from .validation import (
 __all__ = [
     "deform_mlp_delta_v1",
     "deform_mlp_delta_out_v1",
+    "deform_mlp_sliced_v2",
+    "deform_mlp_sliced_out_v2",
     "HEAD_FEATURES",
     "MAX_HEAD_TASKS",
     "WORKER_GROUP_THREADS",
@@ -190,6 +192,37 @@ def deform_mlp_delta_out_v1(
     return tuple(_extension().deform_mlp_delta_out_v1(
         features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
         tail_weights, tail_biases, outputs, persistent_blocks,
+    ))
+
+
+def deform_mlp_sliced_v2(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    tail_weights,
+):
+    """Run the experimental two-kernel sliced MLP and return its intermediates.
+
+    The returned pair is ``(activated, partials)`` with FP16 ``activated`` of
+    shape ``[N,128]`` and FP32 ``partials`` of shape ``[8,N,59]``.  Reduce the
+    latter over dimension 0 and add the concatenated FP32 tail bias exactly
+    once to obtain the five packed delta groups.
+    """
+
+    return tuple(_extension().deform_mlp_sliced_v2(
+        features, backbone_weight_kh, backbone_bias,
+        first_weights, first_biases, tail_weights,
+    ))
+
+
+def deform_mlp_sliced_out_v2(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    tail_weights, activated, partials,
+):
+    """Write the two-kernel sliced activation and tail partials into buffers."""
+
+    return tuple(_extension().deform_mlp_sliced_out_v2(
+        features, backbone_weight_kh, backbone_bias,
+        first_weights, first_biases, tail_weights,
+        activated, partials,
     ))
 
 

@@ -85,6 +85,43 @@ Run its CUDA tests on `4A6000` (including the single-kernel profiler assertion):
 PYTHONPATH=. python -m unittest tests.test_deform_mlp_cuda -v
 ```
 
+### Experimental sliced deformation MLP: two CUDA kernels
+
+`deform_mlp_sliced_v2` preserves the same backbone/head quantization boundary
+but exposes the requested eight-way vertical decomposition.  Its first kernel
+materializes the common FP16 activation `[N,128]`.  Its second kernel launches
+an exact two-dimensional grid `[ceil(N/16),8]`; block `slice` computes the five
+`128x16` first-linear slabs, applies their ReLUs, immediately evaluates the
+matching 16-channel FP32 tail contributions, and writes one non-overlapping
+plane of `[8,N,59]` partials.  It performs no atomics and adds no tail bias.
+
+```python
+from tacker_4dgs_head import deform_mlp_sliced_v2
+
+with torch.no_grad():
+    activated, partials = deform_mlp_sliced_v2(
+        features,
+        backbone_weight_kh,
+        backbone_bias,
+        first_weights,
+        first_biases,
+        tail_weights,
+    )
+    packed_delta = partials.sum(dim=0) + tail_biases
+    dx, ds, dr, do, dsh = (
+        packed_delta[:, 0:3], packed_delta[:, 3:6],
+        packed_delta[:, 6:10], packed_delta[:, 10:11],
+        packed_delta[:, 11:59],
+    )
+```
+
+`deform_mlp_sliced_out_v2` accepts caller-owned FP16 `[N,128]` activation and
+FP32 `[8,N,59]` partial buffers.  The two custom kernel launches use the current
+CUDA stream.  The final slice reduction/tail-bias/residual/activation remains
+the responsibility of the enclosing deformation path.  The machine-readable
+contract is `abi/deform_mlp_sliced_v2.json`; v1 remains unchanged and is still
+the qualified single-kernel baseline.
+
 ### Existing head APIs
 
 ```python
