@@ -24,10 +24,12 @@ std::vector<torch::Tensor> deform_mlp_delta_out_v1_cuda(
     const std::vector<torch::Tensor>& outputs,
     int64_t persistent_blocks);
 
-// Two-launch experimental path.  The first kernel materializes the common
-// FP16 backbone activation [N,128].  The second launches eight independent
-// blocks per 16-row tile and writes fused first-linear/ReLU/tail partials as
-// [8,N,59].  The caller owns the final slice reduction and tail-bias add.
+// Six-launch experimental path.  The first kernel materializes the common
+// FP16 backbone activation [N,128].  Five head-specialized kernels then launch
+// eight independent slice blocks per 128-row group, serially traverse 16-row
+// WMMA micro-tiles, and write disjoint tail partials as [8,N,59].  The heads
+// run on independent pooled streams and rejoin the caller's current stream
+// before the caller-owned final slice reduction and tail-bias add.
 std::vector<torch::Tensor> deform_mlp_sliced_v2_cuda(
     const torch::Tensor& features,
     const torch::Tensor& backbone_weight_kh,

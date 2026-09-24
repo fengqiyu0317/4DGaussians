@@ -206,7 +206,7 @@ class DeformMlpCudaTest(unittest.TestCase):
 
     def test_sliced_v2_partial_tiles_and_reduction(self):
         with torch.no_grad():
-            for rows in (0, 1, 15, 16, 17, 33):
+            for rows in (0, 1, 15, 16, 17, 33, 127, 128, 129):
                 with self.subTest(rows=rows):
                     args = self.case(rows)
                     activated, partials = deform_mlp_sliced_v2(*args[:-1])
@@ -229,7 +229,7 @@ class DeformMlpCudaTest(unittest.TestCase):
                     )
                     self.assert_outputs(outputs, self.reference(args))
 
-    def test_sliced_v2_out_buffers_and_two_kernel_contract(self):
+    def test_sliced_v2_out_buffers_and_parallel_six_kernel_contract(self):
         with torch.no_grad():
             args = self.case(33)
             activated = torch.empty(
@@ -256,9 +256,42 @@ class DeformMlpCudaTest(unittest.TestCase):
                 for event in prof.events()
                 if event.device_type == torch.autograd.DeviceType.CUDA
             ]
-            self.assertEqual(len(kernels), 2, kernels)
-            self.assertIn("tacker_deform_mlp_backbone_v2", kernels[0])
-            self.assertIn("tacker_deform_mlp_sliced_heads_v2", kernels[1])
+            expected_names = ["tacker_deform_mlp_backbone_v2"] + [
+                "tacker_deform_mlp_sliced_head{}_v2".format(head)
+                for head in range(5)
+            ]
+            self.assertEqual(len(kernels), len(expected_names), kernels)
+            for expected in expected_names:
+                self.assertEqual(
+                    sum(expected in actual for actual in kernels), 1, kernels)
+
+    def test_sliced_v2_parallel_heads_join_non_default_stream(self):
+        with torch.no_grad():
+            args = self.case(129)
+            expected_activated, expected_partials = self.sliced_reference(args)
+            ready = torch.cuda.Event()
+            ready.record()
+            stream = torch.cuda.Stream()
+            done = torch.cuda.Event()
+            with torch.cuda.stream(stream):
+                stream.wait_event(ready)
+                for value in args:
+                    value.record_stream(stream)
+                activated, partials = deform_mlp_sliced_v2(*args[:-1])
+                # This reduction is deliberately queued immediately.  It is
+                # correct only if the extension rejoins all five head streams.
+                packed = partials.sum(dim=0) + args[-1]
+                done.record()
+            torch.cuda.current_stream().wait_event(done)
+            for value in (activated, partials, packed):
+                value.record_stream(torch.cuda.current_stream())
+            torch.testing.assert_close(
+                activated, expected_activated, rtol=2e-3, atol=5e-4)
+            torch.testing.assert_close(
+                partials, expected_partials, rtol=2e-3, atol=5e-4)
+            torch.testing.assert_close(
+                packed, expected_partials.sum(dim=0) + args[-1],
+                rtol=2e-3, atol=5e-4)
 
     def test_sliced_v2_validation_rejects_bad_outputs(self):
         with torch.no_grad():

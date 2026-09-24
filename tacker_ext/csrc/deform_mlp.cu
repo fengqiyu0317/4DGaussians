@@ -1,7 +1,9 @@
 #include <ATen/core/grad_mode.h>
 #include <ATen/cuda/CUDAContext.h>
+#include <ATen/cuda/CUDAEvent.h>
 #include <c10/cuda/CUDAGuard.h>
 #include <c10/cuda/CUDAException.h>
+#include <c10/cuda/CUDAStream.h>
 
 #include <algorithm>
 #include <array>
@@ -16,6 +18,11 @@ namespace {
 constexpr int kOutputWidths[] = {3, 3, 4, 1, 48};
 constexpr int kSlicedOutputWidth = 59;
 constexpr int kSlicedCount = 8;
+constexpr int kSlicedRowsPerGroup = 128;
+constexpr int kSlicedMicroTiles =
+    kSlicedRowsPerGroup / tacker_4dgs::kDeformRows;
+static_assert(kSlicedRowsPerGroup % tacker_4dgs::kDeformRows == 0,
+              "sliced row group must contain complete WMMA row tiles");
 
 void check_tensor(const torch::Tensor& value, const char* name,
                   at::ScalarType dtype, const c10::Device& device,
@@ -96,31 +103,30 @@ struct __align__(32) DeformBackboneScratchV2 {
     float features[tacker_4dgs::kDeformRows * tacker_4dgs::kDeformInput];
 };
 
-struct __align__(32) DeformSliceScratchV2 {
+struct __align__(32) DeformHeadScratchV2 {
     half activated[
         tacker_4dgs::kDeformRows * tacker_4dgs::kDeformActivatedStride];
-    // Heads 0--3 execute concurrently, one per warp.  Head 4 reuses slot 0.
-    float hidden[4][tacker_4dgs::kDeformRows * 16];
+    float hidden[tacker_4dgs::kDeformRows * 16];
 };
 
 static_assert(sizeof(DeformBackboneScratchV2) == 2048,
               "unexpected sliced backbone scratch layout");
-static_assert(sizeof(DeformSliceScratchV2) == 8448,
-              "unexpected sliced head scratch layout");
+static_assert(sizeof(DeformHeadScratchV2) == 5376,
+              "unexpected per-head scratch layout");
 
+template <int Head>
 __device__ __forceinline__ void compute_sliced_head_tile_v2(
     const half* activated,
     const half* first_weights,
     const float* first_biases,
-    int head,
     int slice,
     float* hidden) {
     namespace wmma = nvcuda::wmma;
     const int lane = static_cast<int>(threadIdx.x) & 31;
     const int hidden_begin = slice * 16;
     const half* weight = first_weights +
-        head * tacker_4dgs::kDeformWidth * tacker_4dgs::kDeformWidth;
-    const float* bias = first_biases + head * tacker_4dgs::kDeformWidth;
+        Head * tacker_4dgs::kDeformWidth * tacker_4dgs::kDeformWidth;
+    const float* bias = first_biases + Head * tacker_4dgs::kDeformWidth;
 
     wmma::fragment<wmma::matrix_a, 16, 16, 16, half, wmma::row_major> a;
     wmma::fragment<wmma::matrix_b, 16, 16, 16, half, wmma::col_major> b;
@@ -145,31 +151,28 @@ __device__ __forceinline__ void compute_sliced_head_tile_v2(
     __syncwarp();
 }
 
+template <int Width, int Offset>
 __device__ __forceinline__ void store_sliced_tail_partial_v2(
     const float* hidden,
     const float* tail_weights,
     float* partials,
     int rows,
     int row_begin,
-    int head,
     int slice,
     int local_tid,
     int local_step) {
-    const int width = head < 2 ? 3 : (head == 2 ? 4 : (head == 3 ? 1 : 48));
-    const int offset = head == 0 ? 0 : (head == 1 ? 3 :
-                       (head == 2 ? 6 : (head == 3 ? 10 : 11)));
     const int hidden_begin = slice * 16;
-    for (int u = local_tid; u < tacker_4dgs::kDeformRows * width;
+    for (int u = local_tid; u < tacker_4dgs::kDeformRows * Width;
          u += local_step) {
-        const int row = u / width;
-        const int column = u % width;
+        const int row = u / Width;
+        const int column = u % Width;
         float sum = 0.0f;
 #pragma unroll
         for (int k = 0; k < 16; ++k) {
             sum = fmaf(
                 hidden[row * 16 + k],
                 tail_weights[
-                    (offset + column) * tacker_4dgs::kDeformWidth +
+                    (Offset + column) * tacker_4dgs::kDeformWidth +
                     hidden_begin + k],
                 sum);
         }
@@ -178,8 +181,61 @@ __device__ __forceinline__ void store_sliced_tail_partial_v2(
             partials[
                 (static_cast<size_t>(slice) * rows + global_row) *
                     kSlicedOutputWidth +
-                offset + column] = sum;
+                Offset + column] = sum;
         }
+    }
+}
+
+template <int Head, int Width, int Offset>
+__device__ __forceinline__ void run_sliced_head_v2(
+    const half* activated,
+    const half* first_weights,
+    const float* first_biases,
+    const float* tail_weights,
+    float* partials,
+    int rows,
+    DeformHeadScratchV2& scratch) {
+    const int tid = static_cast<int>(threadIdx.x);
+    const int row_group_begin = static_cast<int>(blockIdx.x) *
+        kSlicedRowsPerGroup;
+    const int slice = static_cast<int>(blockIdx.y);
+    int micro_tiles =
+        (rows - row_group_begin + tacker_4dgs::kDeformRows - 1) /
+        tacker_4dgs::kDeformRows;
+    if (micro_tiles > kSlicedMicroTiles) micro_tiles = kSlicedMicroTiles;
+
+    for (int micro = 0; micro < micro_tiles; ++micro) {
+        const int row_begin = row_group_begin +
+            micro * tacker_4dgs::kDeformRows;
+        for (int e = tid;
+             e < tacker_4dgs::kDeformRows * tacker_4dgs::kDeformWidth;
+             e += blockDim.x) {
+            const int row = e / tacker_4dgs::kDeformWidth;
+            const int column = e % tacker_4dgs::kDeformWidth;
+            const int global_row = row_begin + row;
+            scratch.activated[
+                row * tacker_4dgs::kDeformActivatedStride + column] =
+                global_row < rows
+                    ? activated[
+                          static_cast<size_t>(global_row) *
+                              tacker_4dgs::kDeformWidth +
+                          column]
+                    : __float2half_rn(0.0f);
+        }
+        __syncthreads();
+
+        // A single warp owns the 16x16 WMMA slab for this head.  Tail work is
+        // then distributed across the head-specific block size.
+        if (tid < 32) {
+            compute_sliced_head_tile_v2<Head>(
+                scratch.activated, first_weights, first_biases,
+                slice, scratch.hidden);
+        }
+        __syncthreads();
+        store_sliced_tail_partial_v2<Width, Offset>(
+            scratch.hidden, tail_weights, partials,
+            rows, row_begin, slice, tid, blockDim.x);
+        __syncthreads();
     }
 }
 
@@ -200,98 +256,125 @@ tacker_deform_mlp_backbone_v2(
     int rows) {
     __shared__ DeformBackboneScratchV2 scratch;
     const int tid = static_cast<int>(threadIdx.x);
-    const int row_begin = static_cast<int>(blockIdx.x) *
+    const int row_group_begin = static_cast<int>(blockIdx.x) *
+        kSlicedRowsPerGroup;
+    int micro_tiles =
+        (rows - row_group_begin + tacker_4dgs::kDeformRows - 1) /
         tacker_4dgs::kDeformRows;
-    for (int e = tid;
-         e < tacker_4dgs::kDeformRows * tacker_4dgs::kDeformInput;
-         e += blockDim.x) {
-        const int row = row_begin + e / tacker_4dgs::kDeformInput;
-        scratch.features[e] = row < rows
-            ? features[static_cast<size_t>(row) * tacker_4dgs::kDeformInput +
-                       e % tacker_4dgs::kDeformInput]
-            : 0.0f;
-    }
-    __syncthreads();
+    if (micro_tiles > kSlicedMicroTiles) micro_tiles = kSlicedMicroTiles;
 
-    if (tid < tacker_4dgs::kDeformWidth) {
+    // One CTA owns up to 128 rows, but retains the proven 16-row shared-memory
+    // micro-tile.  This cuts the grid by 8x without increasing shared memory.
+    for (int micro = 0; micro < micro_tiles; ++micro) {
+        const int row_begin = row_group_begin +
+            micro * tacker_4dgs::kDeformRows;
+        for (int e = tid;
+             e < tacker_4dgs::kDeformRows * tacker_4dgs::kDeformInput;
+             e += blockDim.x) {
+            const int row = row_begin + e / tacker_4dgs::kDeformInput;
+            scratch.features[e] = row < rows
+                ? features[
+                      static_cast<size_t>(row) * tacker_4dgs::kDeformInput +
+                      e % tacker_4dgs::kDeformInput]
+                : 0.0f;
+        }
+        __syncthreads();
+
+        if (tid < tacker_4dgs::kDeformWidth) {
 #pragma unroll
-        for (int row = 0; row < tacker_4dgs::kDeformRows; ++row) {
-            float sum = 0.0f;
-            if (row_begin + row < rows) {
+            for (int row = 0; row < tacker_4dgs::kDeformRows; ++row) {
+                float sum = 0.0f;
+                if (row_begin + row < rows) {
 #pragma unroll
-                for (int k = 0; k < tacker_4dgs::kDeformInput; ++k) {
-                    sum = fmaf(
-                        scratch.features[row * tacker_4dgs::kDeformInput + k],
-                        backbone_weight[k * tacker_4dgs::kDeformWidth + tid],
-                        sum);
+                    for (int k = 0; k < tacker_4dgs::kDeformInput; ++k) {
+                        sum = fmaf(
+                            scratch.features[
+                                row * tacker_4dgs::kDeformInput + k],
+                            backbone_weight[
+                                k * tacker_4dgs::kDeformWidth + tid],
+                            sum);
+                    }
+                    sum += backbone_bias[tid];
+                    activated[
+                        static_cast<size_t>(row_begin + row) *
+                            tacker_4dgs::kDeformWidth +
+                        tid] = __float2half_rn(
+                            tacker_4dgs::deform_relu(sum));
                 }
-                sum += backbone_bias[tid];
-                activated[
-                    static_cast<size_t>(row_begin + row) *
-                        tacker_4dgs::kDeformWidth +
-                    tid] = __float2half_rn(tacker_4dgs::deform_relu(sum));
             }
         }
+        __syncthreads();
     }
 }
 
-extern "C" __global__ void __launch_bounds__(128)
-tacker_deform_mlp_sliced_heads_v2(
+extern "C" __global__ void __launch_bounds__(32)
+tacker_deform_mlp_sliced_head0_v2(
     const half* activated,
     const half* first_weights,
     const float* first_biases,
     const float* tail_weights,
     float* partials,
     int rows) {
-    __shared__ DeformSliceScratchV2 scratch;
-    const int tid = static_cast<int>(threadIdx.x);
-    const int warp = tid / 32;
-    const int lane = tid % 32;
-    const int row_begin = static_cast<int>(blockIdx.x) *
-        tacker_4dgs::kDeformRows;
-    const int slice = static_cast<int>(blockIdx.y);
+    __shared__ DeformHeadScratchV2 scratch;
+    run_sliced_head_v2<0, 3, 0>(
+        activated, first_weights, first_biases, tail_weights,
+        partials, rows, scratch);
+}
 
-    for (int e = tid;
-         e < tacker_4dgs::kDeformRows * tacker_4dgs::kDeformWidth;
-         e += blockDim.x) {
-        const int row = e / tacker_4dgs::kDeformWidth;
-        const int column = e % tacker_4dgs::kDeformWidth;
-        const int global_row = row_begin + row;
-        scratch.activated[
-            row * tacker_4dgs::kDeformActivatedStride + column] =
-            global_row < rows
-                ? activated[
-                      static_cast<size_t>(global_row) *
-                          tacker_4dgs::kDeformWidth +
-                      column]
-                : __float2half_rn(0.0f);
-    }
-    __syncthreads();
+extern "C" __global__ void __launch_bounds__(32)
+tacker_deform_mlp_sliced_head1_v2(
+    const half* activated,
+    const half* first_weights,
+    const float* first_biases,
+    const float* tail_weights,
+    float* partials,
+    int rows) {
+    __shared__ DeformHeadScratchV2 scratch;
+    run_sliced_head_v2<1, 3, 3>(
+        activated, first_weights, first_biases, tail_weights,
+        partials, rows, scratch);
+}
 
-    // The first four heads execute concurrently, one complete 128x16 WMMA
-    // slab per warp.  Their tail partials are warp-private and need no CTA
-    // barrier beyond the activation staging above.
-    if (warp < 4) {
-        compute_sliced_head_tile_v2(
-            scratch.activated, first_weights, first_biases,
-            warp, slice, scratch.hidden[warp]);
-        store_sliced_tail_partial_v2(
-            scratch.hidden[warp], tail_weights, partials,
-            rows, row_begin, warp, slice, lane, 32);
-    }
-    __syncthreads();
+extern "C" __global__ void __launch_bounds__(32)
+tacker_deform_mlp_sliced_head2_v2(
+    const half* activated,
+    const half* first_weights,
+    const float* first_biases,
+    const float* tail_weights,
+    float* partials,
+    int rows) {
+    __shared__ DeformHeadScratchV2 scratch;
+    run_sliced_head_v2<2, 4, 6>(
+        activated, first_weights, first_biases, tail_weights,
+        partials, rows, scratch);
+}
 
-    // SH is the fifth head.  Warp 0 produces its 16 hidden channels, then all
-    // four warps share the 48-wide tail work.
-    if (warp == 0) {
-        compute_sliced_head_tile_v2(
-            scratch.activated, first_weights, first_biases,
-            4, slice, scratch.hidden[0]);
-    }
-    __syncthreads();
-    store_sliced_tail_partial_v2(
-        scratch.hidden[0], tail_weights, partials,
-        rows, row_begin, 4, slice, tid, blockDim.x);
+extern "C" __global__ void __launch_bounds__(32)
+tacker_deform_mlp_sliced_head3_v2(
+    const half* activated,
+    const half* first_weights,
+    const float* first_biases,
+    const float* tail_weights,
+    float* partials,
+    int rows) {
+    __shared__ DeformHeadScratchV2 scratch;
+    run_sliced_head_v2<3, 1, 10>(
+        activated, first_weights, first_biases, tail_weights,
+        partials, rows, scratch);
+}
+
+extern "C" __global__ void __launch_bounds__(128)
+tacker_deform_mlp_sliced_head4_v2(
+    const half* activated,
+    const half* first_weights,
+    const float* first_biases,
+    const float* tail_weights,
+    float* partials,
+    int rows) {
+    __shared__ DeformHeadScratchV2 scratch;
+    run_sliced_head_v2<4, 48, 11>(
+        activated, first_weights, first_biases, tail_weights,
+        partials, rows, scratch);
 }
 
 std::vector<torch::Tensor> deform_mlp_delta_out_v1_cuda(
@@ -415,28 +498,68 @@ std::vector<torch::Tensor> deform_mlp_sliced_out_v2_cuda(
     const auto* properties = at::cuda::getCurrentDeviceProperties();
     TORCH_CHECK(properties->major == 8 && properties->minor == 6,
                 "deform_mlp_sliced_v2 requires the sm_86 build target");
-    const int tiles = static_cast<int>(
-        (static_cast<int64_t>(rows) + tacker_4dgs::kDeformRows - 1) /
-        tacker_4dgs::kDeformRows);
-    const cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();
+    const int groups = static_cast<int>(
+        (static_cast<int64_t>(rows) + kSlicedRowsPerGroup - 1) /
+        kSlicedRowsPerGroup);
+    const auto current_stream = at::cuda::getCurrentCUDAStream();
+    const cudaStream_t stream = current_stream.stream();
     tacker_deform_mlp_backbone_v2<<<
-        tiles, tacker_4dgs::kDeformThreads, 0, stream>>>(
+        groups, tacker_4dgs::kDeformThreads, 0, stream>>>(
         features.data_ptr<float>(),
         backbone_weight_kh.data_ptr<float>(),
         backbone_bias.data_ptr<float>(),
         reinterpret_cast<half*>(activated.data_ptr<at::Half>()),
         rows);
     C10_CUDA_KERNEL_LAUNCH_CHECK();
-    tacker_deform_mlp_sliced_heads_v2<<<
-        dim3(static_cast<unsigned int>(tiles), kSlicedCount, 1),
-        tacker_4dgs::kDeformThreads, 0, stream>>>(
-        reinterpret_cast<const half*>(activated.data_ptr<at::Half>()),
-        reinterpret_cast<const half*>(first_weights.data_ptr<at::Half>()),
-        first_biases.data_ptr<float>(),
-        tail_weights.data_ptr<float>(),
-        partials.data_ptr<float>(),
-        rows);
-    C10_CUDA_KERNEL_LAUNCH_CHECK();
+    const dim3 head_grid(
+        static_cast<unsigned int>(groups), kSlicedCount, 1);
+    const half* activated_ptr =
+        reinterpret_cast<const half*>(activated.data_ptr<at::Half>());
+    const half* first_weights_ptr =
+        reinterpret_cast<const half*>(first_weights.data_ptr<at::Half>());
+    const float* first_biases_ptr = first_biases.data_ptr<float>();
+    const float* tail_weights_ptr = tail_weights.data_ptr<float>();
+    float* partials_ptr = partials.data_ptr<float>();
+
+    // Publish the backbone activation to five independent streams.  Joining
+    // all five streams back into the caller's current stream before returning
+    // preserves normal PyTorch stream semantics: an immediately following
+    // partials.sum() cannot race any head kernel.
+    at::cuda::CUDAEvent backbone_ready;
+    backbone_ready.record(current_stream);
+    std::array<c10::cuda::CUDAStream, 5> head_streams = {
+        c10::cuda::getStreamFromPool(false, device.index()),
+        c10::cuda::getStreamFromPool(false, device.index()),
+        c10::cuda::getStreamFromPool(false, device.index()),
+        c10::cuda::getStreamFromPool(false, device.index()),
+        c10::cuda::getStreamFromPool(false, device.index()),
+    };
+    std::array<at::cuda::CUDAEvent, 5> head_done;
+    for (const auto& head_stream : head_streams) {
+        backbone_ready.block(head_stream);
+    }
+
+#define TACKER_LAUNCH_SLICED_HEAD_V2(index, kernel, threads)                  \
+    kernel<<<head_grid, threads, 0, head_streams[index].stream()>>>(          \
+        activated_ptr, first_weights_ptr, first_biases_ptr,                  \
+        tail_weights_ptr, partials_ptr, rows);                               \
+    C10_CUDA_KERNEL_LAUNCH_CHECK();                                          \
+    head_done[index].record(head_streams[index])
+    TACKER_LAUNCH_SLICED_HEAD_V2(
+        0, tacker_deform_mlp_sliced_head0_v2, 32);
+    TACKER_LAUNCH_SLICED_HEAD_V2(
+        1, tacker_deform_mlp_sliced_head1_v2, 32);
+    TACKER_LAUNCH_SLICED_HEAD_V2(
+        2, tacker_deform_mlp_sliced_head2_v2, 32);
+    TACKER_LAUNCH_SLICED_HEAD_V2(
+        3, tacker_deform_mlp_sliced_head3_v2, 32);
+    TACKER_LAUNCH_SLICED_HEAD_V2(
+        4, tacker_deform_mlp_sliced_head4_v2,
+        tacker_4dgs::kDeformThreads);
+#undef TACKER_LAUNCH_SLICED_HEAD_V2
+    for (auto& done : head_done) {
+        done.block(current_stream);
+    }
     return {activated, partials};
 }
 

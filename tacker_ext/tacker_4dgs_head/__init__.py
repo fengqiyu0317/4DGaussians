@@ -199,12 +199,13 @@ def deform_mlp_sliced_v2(
     features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
     tail_weights,
 ):
-    """Run the experimental two-kernel sliced MLP and return its intermediates.
+    """Run the experimental parallel-head sliced MLP and return intermediates.
 
     The returned pair is ``(activated, partials)`` with FP16 ``activated`` of
     shape ``[N,128]`` and FP32 ``partials`` of shape ``[8,N,59]``.  Reduce the
     latter over dimension 0 and add the concatenated FP32 tail bias exactly
-    once to obtain the five packed delta groups.
+    once to obtain the five packed delta groups.  The five head kernels use
+    independent CUDA streams and rejoin the caller's current stream.
     """
 
     return tuple(_extension().deform_mlp_sliced_v2(
@@ -217,7 +218,7 @@ def deform_mlp_sliced_out_v2(
     features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
     tail_weights, activated, partials,
 ):
-    """Write the two-kernel sliced activation and tail partials into buffers."""
+    """Write sliced intermediates using five parallel head CUDA streams."""
 
     return tuple(_extension().deform_mlp_sliced_out_v2(
         features, backbone_weight_kh, backbone_bias,

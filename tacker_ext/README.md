@@ -85,15 +85,18 @@ Run its CUDA tests on `4A6000` (including the single-kernel profiler assertion):
 PYTHONPATH=. python -m unittest tests.test_deform_mlp_cuda -v
 ```
 
-### Experimental sliced deformation MLP: two CUDA kernels
+### Experimental sliced deformation MLP: six CUDA kernels
 
 `deform_mlp_sliced_v2` preserves the same backbone/head quantization boundary
 but exposes the requested eight-way vertical decomposition.  Its first kernel
-materializes the common FP16 activation `[N,128]`.  Its second kernel launches
-an exact two-dimensional grid `[ceil(N/16),8]`; block `slice` computes the five
-`128x16` first-linear slabs, applies their ReLUs, immediately evaluates the
-matching 16-channel FP32 tail contributions, and writes one non-overlapping
-plane of `[8,N,59]` partials.  It performs no atomics and adds no tail bias.
+materializes the common FP16 activation `[N,128]`.  Five head-specialized
+kernels then launch exact two-dimensional grids `[ceil(N/128),8]`.  Every block
+owns one head/slice pair and serially traverses up to eight 16-row WMMA
+micro-tiles.  Head kernels 0--3 use 32 threads; the 48-output SH head uses 128.
+They write disjoint regions of the shared `[8,N,59]` partial tensor, perform no
+atomics, and add no tail bias.  After the backbone records a CUDA event, the
+five heads run on five independent streams from PyTorch's stream pool.  The
+caller's current stream waits on all five completion events before returning.
 
 ```python
 from tacker_4dgs_head import deform_mlp_sliced_v2
@@ -116,11 +119,12 @@ with torch.no_grad():
 ```
 
 `deform_mlp_sliced_out_v2` accepts caller-owned FP16 `[N,128]` activation and
-FP32 `[8,N,59]` partial buffers.  The two custom kernel launches use the current
-CUDA stream.  The final slice reduction/tail-bias/residual/activation remains
-the responsibility of the enclosing deformation path.  The machine-readable
-contract is `abi/deform_mlp_sliced_v2.json`; v1 remains unchanged and is still
-the qualified single-kernel baseline.
+FP32 `[8,N,59]` partial buffers.  The backbone uses the caller's current CUDA
+stream, while the five head launches use independent pooled streams and rejoin
+the current stream asynchronously.  The final slice reduction/tail-bias/
+residual/activation remains the responsibility of the enclosing deformation
+path.  The machine-readable contract is `abi/deform_mlp_sliced_v2.json`; v1
+remains unchanged and is still the qualified single-kernel baseline.
 
 ### Existing head APIs
 
