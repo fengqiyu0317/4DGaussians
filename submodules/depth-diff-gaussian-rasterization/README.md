@@ -11,8 +11,11 @@ Raster uses named barrier 1 with exactly 256 participants; the head adapter
 uses only warp-local synchronization. `persistent_blocks=0` queries and caches
 the active GPU's SM count.
 
-CUDA 11.1 is the minimum supported toolkit for this `sm_86` path; CUDA 11.6 is
-recommended for the target PyTorch 1.13/A6000 environment. Mixed head input,
+For the v13 / gsplat source release, use the root
+[installation guide](../../docs/INFERENCE_VERSIONS.md) and
+`scripts/build_inference_extensions.sh sm_86|sm_87` with matching CUDA PyTorch.
+The ABI descriptions below also cover compatible interfaces retained in the
+shared extension and its core tests. Mixed head input,
 weight, and output pointers are required to be natively 32-byte aligned for
 WMMA. Normal CUDA allocator base tensors satisfy this without a copy, while a
 misaligned contiguous storage view is rejected.
@@ -99,14 +102,16 @@ a device-wide synchronization.
 CPU-only source contract tests do not import PyTorch:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python -m unittest tests.test_tacker_mixed_contract -v
+# From the repository root; includes the rasterizer contract suite.
+python3 tests/run_core_tests.py
 ```
 
-After building the extension on `4A6000`, the CUDA boundary cases (native
-alignment and zero-row ranked alternatives) can be run with:
+After building the extensions and the reference library described in the
+[core test guide](../../tests/README.md), CUDA boundary cases (native
+alignment and zero-row ranked alternatives) can be run on an idle target GPU:
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python -m unittest tests.test_tacker_mixed_cuda -v
+CUDA_VISIBLE_DEVICES=0 python3 tests/run_core_tests.py --cuda
 ```
 
 The CUDA suite covers 1--5 heads, every legal worker-group count, a dual-head
@@ -120,14 +125,10 @@ configured A6000 qualification run.
 The legacy training API has a separate GPU smoke test that renders one real
 Gaussian and runs autograd forward/backward on a non-default PyTorch stream:
 
-```bash
-PYTHONDONTWRITEBYTECODE=1 python -m unittest \
-  tests.test_stream_aware_legacy_cuda -v
-```
+It is included in the same explicit CUDA core suite above.
 
-CUDA compilation, numerical comparison against the legacy Raster path, head
-reference checks, Raster QoS, and performance qualification must be run on the
-configured RTX A6000 server.
+CUDA compilation and numerical checks must run on the matching target device.
+CPU source checks do not establish CUDA correctness or performance qualification.
 
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">

@@ -16,14 +16,17 @@ gsplat 入口不启用普通路线的 Raster prepass 或 fused feature reduction
 | `tacker_ext/` | MLP、HexPlane、头文件、Python 绑定及构建 |
 | `submodules/depth-diff-gaussian-rasterization/` | 已纳入主仓库的光栅化及 mixed CUDA 源码 |
 | `submodules/simple-knn/` | 已纳入主仓库的近邻扩展 |
-| `gsplat_mixed_ext/` | gsplat mixed kernel，保留历史与 wide 实验变体 |
+| `gsplat_mixed_ext/` | gsplat mixed kernel、JIT 构建及核心测试使用的对照实现 |
 | `profiles/` | 两份原始 disabled Graph qualification 配置 |
-| `scripts/render_versions.py` | 本次新增的可移植图像导出入口 |
+| `scripts/render_versions.py` | 两版共用的可移植图像导出入口 |
+| `scripts/build_inference_extensions.sh` | 两种设备架构的扩展构建入口 |
+| `tests/run_core_tests.py` | 明确选择核心测试，避免运行本地留存的旧实验测试 |
 
-保留历史训练、验证、分析脚本供研究查阅，但它们不一定是可直接移植的入口。
-特别是 `run_jetson_*` / `run_a6000_*` 中的旧机器路径以及旧报告的结果链接，
-不代表这些数据随仓库发布。新入口不依赖服务器用户名、绝对实验路径、Git
-子模块元数据或旧实验的已编译 `.so`。
+发布范围限于现成数据与 checkpoint 的两版推理及核心测试。benchmark、实验
+协议与启动器、NCU 分析、旧报告、训练和数据预处理工具已取消 Git 跟踪；原工作区
+保留这些文件，并通过 `.gitignore` 防止再次误提交。新克隆中不包含这些文件。
+运行入口不依赖服务器用户名、绝对实验路径、Git 子模块元数据或旧实验的 `.so`。
+共用 CUDA 扩展中的历史 ABI、兼容符号和测试对照实现保留，未通过删函数改变内核。
 
 ## 安装
 
@@ -48,8 +51,8 @@ bash scripts/build_inference_extensions.sh sm_87  # Jetson AGX Orin
 和构建路径，Git 中这些目录已是普通文件。GLM 仅保留编译必需的头文件与许可。
 使用上述 Python 扩展构建脚本；历史 CMake 目标未作为本次发布构建入口验证。
 
-`requirements-inference.txt` 不替换已有 PyTorch；原始 `requirements.txt`
-中的 PyTorch 1.13.1 是上游旧训练环境，不应用于这两条现代推理路线。
+`requirements-inference.txt` 不替换已有 PyTorch；仅使用这里的依赖文件，
+原工作区留存的旧训练 `requirements.txt` 不属于当前发布版本。
 `MAX_JOBS` 默认为 2，可按机器内存调整。运行前确认选中的 GPU 空闲；脚本
 不会自动抢占进程、修改驱动或锁定 GPU 频率。系统驱动/用户库需已兼容。
 
@@ -79,8 +82,9 @@ MODEL/
 仅用于显式 qualification 执行。它们是必需的运行配置，不是性能结果归档。
 模型数量、图像分辨率、GPU 名称/架构或重新编译后的资源不匹配时会报错；
 不要为了启动而手改哈希、开启 deployment 或移除检查。其他场景/设备需要
-重新生成和验证其自己的 qualification。现有 `materialize_tacker_workload_profiles.py`
-可辅助重绑定工作负载，但不等同于完成数值、画质和性能验证。
+重新生成和验证其自己的 qualification；本精简版不包含实验配置生成与准入工具。
+`tacker_profiles/raster_head_sm86.json` 是共用 API 及核心测试引用的旧 disabled
+默认模板，不替代上述两份显式运行配置。
 
 ## 运行两条路线
 
@@ -119,32 +123,28 @@ PyTorch，不创建输出，不执行 GPU 工作。至少渲染两帧才能覆�
 没有 `execution.json` 就不是完整成功。入口不计算 FPS，逐帧导出带有 CPU
 传输与编码开销，不能用其墙钟耗时评价融合性能。
 
-历史 `render.py --execution-mode tacker` 走部署准入，不能把这里的 disabled
-profile 当作 enabled 部署配置使用。两版本演示优先使用上面的新入口。
-正式性能测试继续遵循 `full_mlp_overlap_graph` 与对应 profile，Graph 和 eager
-数据分别报告。历史 sealed profiler 和实验脚本的 Git provenance 仍按原协议设计，
-单仓库发布后使用它们前需另行适配和验证，不能伪造旧 Git 提交身份。
+两版均使用上面的显式 qualification 入口，不能把 disabled profile 当作
+enabled 部署配置使用。本发布版本没有性能测试入口；如另行开展性能实验，
+仍需确认实际命中 `full_mlp_overlap_graph` 与对应 profile，并区分 Graph / eager。
 
 ## 验证
 
-不使用 GPU 的入口与任务分配检查：
+不使用 GPU 的核心回归（入口、参数、渲染调度、Graph、任务配对、ABI 与验证）：
 
 ```bash
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_render_versions.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_gsplat_candidate_pairing.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_hexplane_block_mapping.py
-PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_raster_hexplane_graph.py
+python3 tests/run_core_tests.py
 ```
 
-CUDA 数值测试仍在 `tacker_ext/tests` 与 `tests/test_*cuda.py`。部分历史 gsplat
-对照测试需要单独编译的 legacy-v7 参考库；请读取相应测试的环境变量要求。
-本次源码整理不声称重新完成 GPU 编译、数值/画质验证或性能复测。
-依赖旧 Phase 0 / Phase 3.1 结果归档的三项测试在归档缺失时明确跳过；其他
-CPU provenance 测试使用临时合成 fixture，不要求仓库中存在编译好的 CUDA 库。
+不要在留有旧文件的工作区对整个测试目录做无筛选的 discovery；显式测试入口
+只选取随仓库发布的测试，在原目录和新克隆中使用同一组文件。
+CUDA 数值测试保留于根目录及扩展测试目录；gsplat 对照用的 device-v7 独立源码
+放在 `tests/cuda/`，可在当前设备编译，不要求旧服务器上的封存库。
+构建参考库和 GPU 测试方法见 [核心测试说明](../tests/README.md)。
+CPU 检查不代表完成 GPU 编译、数值/画质验证或性能复测。
 
 ## Git 与本地数据
 
-`.gitignore` 排除实验结果、NSight 文件、模型、数据、缓存、编译产物和 notebook
-自动备份。之前已跟踪的结果在本次提交中取消跟踪，原磁盘文件保留。普通 Git
-提交不会删除历史提交里的结果；这里没有重写历史，也不需要 force push。
+`.gitignore` 排除历史实验代码与报告、实验结果、NSight 文件、模型、数据、缓存、
+编译产物和 notebook 自动备份。取消跟踪的文件仍保留在原工作区，核心测试采用
+明确文件清单以隔离它们。普通 Git 提交不会删除历史提交里的大文件；本次不重写历史。
 许可证和原始文件头随源码保留，详见根目录 `THIRD_PARTY_NOTICES.md`。

@@ -1,4 +1,4 @@
-"""Verify gsplat's migrated device-v7 against the sealed legacy v11 MLP."""
+"""Verify gsplat's device-v7 against the independent device-v7 MLP reference."""
 import ctypes
 import os
 from pathlib import Path
@@ -14,9 +14,11 @@ except ImportError:
 
 class LegacyV7:
     def __init__(self,path=None):
-        path=path or os.environ.get('GSPLAT_LEGACY_V7_LIBRARY')
-        if not path or not Path(path).is_file():
-            raise RuntimeError('GSPLAT_LEGACY_V7_LIBRARY must name the sealed legacy matched library')
+        path=(path or os.environ.get('GSPLAT_V7_REFERENCE_LIBRARY')
+              or os.environ.get('GSPLAT_LEGACY_V7_LIBRARY')
+              or Path(__file__).resolve().parent / 'cuda/libdeform_v7_reference.so')
+        if not Path(path).is_file():
+            raise RuntimeError('Build the device-v7 reference library as described in tests/README.md: '+str(path))
         self.library=ctypes.CDLL(str(path))
         self.function=self.library.deform_matched_launch
         self.function.argtypes=[ctypes.c_void_p]*12+[ctypes.c_int,ctypes.c_size_t]

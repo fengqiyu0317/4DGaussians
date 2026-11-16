@@ -7,9 +7,6 @@ matplotlib
 plyfile
 tqdm
 opencv-python-headless<4.12
-imageio[ffmpeg]
-lpips
-pytorch-msssim
 ninja
 packaging
 setuptools
