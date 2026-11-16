@@ -9,6 +9,8 @@ python3 tests/run_core_tests.py --list
 
 默认只运行 CPU 测试，不需要 PyTorch 或 GPU，覆盖运行入口、参数、渲染调度、
 Graph 生命周期、候选任务配对、HexPlane 映射、ABI 与参数验证。
+`test_render_entry.py` 还覆盖通用 `render.py` 的自定义模型／场景参数、后端分发、
+融合 profile 要求、帧数检查与图片写入失败处理，使用替身而非 GPU 渲染。
 HexPlane 映射测试需要 C++ 编译器；缺失时 unittest 会明确标记跳过。
 测试入口显式列出发布文件，避免加载原工作区仍保留但已取消跟踪的实验测试。
 `test_tacker_phase2.py` 同时提供 full-MLP 测试使用的公共 fixture，因此保留。

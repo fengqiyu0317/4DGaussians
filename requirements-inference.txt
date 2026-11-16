@@ -1,5 +1,5 @@
 # Install a platform-compatible CUDA PyTorch + torchvision first.
-# These dependencies serve the v13 / gsplat inference entry point.
+# Shared dependencies for render.py and the v13 / gsplat fusion entry point.
 numpy<2
 pillow
 scipy
@@ -7,6 +7,7 @@ matplotlib
 plyfile
 tqdm
 opencv-python-headless<4.12
+imageio[ffmpeg]
 ninja
 packaging
 setuptools

@@ -1,14 +1,17 @@
 # 4DGaussians：普通 v13 与 gsplat 推理
 
-本仓库提供两条共享模型、场景和 HexPlane / Deform MLP 的推理路线：
+本仓库提供通用渲染入口，以及两条共享模型、场景和 HexPlane / Deform MLP 的融合推理路线：
 
 | 版本 | 实现 |
 | --- | --- |
 | 普通 v13 | mixed ABI-v12、Raster prepass、原生 HexPlane Graph、fused feature reduction |
 | gsplat | gsplat 1.5.3、`tensor_v7_ca`、双槽 Graph、candidate-aware 任务配对 |
 
-**[安装与运行指南](docs/INFERENCE_VERSIONS.md)** 包含环境、数据与 checkpoint
-要求、两版命令和 qualification 限制。现有配置为 `flame_steak` iteration 14000、
+**[通用渲染指南](docs/GENERAL_RENDERING.md)** 介绍如何使用自己的兼容场景与模型，
+选择原始光栅化或 gsplat 后端，导出图片和视频；串行／双流模式不需要固定场景 profile。
+
+**[两版融合安装与运行指南](docs/INFERENCE_VERSIONS.md)** 包含环境、数据与 checkpoint
+要求、两版命令和 qualification 限制。随仓库提供的融合配置为 `flame_steak` iteration 14000、
 111525 个高斯、1352×1014，设备分别为 Orin / sm_87 和 A6000 / sm_86。
 其他工作负载需要另行生成并验证配置。
 
@@ -19,15 +22,20 @@ python3 -m pip install --no-build-isolation -r requirements-gsplat.txt
 bash scripts/build_inference_extensions.sh sm_87  # A6000 改为 sm_86
 
 python3 scripts/render_versions.py --help
+python3 render.py --help  # 安装完整依赖后查看通用入口参数
 python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 ```
 
-运行入口为 `scripts/render_versions.py`，通过 `--variant v13` 或
+通用入口为 `render.py`，支持 `diff_gaussian` / `gsplat` 后端的串行和双流渲染。
+模型需有训练时的 `cfg_args`，并使用匹配 checkpoint 的配置与已准备好的数据。
+
+固定融合入口为 `scripts/render_versions.py`，通过 `--variant v13` 或
 `--variant gsplat_ca` 选择版本，必须显式传入对应 `profiles/` 配置。
 入口检查实际 Graph / mixed 执行并导出图片，不报告性能 FPS。
 
 ## 发布范围
 
+- `render.py`：通用图片／视频导出入口；视频编码依赖 `imageio[ffmpeg]`。
 - `gaussian_renderer/`、`scene/`、`utils/`、`arguments/`：两版共用的 Python 源码与配置。
 - `tacker_ext/`、`gsplat_mixed_ext/`、`submodules/`：CUDA 源码、绑定、ABI、头文件与构建文件。
 - `profiles/`：必需的 disabled qualification 配置；不是实验结果归档。

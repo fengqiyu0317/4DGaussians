@@ -95,7 +95,6 @@ submodules/depth-diff-gaussian-rasterization/third_party/glm/*
 /multipleviewprogress.sh
 /profile_render.py
 /profile_tacker_leaves.py
-/render.py
 /requirements.txt
 /scene/camera.py
 /tacker_ext/README.md

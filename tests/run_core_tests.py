@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 CPU_SUITES = (
     ("tests", (
-        "test_arguments", "test_render_versions", "test_render_pipeline",
+        "test_arguments", "test_render_entry", "test_render_versions", "test_render_pipeline",
         "test_tacker_pipeline", "test_tacker_phase2", "test_full_mlp_partition",
         "test_gsplat_candidate_pairing", "test_hexplane_block_mapping",
         "test_hexplane_fused_reduction", "test_raster_hexplane_graph",
