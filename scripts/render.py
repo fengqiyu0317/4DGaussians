@@ -8,6 +8,13 @@
 #
 # For inquiries contact  george.drettakis@inria.fr
 #
+from pathlib import Path
+import sys
+
+# Resolve project imports from this file, independently of the caller's cwd.
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
 import imageio
 import numpy as np
 import torch

@@ -4,6 +4,7 @@ from contextlib import contextmanager, nullcontext
 import importlib.util
 from pathlib import Path
 import runpy
+import subprocess
 import sys
 import tempfile
 from types import ModuleType, SimpleNamespace
@@ -11,7 +12,7 @@ import unittest
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
-ENTRY = ROOT / 'render.py'
+ENTRY = ROOT / 'scripts' / 'render.py'
 
 
 @contextmanager
@@ -38,7 +39,7 @@ def load_entry():
         'torchvision': module('torchvision', utils=SimpleNamespace(save_image=mock.Mock())),
         'utils.general_utils': module('utils.general_utils', safe_state=mock.Mock()),
     }
-    with mock.patch.dict(sys.modules, modules):
+    with mock.patch.object(sys, 'path', sys.path.copy()), mock.patch.dict(sys.modules, modules):
         spec = importlib.util.spec_from_file_location('general_render_test_entry', ENTRY)
         entry = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(entry)
@@ -46,6 +47,34 @@ def load_entry():
 
 
 class GeneralRenderEntryTest(unittest.TestCase):
+    def test_project_imports_work_from_an_unrelated_directory(self):
+        # An isolated process has neither the repository cwd/PYTHONPATH nor
+        # previously imported project modules that could hide a missing bootstrap.
+        code = '''
+import importlib.util
+from pathlib import Path
+import sys
+
+root = Path(sys.argv[2])
+assert Path.cwd() != root
+assert str(root) not in sys.path
+spec = importlib.util.spec_from_file_location('render_entry_helpers', sys.argv[1])
+helpers = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(helpers)
+with helpers.load_entry() as (entry, _):
+    import arguments
+    import gsplat_mixed_ext
+    assert entry.ROOT == root
+    assert Path(arguments.__file__) == root / 'arguments' / '__init__.py'
+    assert Path(gsplat_mixed_ext.__file__) == root / 'gsplat_mixed_ext' / '__init__.py'
+'''
+        with tempfile.TemporaryDirectory() as directory:
+            result = subprocess.run(
+                [sys.executable, '-I', '-B', '-c', code, str(Path(__file__).resolve()), str(ROOT)],
+                cwd=directory, capture_output=True, text=True,
+            )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
     def test_serial_preserves_view_order_without_a_profile_for_both_backends(self):
         for backend in ('diff_gaussian', 'gsplat'):
             with self.subTest(backend=backend), load_entry() as (entry, _):

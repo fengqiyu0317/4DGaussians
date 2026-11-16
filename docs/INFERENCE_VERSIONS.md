@@ -7,7 +7,7 @@
 gsplat 入口不启用普通路线的 Raster prepass 或 fused feature reduction。
 
 本页描述固定配置的融合入口。需要用自己的兼容场景和 checkpoint 进行基础渲染时，
-请使用 [render.py 通用渲染指南](GENERAL_RENDERING.md)；其串行／双流模式不要求
+请使用 [scripts/render.py 通用渲染指南](GENERAL_RENDERING.md)；其串行／双流模式不要求
 本页的固定场景 profile。通用入口与两版融合入口同时保留。
 
 ## 目录与范围
@@ -23,7 +23,7 @@ gsplat 入口不启用普通路线的 Raster prepass 或 fused feature reduction
 | `gsplat_mixed_ext/` | gsplat mixed kernel、JIT 构建及核心测试使用的对照实现 |
 | `profiles/` | 两份原始 disabled Graph qualification 配置 |
 | `scripts/render_versions.py` | 两版共用的可移植图像导出入口 |
-| `render.py` | 通用场景的串行／双流渲染及图片、视频导出 |
+| `scripts/render.py` | 通用场景的串行／双流渲染及图片、视频导出 |
 | `scripts/build_inference_extensions.sh` | 两种设备架构的扩展构建入口 |
 | `tests/run_core_tests.py` | 明确选择核心测试，避免运行本地留存的旧实验测试 |
 
@@ -129,7 +129,7 @@ PyTorch，不创建输出，不执行 GPU 工作。至少渲染两帧才能覆�
 传输与编码开销，不能用其墙钟耗时评价融合性能。
 
 两版均使用上面的显式 qualification 入口，不能把 disabled profile 当作
-enabled 部署配置使用。通用 `render.py` 显示单次循环 FPS，但没有正式性能实验的
+enabled 部署配置使用。通用 `scripts/render.py` 显示单次循环 FPS，但没有正式性能实验的
 预热、重复和配对控制；本发布版本不包含 benchmark 工具。如另行开展性能实验，
 仍需确认实际命中 `full_mlp_overlap_graph` 与对应 profile，并区分 Graph / eager。
 

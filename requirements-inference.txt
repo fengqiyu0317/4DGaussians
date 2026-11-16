@@ -1,5 +1,5 @@
 # Install a platform-compatible CUDA PyTorch + torchvision first.
-# Shared dependencies for render.py and the v13 / gsplat fusion entry point.
+# Shared dependencies for scripts/render.py and the v13 / gsplat fusion entry point.
 numpy<2
 pillow
 scipy

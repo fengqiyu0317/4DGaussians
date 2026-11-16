@@ -48,6 +48,7 @@ submodules/depth-diff-gaussian-rasterization/third_party/glm/*
 /papers/
 /lpipsPyTorch/
 /scripts/*
+!/scripts/render.py
 !/scripts/render_versions.py
 !/scripts/build_inference_extensions.sh
 /4DGaussians.ipynb

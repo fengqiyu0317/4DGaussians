@@ -1,6 +1,6 @@
-# 通用渲染入口 render.py
+# 通用渲染入口 scripts/render.py
 
-`render.py` 用于加载已有的 4DGaussians checkpoint 和准备好的数据集，渲染训练集、
+`scripts/render.py` 用于加载已有的 4DGaussians checkpoint 和准备好的数据集，渲染训练集、
 测试集或数据读取器生成的视频视角。它保留上游的模型格式和参数读取方式。
 `serial` / `two_stream` 可选择 `diff_gaussian` 或 `gsplat` 光栅化后端，不要求
 `flame_steak` qualification，也不固定高斯数量、图像尺寸或训练迭代数。
@@ -8,15 +8,15 @@
 
 | 入口 / 模式 | 用途与限制 |
 | --- | --- |
-| `render.py --execution-mode serial` | 通用逐帧渲染，默认模式，不需要 profile |
-| `render.py --execution-mode two_stream` | 通用双流调度，不需要 profile；不满足条件时会报告回退 |
+| `scripts/render.py --execution-mode serial` | 通用逐帧渲染，默认模式，不需要 profile |
+| `scripts/render.py --execution-mode two_stream` | 通用双流调度，不需要 profile；不满足条件时会报告回退 |
 | `scripts/render_versions.py --variant v13` | 固定普通 v13 融合配置，必须匹配 qualification |
 | `scripts/render_versions.py --variant gsplat_ca` | 固定 gsplat `tensor_v7_ca` 融合配置，必须匹配 qualification |
 
-`render.py` 的历史 `tacker`、`gsplat_mixed`、`gsplat_matched_graph` 选项仍保留，
+`scripts/render.py` 的历史 `tacker`、`gsplat_mixed`、`gsplat_matched_graph` 选项仍保留，
 但它们继续执行 profile 校验。通用串行／双流渲染不等于启用了 v13 或
 `tensor_v7_ca` 融合内核；运行这两个固定融合版本应使用[两版融合指南](INFERENCE_VERSIONS.md)。
-尤其 `render.py --execution-mode tacker` 走部署准入，不能用随仓库提供的 disabled
+尤其 `scripts/render.py --execution-mode tacker` 走部署准入，不能用随仓库提供的 disabled
 qualification 文件替代已验证的部署 profile。
 
 ## 环境与输入
@@ -46,12 +46,16 @@ MODEL/
 
 ## 使用示例
 
+两个入口统一位于 `scripts/`。以下命令从仓库根目录执行；也可以从其他目录通过
+脚本的绝对路径启动，源码导入仍按脚本位置定位。相对数据、模型和配置路径依然
+相对于当前工作目录解析。
+
 以下路径为示例，替换为自己的数据、模型和训练配置。先确认目标 GPU 空闲；
 Jetson 上模型、输出、临时目录及缓存均应位于 `/data/qyfeng` 数据盘。
 
 ```bash
 # 原始光栅化后端，渲染测试集；-1 表示自动选择最新 checkpoint。
-CUDA_VISIBLE_DEVICES=0 python3 render.py \
+CUDA_VISIBLE_DEVICES=0 python3 scripts/render.py \
   -m /data/qyfeng/models/my_scene \
   -s /data/qyfeng/datasets/my_scene \
   --configs /data/qyfeng/configs/my_scene.py \
@@ -59,7 +63,7 @@ CUDA_VISIBLE_DEVICES=0 python3 render.py \
   --execution-mode serial --skip_train --skip_video
 
 # gsplat 后端，渲染指定迭代的测试集。
-CUDA_VISIBLE_DEVICES=0 python3 render.py \
+CUDA_VISIBLE_DEVICES=0 python3 scripts/render.py \
   -m /data/qyfeng/models/my_scene \
   -s /data/qyfeng/datasets/my_scene \
   --configs /data/qyfeng/configs/my_scene.py \

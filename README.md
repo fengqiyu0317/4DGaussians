@@ -22,11 +22,11 @@ python3 -m pip install --no-build-isolation -r requirements-gsplat.txt
 bash scripts/build_inference_extensions.sh sm_87  # A6000 改为 sm_86
 
 python3 scripts/render_versions.py --help
-python3 render.py --help  # 安装完整依赖后查看通用入口参数
+python3 scripts/render.py --help  # 安装完整依赖后查看通用入口参数
 python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 ```
 
-通用入口为 `render.py`，支持 `diff_gaussian` / `gsplat` 后端的串行和双流渲染。
+通用入口为 `scripts/render.py`，支持 `diff_gaussian` / `gsplat` 后端的串行和双流渲染。
 模型需有训练时的 `cfg_args`，并使用匹配 checkpoint 的配置与已准备好的数据。
 
 固定融合入口为 `scripts/render_versions.py`，通过 `--variant v13` 或
@@ -35,7 +35,7 @@ python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 
 ## 发布范围
 
-- `render.py`：通用图片／视频导出入口；视频编码依赖 `imageio[ffmpeg]`。
+- `scripts/render.py`：通用图片／视频导出入口；视频编码依赖 `imageio[ffmpeg]`。
 - `gaussian_renderer/`、`scene/`、`utils/`、`arguments/`：两版共用的 Python 源码与配置。
 - `tacker_ext/`、`gsplat_mixed_ext/`、`submodules/`：CUDA 源码、绑定、ABI、头文件与构建文件。
 - `profiles/`：必需的 disabled qualification 配置；不是实验结果归档。
