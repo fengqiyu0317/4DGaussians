@@ -1,11 +1,14 @@
-# 4DGaussians：普通 v13 与 gsplat 推理
+# 4DGaussians：训练、普通 v13 与 gsplat 推理
 
-本仓库提供通用渲染入口，以及两条共享模型、场景和 HexPlane / Deform MLP 的融合推理路线：
+本仓库提供原有 4DGaussians 两阶段训练、通用渲染入口，以及两条共享模型、场景和 HexPlane / Deform MLP 的融合推理路线：
 
 | 版本 | 实现 |
 | --- | --- |
 | 普通 v13 | mixed ABI-v12、Raster prepass、原生 HexPlane Graph、fused feature reduction |
 | gsplat | gsplat 1.5.3、`tensor_v7_ca`、双槽 Graph、candidate-aware 任务配对 |
+
+**[训练指南](docs/TRAINING.md)** 包含训练依赖、数据准备、场景配置、模型保存与
+checkpoint 恢复。训练使用可微 `diff_gaussian` 后端，不需要固定场景 profile。
 
 **[通用渲染指南](docs/GENERAL_RENDERING.md)** 介绍如何使用自己的兼容场景与模型，
 选择原始光栅化或 gsplat 后端，导出图片和视频；串行／双流模式不需要固定场景 profile。
@@ -23,6 +26,7 @@ bash scripts/build_inference_extensions.sh sm_87  # A6000 改为 sm_86
 
 python3 scripts/render_versions.py --help
 python3 scripts/render.py --help  # 安装完整依赖后查看通用入口参数
+python3 train.py --help  # 训练还需安装 requirements-training.txt
 python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 ```
 
@@ -35,6 +39,8 @@ python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 
 ## 发布范围
 
+- `train.py`、`requirements-training.txt`：训练入口与附加依赖；原有场景配置已恢复。
+- `colmap.sh` 和 `scripts/` 中的数据准备工具：抽帧、姿态转换和点云下采样。
 - `scripts/render.py`：通用图片／视频导出入口；视频编码依赖 `imageio[ffmpeg]`。
 - `gaussian_renderer/`、`scene/`、`utils/`、`arguments/`：两版共用的 Python 源码与配置。
 - `tacker_ext/`、`gsplat_mixed_ext/`、`submodules/`：CUDA 源码、绑定、ABI、头文件与构建文件。
@@ -43,8 +49,8 @@ python3 tests/run_core_tests.py  # 默认只运行 CPU 核心测试
 
 CUDA 依赖和 GLM 头文件以普通源码目录纳入单仓库，无需 `git submodule update`。
 共用扩展中的兼容实现与测试对照内核仍保留，以维持构建、ABI 和数值验证。
-模型、数据集、编译产物、benchmark、实验启动器、旧报告、训练和预处理入口不随
-当前推理版本发布。原工作区中的这些历史文件仅取消 Git 跟踪并加入忽略规则，
+模型、数据集、编译产物、benchmark、性能实验启动器和旧报告不随
+当前版本发布。原工作区中的这些历史文件仅取消 Git 跟踪并加入忽略规则，
 本地内容保留；旧版本也可从 Git 历史查看。
 
 ## 来源与许可

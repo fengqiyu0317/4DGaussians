@@ -9,6 +9,8 @@ python3 tests/run_core_tests.py --list
 
 默认只运行 CPU 测试，不需要 PyTorch 或 GPU，覆盖运行入口、参数、渲染调度、
 Graph 生命周期、候选任务配对、HexPlane 映射、ABI 与参数验证。
+训练回归覆盖所有场景配置、最终模型保存、DataLoader 新批次选择、checkpoint
+阶段识别与 coarse/fine 调度；使用替身验证控制逻辑，不执行训练或 GPU 工作。
 `test_render_entry.py` 还覆盖通用 `scripts/render.py` 的自定义模型／场景参数、后端分发、
 融合 profile 要求、帧数检查与图片写入失败处理，使用替身而非 GPU 渲染。
 入口导入路径还会在隔离子进程中从项目外目录检查，不依赖现有 `PYTHONPATH`。

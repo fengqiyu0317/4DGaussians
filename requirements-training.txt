@@ -1,0 +1,4 @@
+# Install matching CUDA PyTorch + torchvision first; do not downgrade inference.
+-r requirements-inference.txt
+lpips
+tensorboard

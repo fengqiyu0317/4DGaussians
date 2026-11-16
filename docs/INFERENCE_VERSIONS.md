@@ -27,9 +27,9 @@ gsplat 入口不启用普通路线的 Raster prepass 或 fused feature reduction
 | `scripts/build_inference_extensions.sh` | 两种设备架构的扩展构建入口 |
 | `tests/run_core_tests.py` | 明确选择核心测试，避免运行本地留存的旧实验测试 |
 
-发布范围包括现成数据与 checkpoint 的通用渲染、两版融合推理及核心测试。benchmark、实验
-协议与启动器、NCU 分析、旧报告、训练和数据预处理工具已取消 Git 跟踪；原工作区
-保留这些文件，并通过 `.gitignore` 防止再次误提交。新克隆中不包含这些文件。
+本文介绍现成数据与 checkpoint 的两版推理；训练和必要的数据准备工具已恢复，
+使用方法见[训练指南](TRAINING.md)。benchmark、实验协议与启动器、NCU 分析和
+旧报告仍取消 Git 跟踪；原工作区保留这些文件，并通过 `.gitignore` 防止再次误提交。
 运行入口不依赖服务器用户名、绝对实验路径、Git 子模块元数据或旧实验的 `.so`。
 共用 CUDA 扩展中的历史 ABI、兼容符号和测试对照实现保留，未通过删函数改变内核。
 

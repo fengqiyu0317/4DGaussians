@@ -1,0 +1,3 @@
+# Optional point-cloud preparation; unnecessary with already prepared datasets.
+-r requirements-inference.txt
+open3d
