@@ -11,6 +11,7 @@ from unittest import mock
 from tests import test_tacker_phase2 as phase2_contracts
 from tests.test_tacker_pipeline import (
     FakeEvent,
+    FakeStream,
     FakeTensor,
     GaussianRenderState,
     Linear,
@@ -31,9 +32,17 @@ def _resources():
     }
 
 
-def _full_profile(module, persistent_blocks=0):
+def _full_profile(module, persistent_blocks=0, overlap=False, graph=False):
     profile = module.load_tacker_profile()
-    candidate = module.full_mlp_candidate_contract(
+    if overlap and graph:
+        raise ValueError("overlap and graph test modes are mutually exclusive")
+    if graph:
+        builder = module.full_mlp_overlap_graph_candidate_contract
+    elif overlap:
+        builder = module.full_mlp_overlap_candidate_contract
+    else:
+        builder = module.full_mlp_candidate_contract
+    candidate = builder(
         "full_mlp_pb{}".format(persistent_blocks),
         module.HEAD_ORDER,
         worker_groups=1,
@@ -170,6 +179,130 @@ class CandidateContractTest(unittest.TestCase):
             module.full_mlp_candidate_contract(
                 "workers", module.HEAD_ORDER, worker_groups=2
             )
+
+    def test_overlap_contract_is_opt_in_and_keeps_physical_abi_v5(self):
+        module = _load_module()
+        profile, candidate = _full_profile(module, overlap=True)
+        self.assertIs(module.validate_tacker_profile(profile), profile)
+        partition = module.resolve_fusion_partition(candidate)
+        self.assertIsInstance(partition, module.FullMlpOverlapPartition)
+        self.assertTrue(partition.overlaps_raster_prepare)
+        self.assertEqual(candidate["abi_family"], module.FULL_MLP_ABI_FAMILY)
+        self.assertEqual(candidate["cuda_symbol"], "tacker_mix_render_deform_mlp_v5")
+        self.assertEqual(candidate["partition"]["kind"], "full_mlp_overlap")
+        self.assertTrue(
+            candidate["capability_requirements"][
+                "prepared_raster_deform_mlp_overlap"
+            ]
+        )
+        _old_profile, old_candidate = _full_profile(module)
+        self.assertIsInstance(
+            module.resolve_fusion_partition(old_candidate),
+            module.FullMlpPartition,
+        )
+        self.assertNotIsInstance(
+            module.resolve_fusion_partition(old_candidate),
+            module.FullMlpOverlapPartition,
+        )
+
+    def test_graph_overlap_contract_is_a_third_opt_in_schedule(self):
+        module = _load_module()
+        profile, candidate = _full_profile(module, graph=True)
+        self.assertIs(module.validate_tacker_profile(profile), profile)
+        partition = module.resolve_fusion_partition(candidate)
+        self.assertIsInstance(
+            partition, module.FullMlpOverlapGraphPartition
+        )
+        self.assertTrue(partition.overlaps_raster_prepare)
+        self.assertTrue(partition.uses_hexplane_cuda_graph)
+        self.assertEqual(
+            candidate["partition"]["kind"], "full_mlp_overlap_graph"
+        )
+        self.assertEqual(
+            candidate["prefix_submission"],
+            {
+                "backend": "torch.cuda.CUDAGraph",
+                "capture_version": 1,
+                "slot_count": 2,
+                "static_input_copies": ["xyz", "timestamp"],
+                "output_dtype": "float32",
+                "output_width": 32,
+            },
+        )
+        self.assertEqual(candidate["cuda_symbol"], "tacker_mix_render_deform_mlp_v5")
+        _overlap_profile, overlap_candidate = _full_profile(
+            module, overlap=True
+        )
+        self.assertIsInstance(
+            module.resolve_fusion_partition(overlap_candidate),
+            module.FullMlpOverlapPartition,
+        )
+        self.assertNotIsInstance(
+            module.resolve_fusion_partition(overlap_candidate),
+            module.FullMlpOverlapGraphPartition,
+        )
+
+    def test_v12_default_split_pairs_one_raster_cta_with_two_deform_tiles(self):
+        module = _load_module()
+        settings = types.SimpleNamespace(image_width=1352, image_height=1014)
+        context = types.SimpleNamespace(
+            rasterizer=types.SimpleNamespace(raster_settings=settings)
+        )
+        prepared_raster = types.SimpleNamespace(
+            radii=types.SimpleNamespace(numel=lambda: 111525)
+        )
+        real_get = module.os.environ.get
+
+        def without_split_override(name, default=None):
+            if name in {
+                "TACKER_MIXED_V12_SPLIT_TILE",
+                "TACKER_MIXED_V12_SPLIT_FRACTION",
+            }:
+                return None
+            return real_get(name, default)
+
+        with mock.patch.object(
+            module.os.environ,
+            "get",
+            side_effect=without_split_override,
+        ):
+            split_tile = module._split_raster_v12_tile(
+                context,
+                prepared_raster,
+                deform_rows=111525,
+            )
+
+        raster_blocks = 85 * 64
+        deform_tiles = (111525 + 15) // 16
+        self.assertEqual(deform_tiles, 6971)
+        self.assertEqual(split_tile, 1954)
+        self.assertEqual(raster_blocks - split_tile, 3486)
+        self.assertEqual(2 * (raster_blocks - split_tile), deform_tiles + 1)
+
+    def test_deform_then_raster_profile_schedule_is_an_opt_in_boundary(self):
+        module = _load_module()
+        log = []
+        renderer = object.__new__(module.TackerRenderer)
+        slot = types.SimpleNamespace(
+            split_profile_prefix_end=FakeEvent("deform_end", log)
+        )
+        schedule = {"TACKER_PROFILE_MIXED_PIPELINE_SCHEDULE": "both"}
+        with mock.patch.dict(module.os.environ, schedule, clear=False):
+            renderer._isolate_profile_deform_side(slot)
+        self.assertEqual(log, [])
+
+        schedule["TACKER_PROFILE_MIXED_PIPELINE_SCHEDULE"] = (
+            "deform_then_raster"
+        )
+        with mock.patch.dict(
+            module.os.environ, schedule, clear=False
+        ), mock.patch.object(
+            module,
+            "_mixed_pipeline_profile_path",
+            return_value="timeline.jsonl",
+        ):
+            renderer._isolate_profile_deform_side(slot)
+        self.assertEqual(log, [("synchronize_event", "deform_end")])
 
 
 class PartitionExecutionTest(unittest.TestCase):
@@ -389,6 +522,273 @@ class RuntimeAndSchedulerTest(unittest.TestCase):
                 self.assertEqual(
                     counts["selected_head_evaluations_per_head"], frame_count
                 )
+
+    def test_overlap_waits_for_deform_prefix_only_after_raster_prepare(self):
+        module = _load_module(available=True, grad_enabled=False)
+        log = module._test_log
+
+        class Task:
+            def __init__(self):
+                self.mixed_outputs = None
+
+            def record_stream(self, stream):
+                log.append(("task_record", stream.name))
+
+        class Partition:
+            def prepare_raster(self, _context, _state):
+                log.append(("prepare_raster", module._test_torch.cuda.current.name))
+                return (FakeTensor(name="prepared"),)
+
+            def split_raster_tile(self, _context, _prepared, _task):
+                return None
+
+            def launch_prepared_mixed(
+                self, _context, _prepared, _task, raster_start=None
+            ):
+                assert raster_start is None
+                log.append(("launch_mixed", module._test_torch.cuda.current.name))
+                return "mixed"
+
+            def result_from_mixed(self, _context, _mixed):
+                value = FakeTensor()
+                outputs = tuple(FakeTensor() for _ in module.HEAD_ORDER)
+                return RenderResult(value, value, value, value, value), outputs
+
+        renderer = object.__new__(module.TackerRenderer)
+        renderer.raster_stream = FakeStream("raster", 10, log)
+        renderer.raster_prefix_stream = renderer.raster_stream
+        renderer._green_contexts = None
+        renderer.partition = Partition()
+        current = module._TackerSlot(
+            ready=FakeEvent("current_ready", log),
+            prefix_ready=FakeEvent("unused_prefix", log),
+            mixed_done=FakeEvent("unused_mixed", log),
+            raster_done=FakeEvent("raster_done", log),
+            context=types.SimpleNamespace(),
+            state=GaussianRenderState(
+                FakeTensor(), FakeTensor(), FakeTensor(), FakeTensor(), FakeTensor()
+            ),
+        )
+        following = module._TackerSlot(
+            ready=FakeEvent("unused_ready", log),
+            prefix_ready=FakeEvent("next_prefix", log),
+            mixed_done=FakeEvent("mixed_done", log),
+            raster_done=FakeEvent("unused_raster", log),
+            task=Task(),
+        )
+
+        renderer._enqueue_raster_prepare(current)
+        renderer._enqueue_prepared_mixed(current, following)
+
+        wait_current = log.index(("wait_event", "raster", "current_ready"))
+        prepare = log.index(("prepare_raster", "raster"))
+        wait_prefix = log.index(("wait_event", "raster", "next_prefix"))
+        launch = log.index(("launch_mixed", "raster"))
+        self.assertLess(wait_current, prepare)
+        self.assertLess(prepare, wait_prefix)
+        self.assertLess(wait_prefix, launch)
+
+    def test_graph_prefix_capture_is_owned_and_reused_by_each_slot(self):
+        module = _load_module(available=True, grad_enabled=False)
+        log = module._test_log
+
+        class Task:
+            def record_stream(self, stream):
+                log.append(("task_record", stream.name))
+
+        class Partition:
+            uses_hexplane_cuda_graph = True
+
+            def create_prefix_graph(self, context, pc, stream):
+                del context, pc
+                graph = object()
+                log.append(("create_graph", stream.name, graph))
+                return graph
+
+            def prepare_graph(
+                self,
+                context,
+                pc,
+                stream,
+                cached,
+                graph,
+                prefix_ready,
+            ):
+                del context, pc, cached
+                log.append(
+                    (
+                        "prepare_graph",
+                        stream.name,
+                        graph,
+                        prefix_ready.name,
+                    )
+                )
+                return Task()
+
+        renderer = object.__new__(module.TackerRenderer)
+        renderer.deform_stream = FakeStream("deform", 11, log)
+        renderer.deform_prefix_stream = renderer.deform_stream
+        renderer.partition = Partition()
+        renderer.pc = object()
+        renderer.cached_head_parameters = object()
+        renderer._wait_slot_reuse = lambda _slot, _stream=None: None
+        context = types.SimpleNamespace()
+        renderer._prepare_context = lambda _view: context
+        slot = module._TackerSlot(
+            ready=FakeEvent("ready", log),
+            prefix_ready=FakeEvent("prefix", log),
+            mixed_done=FakeEvent("mixed", log),
+            raster_done=FakeEvent("raster", log),
+        )
+
+        renderer._enqueue_prefix("view0", slot)
+        first_graph = slot.hexplane_graph
+        renderer._enqueue_prefix("view1", slot)
+
+        self.assertIs(slot.hexplane_graph, first_graph)
+        self.assertEqual(
+            len([entry for entry in log if entry[0] == "create_graph"]),
+            1,
+        )
+        prepares = [entry for entry in log if entry[0] == "prepare_graph"]
+        self.assertEqual(len(prepares), 2)
+        self.assertIs(prepares[0][2], first_graph)
+        self.assertIs(prepares[1][2], first_graph)
+
+
+class RasterHexPlaneExperimentTest(unittest.TestCase):
+    def test_mixed_plane_count_defaults_to_all_and_is_bounded(self):
+        module = _load_module()
+        with mock.patch.dict(module.os.environ, {}, clear=True):
+            self.assertEqual(module._raster_hexplane_mixed_planes(), 12)
+        for value in ("1", "3", "6", "9", "12"):
+            with mock.patch.dict(module.os.environ, {
+                "TACKER_RASTER_HEXPLANE_MIXED_PLANES": value,
+            }, clear=True):
+                self.assertEqual(module._raster_hexplane_mixed_planes(), int(value))
+        for value in ("0", "13", "abc", "6.5"):
+            with mock.patch.dict(module.os.environ, {
+                "TACKER_RASTER_HEXPLANE_MIXED_PLANES": value,
+            }, clear=True), self.assertRaises(ValueError):
+                module._raster_hexplane_mixed_planes()
+
+    def test_mode_is_opt_in_and_rejects_invalid_ratios(self):
+        module = _load_module()
+        with mock.patch.dict(module.os.environ, {}, clear=True):
+            self.assertEqual(module._raster_hexplane_experiment(), (None, 17))
+        for mode, ratio in (("unknown", "17"), ("fused", "0"),
+                            ("separate", "2147483648"), ("fused", "abc")):
+            with mock.patch.dict(module.os.environ, {
+                "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": mode,
+                "TACKER_RASTER_HEXPLANE_TASKS_PER_CTA": ratio,
+            }, clear=True), self.assertRaises(ValueError):
+                module._raster_hexplane_experiment()
+
+    def test_batched_and_block_fused_require_complete_single_task_domains(self):
+        module = _load_module()
+        for mode in ("batched", "block_fused"):
+            with mock.patch.dict(module.os.environ, {
+                "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": mode,
+            }, clear=True):
+                self.assertEqual(module._raster_hexplane_experiment(), (mode, 1))
+            for extra in ({"TACKER_RASTER_HEXPLANE_TASKS_PER_CTA": "17"},
+                          {"TACKER_RASTER_HEXPLANE_MIXED_PLANES": "6"}):
+                with mock.patch.dict(module.os.environ, {
+                    "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": mode, **extra,
+                }, clear=True), self.assertRaises(ValueError):
+                    module._raster_hexplane_experiment()
+
+    def test_deferred_prefix_does_not_publish_unsampled_features(self):
+        module = _load_module(available=True, grad_enabled=False)
+        _install_tensor_packing(module)
+        pc, context, _network, _backbone = _model_and_context(module, [])
+        _profile, candidate = _full_profile(module, graph=True)
+        partition = module.resolve_fusion_partition(candidate)
+        cached = partition.cache_parameters(pc)
+        stream = FakeStream("deform", 11, module._test_log)
+        prefix_ready = FakeEvent("prefix_ready", module._test_log)
+        graph = types.SimpleNamespace(
+            deferred_sampling=True,
+            enqueue=lambda *_args: FakeTensor(0, (2, 32)),
+        )
+        task = module.prepare_full_mlp_graph_task(
+            context, pc, stream, partition.variant, cached, graph, prefix_ready,
+        )
+        self.assertIs(task.prefix_ready, prefix_ready)
+        self.assertNotIn(("event", "prefix_ready", "deform"), module._test_log)
+        graph.deferred_sampling = False
+        module.prepare_full_mlp_graph_task(
+            context, pc, stream, partition.variant, cached, graph, prefix_ready,
+        )
+        self.assertIn(("event", "prefix_ready", "deform"), module._test_log)
+
+    def test_fused_tiles_are_excluded_from_remaining_prepass(self):
+        module = _load_module(available=True, grad_enabled=False)
+        log = module._test_log
+
+        class Graph:
+            deferred_sampling = True
+            mode = "fused"
+
+            def complete_sampling(self, _context, _prepared, split_tile,
+                                  _raster_stream, deform_stream, prefix_ready,
+                                  _prefix_end):
+                assert split_tile == 1954
+                log.append(("fused_prefix", 0, 308))
+                prefix_ready.record(deform_stream)
+                return 308
+
+        class Partition:
+            def split_raster_tile(self, *_args):
+                return 1954
+
+            def launch_prepared_mixed(self, *_args, raster_start=None):
+                log.append(("mlp_mixed", raster_start))
+                return "mixed"
+
+            def result_from_mixed(self, *_args):
+                value = FakeTensor()
+                return RenderResult(value, value, value, value, value), (value,)
+
+        renderer = object.__new__(module.TackerRenderer)
+        renderer.raster_stream = FakeStream("raster", 10, log)
+        renderer.deform_stream = FakeStream("deform", 11, log)
+        renderer._green_contexts = None
+        renderer.partition = Partition()
+        renderer._last_execution_counts = {"raster_prepasses": 0}
+        rasterizer = types.SimpleNamespace(render_prepared_raster_fast_range=
+            lambda _prepared, start, end: log.append(("remaining_prefix", start, end)))
+        current = module._TackerSlot(
+            FakeEvent("ready", log), FakeEvent("unused", log),
+            FakeEvent("unused_mixed", log), FakeEvent("raster_done", log),
+            context=types.SimpleNamespace(rasterizer=rasterizer),
+            prepared_raster=(FakeTensor(),),
+        )
+        following = module._TackerSlot(
+            FakeEvent("next_ready", log), FakeEvent("prefix_ready", log),
+            FakeEvent("mixed_done", log), FakeEvent("next_raster", log),
+            hexplane_graph=Graph(), task=types.SimpleNamespace(
+                record_stream=lambda _stream: None, mixed_outputs=None),
+        )
+        renderer._enqueue_prepared_mixed(current, following)
+        self.assertIn(("remaining_prefix", 308, 1954), log)
+        self.assertIn(("mlp_mixed", 1954), log)
+        self.assertLess(log.index(("event", "prefix_ready", "deform")),
+                        log.index(("wait_event", "raster", "prefix_ready")))
+        self.assertEqual(renderer._last_execution_counts["raster_hexplane_fused_launches"], 1)
+        self.assertEqual(renderer._last_execution_counts["raster_hexplane_sampling_graph_replays"], 0)
+
+    def test_unqualified_experiment_is_rejected_before_stream_creation(self):
+        module = _load_module()
+        renderer = object.__new__(module.TackerRenderer)
+        renderer.raster_stream = None
+        renderer._closed = False
+        renderer._green_config = None
+        renderer.qualification_mode = False
+        with mock.patch.dict(module.os.environ, {
+            "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": "fused",
+        }, clear=True), self.assertRaisesRegex(RuntimeError, "qualification mode"):
+            renderer._ensure_cuda_resources()
 
 
 if __name__ == "__main__":

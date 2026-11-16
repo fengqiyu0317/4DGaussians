@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-28",
+  "host": "jetson",
+  "workload": {
+    "scene": "flame_steak",
+    "iteration": 14000,
+    "gaussians": 111525,
+    "resolution": [
+      1352,
+      1014
+    ],
+    "raster_view": 0,
+    "next_mlp_view": 1
+  },
+  "qualification": "full_mlp_overlap_graph_pb0",
+  "qualification_sha256": "a13d87f6c4a22a24b20f83cb3c66a009e759b739b498c9ff55f8c35c9b82d23a",
+  "inputs": "identical activated Gaussian state and next-frame native Graph-prefix MLP features; each backend builds its own candidate list",
+  "arms": [
+    "old_raster",
+    "gsplat_raster",
+    "old_mixed_v11",
+    "gsplat_mixed_ca"
+  ],
+  "binaries": "reuse sealed old v11 and gsplat 1.5.3 plus tensor_v7_ca; no kernel rebuild",
+  "ncu": {
+    "version": "2024.3.1",
+    "replay": "kernel",
+    "graph_profiling": "node",
+    "cache_control": "all",
+    "clock_control": "none",
+    "gpu_clock_hz": 1300500000,
+    "launch_count": 4,
+    "sections": [
+      "LaunchStats",
+      "Occupancy",
+      "SpeedOfLight",
+      "SchedulerStats",
+      "WarpStateStats",
+      "ComputeWorkloadAnalysis",
+      "MemoryWorkloadAnalysis"
+    ],
+    "additional_metrics": [
+      "l1tex__t_sectors_pipe_lsu_mem_local_op_ld.sum",
+      "l1tex__t_sectors_pipe_lsu_mem_local_op_st.sum"
+    ]
+  },
+  "unprofiled_validation": {
+    "rounds": 6,
+    "warmup": 5,
+    "replays": 20,
+    "order": "forward/reverse alternating",
+    "aggregate": "median per arm",
+    "scope": "single fixed pair, Graph leaf, diagnostic not whole-frame FPS"
+  },
+  "assertions": [
+    "one kernel per captured leaf",
+    "5440 raster tiles, no prepass",
+    "same five MLP outputs bitwise equal to sealed legacy v7",
+    "each backend mixed raster outputs bitwise equal to own independent raster",
+    "candidate pairing active, 1531 extra workers, 6971 MLP tiles",
+    "source/checkpoint/binary hashes stable",
+    "before/during device process/frequency audit"
+  ],
+  "scope": "isolated replay microarchitecture; NCU timings are not end-to-end or concurrent-pipeline attribution"
+}

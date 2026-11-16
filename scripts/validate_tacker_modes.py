@@ -30,6 +30,26 @@ QUALITY_THRESHOLDS = {
     "lpips_increase_max": 0.0001,
 }
 
+
+def _deployment_target():
+    cuda_arch = os.environ.get("TACKER_CUDA_ARCH", "sm_86").strip().lower()
+    if (
+        len(cuda_arch) != 5
+        or not cuda_arch.startswith("sm_")
+        or not cuda_arch[3:].isdigit()
+    ):
+        raise ValueError("TACKER_CUDA_ARCH must use the form sm_XX")
+    capability = [int(cuda_arch[3]), int(cuda_arch[4])]
+    default_name = "NVIDIA RTX A6000" if cuda_arch == "sm_86" else ""
+    gpu_name = " ".join(
+        os.environ.get("TACKER_GPU_NAME", default_name).split()
+    )
+    if not gpu_name:
+        raise ValueError(
+            "TACKER_GPU_NAME is required for non-default Tacker targets"
+        )
+    return cuda_arch, capability, gpu_name
+
 # Direct execution sets sys.path[0] to ``scripts/``.  Add only this script's
 # resolved repository root; no caller-controlled string is evaluated.
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -64,16 +84,29 @@ def atomic_write_json(path, value):
 
 def _minimal_failure(error, args=None):
     qualification_profile = getattr(args, "qualification_profile", None)
+    scene_name = _normalise_scene_name(
+        getattr(args, "scene_name", EXPECTED_SCENE)
+    )
+    expected_iteration = int(
+        getattr(args, "iteration", EXPECTED_ITERATION)
+    )
+    expected_resolution = [
+        int(getattr(args, "expected_image_width", EXPECTED_RESOLUTION[0])),
+        int(getattr(args, "expected_image_height", EXPECTED_RESOLUTION[1])),
+    ]
+    expected_gaussians = int(
+        getattr(args, "expected_gaussian_count", EXPECTED_GAUSSIANS)
+    )
     report = {
         "schema_version": SCHEMA_VERSION,
         "kind": "4dgaussians_tacker_quality_validation",
         "generated_at_utc": _utc_now(),
         "passed": False,
         "workload": {
-            "scene": EXPECTED_SCENE,
-            "iteration": EXPECTED_ITERATION,
-            "resolution": list(EXPECTED_RESOLUTION),
-            "gaussian_count": EXPECTED_GAUSSIANS,
+            "scene": scene_name,
+            "iteration": expected_iteration,
+            "resolution": expected_resolution,
+            "gaussian_count": expected_gaussians,
         },
         "thresholds": dict(QUALITY_THRESHOLDS),
         "modes": {},
@@ -93,6 +126,15 @@ def _minimal_failure(error, args=None):
     if args is not None:
         report["requested_modes"] = list(getattr(args, "modes", ()))
     return report
+
+
+def _normalise_scene_name(value):
+    if not isinstance(value, str):
+        raise ValueError("--scene-name must be a string")
+    normalised = value.strip().replace("-", "_").lower()
+    if not normalised:
+        raise ValueError("--scene-name must be non-empty")
+    return normalised
 
 
 def _select_views(scene, split):
@@ -138,6 +180,8 @@ def _renderer(
     profile_path,
     qualification_mode,
     qualification_profile,
+    workload_name,
+    iteration,
 ):
     if mode == "serial":
         return None
@@ -184,8 +228,8 @@ def _renderer(
             cam_type=cam_type,
             profile_path=profile_path,
             profile_override=profile_override,
-            workload_name=EXPECTED_SCENE,
-            iteration=EXPECTED_ITERATION,
+            workload_name=workload_name,
+            iteration=iteration,
             qualification_mode=qualification_mode,
         )
         if qualification_mode:
@@ -267,16 +311,29 @@ def _expected_tacker_execution_counts(frame_count):
     """Return the exact prefill/steady/drain contract for one sequence."""
 
     steady = max(0, int(frame_count) - 1)
-    return {
+    split_raster_v12 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V12") == "1"
+    )
+    expected = {
         "input_frames": int(frame_count),
         "full_deformation": 1,
         "prefix": steady,
         "mixed_launches": steady,
+        "raster_prepasses": steady if split_raster_v12 else 0,
         "suffix": steady,
         "solo_raster": 1,
         "outputs": int(frame_count),
         "selected_head_evaluations_per_head": int(frame_count),
     }
+    prefix_mode = os.environ.get("TACKER_EXPERIMENTAL_RASTER_HEXPLANE", "0")
+    if prefix_mode in ("fused", "separate", "batched", "block_fused") and steady:
+        expected["raster_hexplane_fused_launches"] = steady if prefix_mode in ("fused", "block_fused") else 0
+        expected["raster_hexplane_sampling_graph_replays"] = steady if prefix_mode in ("separate", "batched") else 0
+        if int(os.environ.get("TACKER_RASTER_HEXPLANE_MIXED_PLANES", "12")) < 12:
+            expected["raster_hexplane_early_sampling_graph_replays"] = steady
+    if os.environ.get("TACKER_EXPERIMENTAL_GREEN_PREPARE_HANDOFF", "0") == "1" and steady:
+        expected["raster_prepare_handoffs"] = steady
+    return expected
 
 
 def _evaluate_mode(
@@ -292,6 +349,8 @@ def _evaluate_mode(
     qualification_mode,
     qualification_profile,
     torch,
+    workload_name,
+    iteration,
 ):
     from utils.image_utils import psnr
     from utils.loss_utils import ssim
@@ -305,6 +364,8 @@ def _evaluate_mode(
         profile_path,
         qualification_mode,
         qualification_profile,
+        workload_name,
+        iteration,
     )
     per_view = []
     outputs = iter(_mode_outputs(
@@ -387,6 +448,7 @@ def _evaluate_mode(
             ) is not None
         ) else None,
         "pipeline_execution_counts": execution_counts,
+        "green_contexts": getattr(renderer, "green_contexts_metadata", {"enabled": False}),
         "qualification_requested": bool(
             mode == "tacker" and qualification_mode
         ),
@@ -407,10 +469,26 @@ def run_validation(args, dataset, hyperparam, pipeline):
     from lpipsPyTorch.modules.lpips import LPIPS
     from scene import Scene
 
-    if args.scene_name.replace("-", "_").lower() != EXPECTED_SCENE:
-        raise ValueError("--scene-name must be flame_steak")
-    if args.iteration != EXPECTED_ITERATION:
-        raise ValueError("--iteration must be 14000")
+    scene_name = _normalise_scene_name(args.scene_name)
+    source_scene_name = _normalise_scene_name(Path(dataset.source_path).name)
+    if source_scene_name.endswith("_4dgs_min"):
+        source_scene_name = source_scene_name[: -len("_4dgs_min")]
+    if source_scene_name != scene_name:
+        raise ValueError(
+            "--scene-name {} does not match source directory {}".format(
+                scene_name, source_scene_name
+            )
+        )
+    if args.iteration <= 0:
+        raise ValueError("--iteration must be positive")
+    expected_resolution = [
+        args.expected_image_width,
+        args.expected_image_height,
+    ]
+    if any(value <= 0 for value in expected_resolution):
+        raise ValueError("expected image dimensions must be positive")
+    if args.expected_gaussian_count <= 0:
+        raise ValueError("--expected-gaussian-count must be positive")
     modes = list(dict.fromkeys(args.modes))
     if "serial" not in modes:
         raise ValueError("serial must be included as the quality reference")
@@ -437,13 +515,14 @@ def run_validation(args, dataset, hyperparam, pipeline):
             "requesting tacker requires an explicit --tacker-profile"
         )
     if not torch.cuda.is_available():
-        raise RuntimeError("CUDA is unavailable; run this validation on 4A6000")
+        raise RuntimeError("CUDA is unavailable; run this validation on the target GPU")
+    expected_arch, expected_capability, expected_gpu_name = _deployment_target()
     capability = list(torch.cuda.get_device_capability(args.gpu))
-    gpu_name = torch.cuda.get_device_name(args.gpu)
-    if capability != [8, 6] or gpu_name != "NVIDIA RTX A6000":
+    gpu_name = " ".join(torch.cuda.get_device_name(args.gpu).split())
+    if capability != expected_capability or gpu_name != expected_gpu_name:
         raise RuntimeError(
-            "quality admission requires RTX A6000/sm_86, got {} / {}".format(
-                gpu_name, capability
+            "quality validation requires {}/{}, got {} / {}".format(
+                expected_gpu_name, expected_arch, gpu_name, capability
             )
         )
 
@@ -456,10 +535,12 @@ def run_validation(args, dataset, hyperparam, pipeline):
             load_iteration=args.iteration,
             shuffle=False,
         )
-        if scene.loaded_iter != EXPECTED_ITERATION:
-            raise RuntimeError("loaded checkpoint is not iteration 14000")
+        if scene.loaded_iter != args.iteration:
+            raise RuntimeError(
+                "loaded checkpoint is not iteration {}".format(args.iteration)
+            )
         if scene.dataset_type != "dynerf":
-            raise RuntimeError("flame_steak admission requires the dynerf loader")
+            raise RuntimeError("Tacker admission requires the dynerf loader")
         gaussians._deformation.eval()
         all_views = _select_views(scene, args.split)
         indices = _selected_indices(
@@ -469,16 +550,16 @@ def run_validation(args, dataset, hyperparam, pipeline):
         first_view = views[0]
         resolution = [int(first_view.image_width), int(first_view.image_height)]
         gaussian_count = int(gaussians.get_xyz.shape[0])
-        if resolution != EXPECTED_RESOLUTION:
+        if resolution != expected_resolution:
             raise RuntimeError(
                 "admission resolution must be {}, got {}".format(
-                    EXPECTED_RESOLUTION, resolution
+                    expected_resolution, resolution
                 )
             )
-        if gaussian_count != EXPECTED_GAUSSIANS:
+        if gaussian_count != args.expected_gaussian_count:
             raise RuntimeError(
                 "admission Gaussian count must be {}, got {}".format(
-                    EXPECTED_GAUSSIANS, gaussian_count
+                    args.expected_gaussian_count, gaussian_count
                 )
             )
 
@@ -503,6 +584,8 @@ def run_validation(args, dataset, hyperparam, pipeline):
                 args.qualification_mode,
                 args.qualification_profile,
                 torch,
+                scene_name,
+                args.iteration,
             )
             for view_index, record in zip(
                 indices, mode_results[mode]["per_view"]
@@ -605,7 +688,7 @@ def run_validation(args, dataset, hyperparam, pipeline):
         "generated_at_utc": _utc_now(),
         "passed": passed,
         "workload": {
-            "scene": EXPECTED_SCENE,
+            "scene": scene_name,
             "iteration": scene.loaded_iter,
             "split": args.split,
             "frames": args.frames,
@@ -619,7 +702,7 @@ def run_validation(args, dataset, hyperparam, pipeline):
             "name": gpu_name,
             "index": args.gpu,
             "compute_capability": capability,
-            "cuda_arch": "sm_86",
+            "cuda_arch": expected_arch,
             "cuda_runtime": torch.version.cuda,
             "pytorch_version": str(torch.__version__),
         },
@@ -660,6 +743,21 @@ def _build_parser():
     parser.add_argument("--iteration", type=int, default=EXPECTED_ITERATION)
     parser.add_argument("--configs", type=str)
     parser.add_argument("--scene-name", default=EXPECTED_SCENE)
+    parser.add_argument(
+        "--expected-image-width",
+        type=int,
+        default=EXPECTED_RESOLUTION[0],
+    )
+    parser.add_argument(
+        "--expected-image-height",
+        type=int,
+        default=EXPECTED_RESOLUTION[1],
+    )
+    parser.add_argument(
+        "--expected-gaussian-count",
+        type=int,
+        default=EXPECTED_GAUSSIANS,
+    )
     parser.add_argument("--split", choices=("train", "test"), default="test")
     parser.add_argument("--frames", type=int, default=50)
     parser.add_argument("--view-start", type=int, default=0)

@@ -1,5 +1,6 @@
 import itertools
 import logging as log
+import os
 from typing import Optional, Union, List, Dict, Sequence, Iterable, Collection, Callable
 
 import torch
@@ -75,32 +76,79 @@ def interpolate_ms_features(pts: torch.Tensor,
                             grid_dimensions: int,
                             concat_features: bool,
                             num_levels: Optional[int],
+                            capture_safe: bool = False,
                             ) -> torch.Tensor:
     coo_combs = list(itertools.combinations(
         range(pts.shape[-1]), grid_dimensions)
     )
     if num_levels is None:
         num_levels = len(ms_grids)
+    reduction_threads = None
+    # Limit this experiment to the qualified Graph query. Serial rendering
+    # and the eager prefill remain an independent, unfused reference.
+    if capture_safe and os.environ.get("TACKER_HEXPLANE_FUSED_REDUCTION", "0") != "0":
+        if torch.is_grad_enabled():
+            raise RuntimeError("TACKER_HEXPLANE_FUSED_REDUCTION is inference-only")
+        from tacker_4dgs_head.hexplane import fused_reduction_threads, reduce_features
+        reduction_threads = fused_reduction_threads()
+        if (grid_dimensions != 2 or pts.ndim != 2 or pts.shape[1] != 4
+                or not concat_features or num_levels != 2
+                or any(len(level) != 6 or any(plane.shape[1] != 16 for plane in level)
+                       for level in ms_grids[:num_levels])):
+            raise ValueError("fused HexPlane reduction requires two levels of six 16-channel 2-D planes")
+    reduction_samples = [] if reduction_threads is not None else None
+    lowreg = os.environ.get("TACKER_HEXPLANE_LOWREG") == "1" and not torch.is_grad_enabled()
+    if lowreg:
+        if grid_dimensions != 2 or pts.ndim != 2 or pts.shape[1] != 4:
+            raise ValueError("TACKER_HEXPLANE_LOWREG requires 2-D planes and [N,4] coords")
+        from tacker_4dgs_head.hexplane import sample_plane
+        pts = pts.contiguous()
     multi_scale_interp = [] if concat_features else 0.
     grid: nn.ParameterList
     for scale_id,  grid in enumerate(ms_grids[:num_levels]):
         interp_space = 1.
         for ci, coo_comb in enumerate(coo_combs):
+            if lowreg:
+                interp_out_plane = sample_plane(pts, grid[ci], *coo_comb)
+                if reduction_samples is not None:
+                    reduction_samples.append(interp_out_plane)
+                else:
+                    interp_space = interp_space * interp_out_plane
+                continue
+            if capture_safe:
+                # ``pts[..., coo_comb]`` constructs an implicit CUDA index
+                # tensor and is not graph-capture safe in PyTorch 2.5.  Scalar
+                # integer views plus stack preserve the coordinate order and
+                # numerical grid_sample contract without that hidden copy for
+                # either 2-D or 3-D grids.
+                plane_coords = torch.stack(
+                    tuple(pts[..., axis] for axis in coo_comb),
+                    dim=-1,
+                )
+            else:
+                plane_coords = pts[..., coo_comb]
             # interpolate in plane
             feature_dim = grid[ci].shape[1]  # shape of grid[ci]: 1, out_dim, *reso
             interp_out_plane = (
-                grid_sample_wrapper(grid[ci], pts[..., coo_comb])
+                grid_sample_wrapper(grid[ci], plane_coords)
                 .view(-1, feature_dim)
             )
             # compute product over planes
-            interp_space = interp_space * interp_out_plane
+            if reduction_samples is not None:
+                reduction_samples.append(interp_out_plane)
+            else:
+                interp_space = interp_space * interp_out_plane
 
         # combine over scales
+        if reduction_samples is not None:
+            continue
         if concat_features:
             multi_scale_interp.append(interp_space)
         else:
             multi_scale_interp = multi_scale_interp + interp_space
 
+    if reduction_samples is not None:
+        return reduce_features(reduction_samples, threads=reduction_threads)
     if concat_features:
         multi_scale_interp = torch.cat(multi_scale_interp, dim=-1)
     return multi_scale_interp
@@ -157,7 +205,12 @@ class HexPlaneField(nn.Module):
         self.aabb = nn.Parameter(aabb,requires_grad=False)
         print("Voxel Plane: set aabb=",self.aabb)
 
-    def get_density(self, pts: torch.Tensor, timestamps: Optional[torch.Tensor] = None):
+    def get_density(
+        self,
+        pts: torch.Tensor,
+        timestamps: Optional[torch.Tensor] = None,
+        capture_safe: bool = False,
+    ):
         """Computes and returns the densities."""
         # breakpoint()
         pts = normalize_aabb(pts, self.aabb)
@@ -167,7 +220,8 @@ class HexPlaneField(nn.Module):
         features = interpolate_ms_features(
             pts, ms_grids=self.grids,  # noqa
             grid_dimensions=self.grid_config[0]["grid_dimensions"],
-            concat_features=self.concat_features, num_levels=None)
+            concat_features=self.concat_features, num_levels=None,
+            capture_safe=capture_safe)
         if len(features) < 1:
             features = torch.zeros((0, 1)).to(features.device)
 
@@ -181,3 +235,12 @@ class HexPlaneField(nn.Module):
         features = self.get_density(pts, timestamps)
 
         return features
+
+    def forward_cuda_graph(
+        self,
+        pts: torch.Tensor,
+        timestamps: Optional[torch.Tensor] = None,
+    ):
+        """Capture-safe inference equivalent of :meth:`forward`."""
+
+        return self.get_density(pts, timestamps, capture_safe=True)

@@ -1,0 +1,67 @@
+{
+  "abi_version": 12,
+  "backend_family": "full_deform_mlp_tensor_tail_split_raster_v12",
+  "status": "experimental_split_schedule_approximate_raster_math",
+  "name": "4dgs_split_fast_raster_prefix_plus_fused_tensor_tail_deform_mlp",
+  "rasterizer_upstream_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+  "cuda_arch": "sm_86_or_sm_87",
+  "pointer_size_bytes": 8,
+  "preserved_abis": [
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_raster_fast_v11.json"
+  ],
+  "global_kernel_symbols": {
+    "raster_prefix": "tacker_render_raster_fast_range_v12",
+    "mixed_remainder": "tacker_mix_render_deform_mlp_tensor_tail_split_raster_v12"
+  },
+  "physical_launch": {
+    "raster_prefix_threads": 256,
+    "mixed_remainder_threads": 384,
+    "mixed_launch_bounds_min_blocks_per_sm": 4,
+    "raster_prefix_default_ctas": "raster_split_tile",
+    "mixed_remainder_default_ctas": "raster_tile_count_minus_raster_split_tile",
+    "dynamic_shared_memory_bytes": 0
+  },
+  "work_mapping": {
+    "raster_prefix_range": "[0, raster_split_tile)",
+    "mixed_raster_range": "[raster_split_tile, raster_tile_count)",
+    "raster_tiles_per_default_cta": 1,
+    "deform_mapping": "grid_stride_all_tiles_over_mixed_remainder_ctas",
+    "tile_coverage": "each_raster_tile_exactly_once"
+  },
+  "subgroups": {
+    "raster_prefix": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render_raster_optimized<NUM_CHANNELS, true>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256
+    },
+    "mixed_raster": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render_raster_optimized<NUM_CHANNELS, true>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256
+    },
+    "deform_mlp": {
+      "thread_range": [256, 383],
+      "threads": 128,
+      "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v7",
+      "named_barrier_id": 2,
+      "named_barrier_participants": 128,
+      "cta_wide_barriers": false
+    }
+  },
+  "python_bindings": {
+    "raster_prefix": "render_prepared_gaussians_raster_fast_range",
+    "mixed_remainder": "render_prepared_gaussians_with_deform_mlp_tensor_tail_split_raster_overlap"
+  },
+  "runtime_selection": {
+    "enable": "TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V12=1",
+    "explicit_tile": "TACKER_MIXED_V12_SPLIT_TILE",
+    "fraction": "TACKER_MIXED_V12_SPLIT_FRACTION",
+    "default_fraction": 0.48
+  },
+  "accuracy_requirement": "same_ABI_v11_end_to_end_PSNR_SSIM_LPIPS_gate",
+  "performance_requirement": "split_sweep_then_formal_whole_run_ABBA"
+}

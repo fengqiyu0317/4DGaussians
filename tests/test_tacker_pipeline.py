@@ -134,8 +134,9 @@ class FakeCuda:
         self.log.append(("create_stream", name))
         return result
 
-    def Event(self, blocking=False):
+    def Event(self, blocking=False, enable_timing=False):
         del blocking
+        del enable_timing
         name = "event{}".format(self.event_count)
         self.event_count += 1
         return FakeEvent(name, self.log)
@@ -786,6 +787,38 @@ class ProfileContractTest(unittest.TestCase):
         profile["correctness_thresholds"]["psnr_drop_db_max"] = 0.051
         profile["profile_sha256"] = self.module.profile_sha256(profile)
         with self.assertRaisesRegex(self.module.TackerProfileError, "weakens"):
+            self.module.validate_tacker_profile(profile)
+
+    def test_v2_profile_accepts_any_exact_canonical_workload(self):
+        profile = _valid_profile(self.module)
+        workload_key = "coffee_martini:14000:123456:1352x1014:sm_86"
+        profile["workload_key"] = workload_key
+        profile["manifest"].update(
+            {
+                "workload_key": workload_key,
+                "workload": "coffee_martini",
+                "iteration": 14000,
+                "gaussian_count": 123456,
+                "resolution": [1352, 1014],
+            }
+        )
+        profile["manifest_sha256"] = self.module.manifest_sha256(
+            profile["manifest"]
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        self.assertIs(self.module.validate_tacker_profile(profile), profile)
+
+    def test_v2_workload_key_and_manifest_must_match(self):
+        profile = _valid_profile(self.module)
+        profile["workload_key"] = (
+            "coffee_martini:14000:123456:1352x1014:sm_86"
+        )
+        profile["profile_sha256"] = self.module.profile_sha256(profile)
+
+        with self.assertRaisesRegex(
+            self.module.TackerProfileError, "manifest.workload_key"
+        ):
             self.module.validate_tacker_profile(profile)
 
     def test_v2_requires_tile_resource_and_equivalence_contracts(self):

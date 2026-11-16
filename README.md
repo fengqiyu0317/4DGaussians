@@ -1,5 +1,18 @@
 # 4D Gaussian Splatting for Real-Time Dynamic Scene Rendering
 
+## v13 / gsplat inference source release
+
+本仓库同时保留普通 **v13（mixed ABI-v12）** 与 **gsplat `tensor_v7_ca`**。
+两个 CUDA 子模块及 GLM 头文件现以普通源码目录纳入同一仓库；克隆后无需
+`git submodule update`。历史安装和性能报告保留在下文，当前两版本的安装、
+固定工作负载、运行入口和验证方法请先阅读 **[运行指南](docs/INFERENCE_VERSIONS.md)**。
+
+入口为 `scripts/render_versions.py`，支持 `--dry-run`，明确使用
+`full_mlp_overlap_graph` qualification，并核对真实 mixed / Graph 执行。
+实验结果、模型、数据集、缓存和已编译扩展不随源码发布。必要的 disabled
+qualification 配置单独存放于 `profiles/`；它们不表示新的 GPU/场景已通过准入。
+源码与许可来源见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+
 ## CVPR 2024
 
 ### [Project Page](https://guanjunwu.github.io/4dgs/index.html)| [arXiv Paper](https://arxiv.org/abs/2310.08528)
@@ -53,6 +66,45 @@ pip install -e submodules/simple-knn
 ```
 
 In our environment, we use pytorch=1.13.1+cu116.
+
+### Optional gsplat inference backend
+
+The optional backend was validated with gsplat 1.5.3, PyTorch 2.4.1+cu124,
+and an RTX A6000. Install it into a compatible inference environment with
+`pip install -r requirements-gsplat.txt`, then add `--raster_backend gsplat`
+to `render.py`. Add `--gsplat_packed` to use the packed layout; dense is the
+default. `--execution-mode two_stream` also supports gsplat. The adapter
+preserves RGB, accumulated depth, and per-Gaussian radii; training and Tacker
+mixed kernels require the existing backend. See
+[the comparison protocol](docs/gsplat_backend_comparison_20261021.md) for
+fixed-checkpoint quality and timing results and reproduction commands.
+An experimental physical gsplat + Deform MLP mixed kernel is also available
+through `--execution-mode gsplat_mixed`; it requires an explicit parent
+`full_mlp_overlap_graph` qualification passed as `--tacker-profile`. See
+[the mixed-kernel experiment](docs/gsplat_mixed_kernel_20261021.md) for its
+validation of the ABI-v5 implementation, where the matched non-fused control is faster.
+The [Orin regression analysis and v3 experiment](docs/gsplat_mixed_optimization_20261021.md)
+measure the resource cost and parameter-passing optimization: v3 improves mixed
+throughput by 5.47%, while the matched independent Graph pipeline remains faster.
+The [legacy device-v7 MLP comparison](docs/gsplat_tensor_v7_comparison_20261027.md)
+ports the v11/v13 Tensor Core tail to both gsplat paths. On Orin, the matched
+Graph comparison measures 54.25 FPS for mixed versus 51.90 FPS for independent
+calls, with bitwise-identical RGB/depth across 50 views. Select it explicitly
+with `--gsplat_mixed_kernel tensor_v7 --gsplat_mixed_blocks 3486` and either
+`--execution-mode gsplat_mixed` or `--execution-mode gsplat_matched_graph`.
+The [v11 candidate-aware pairing experiment](docs/gsplat_candidate_pairing_20261027.md)
+adds the legacy extra-MLP task assignment as `tensor_v7_ca` with 5,440 CTAs.
+It preserves the same checkpoint, MLP arithmetic and two-slot Graph schedule;
+the report compares the existing mixed path, independent calls, grid controls
+and a same-binary pairing switch.
+
+The latest and default **gsplat mixed** variant is now `tensor_v7_ca`.
+Use `--raster_backend gsplat --execution-mode gsplat_mixed --tacker-profile <profile>`
+to select it; `--gsplat_mixed_blocks 0` (the default) selects one CTA per Raster
+tile, giving 5,440 CTAs at 1352×1014 and enabling candidate-aware pairing when
+`R < D < 2R`. Older kernels remain available through `--gsplat_mixed_kernel`.
+On the measured Orin workload, this latest variant remains slightly slower
+than `tensor_v7` with 3,486 CTAs; latest identifies the implementation version.
 
 ## Data Preparation
 

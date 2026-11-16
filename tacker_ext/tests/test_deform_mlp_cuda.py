@@ -13,6 +13,11 @@ from tacker_4dgs_head import (
     deform_mlp_delta_out_v1,
     deform_mlp_sliced_out_v2,
     deform_mlp_sliced_v2,
+    deform_mlp_tensor_tail_out_v3,
+    deform_mlp_tensor_tail_v3,
+    deform_mlp_tensor_tail_out_v4,
+    deform_mlp_tensor_tail_v4,
+    pack_deform_tail_weights_v3,
 )
 
 
@@ -78,6 +83,21 @@ class DeformMlpCudaTest(unittest.TestCase):
                 )
             partials.append(packed)
         return activated, torch.stack(partials, dim=0)
+
+    @staticmethod
+    def tensor_tail_reference(args):
+        features, w0, b0, weights, biases, tails, tail_bias = args
+        activated = torch.relu(features @ w0 + b0).half().float()
+        outputs = []
+        for head in range(5):
+            hidden = torch.relu(
+                activated @ weights[head].float().t() + biases[head]
+            ).half().float()
+            lo, hi = OFFSETS[head:head + 2]
+            outputs.append(
+                hidden @ tails[lo:hi].half().float().t() + tail_bias[lo:hi]
+            )
+        return outputs
 
     def assert_outputs(self, actual, expected):
         self.assertEqual(len(actual), 5)
@@ -203,6 +223,75 @@ class DeformMlpCudaTest(unittest.TestCase):
                        if event.device_type == torch.autograd.DeviceType.CUDA]
             self.assertEqual(len(kernels), 1, kernels)
             self.assertIn("tacker_deform_mlp_delta_v1", kernels[0])
+
+    def test_tensor_tail_v3_partial_and_full_tiles(self):
+        with torch.no_grad():
+            for rows in (0, 1, 15, 16, 17, 33, 129):
+                with self.subTest(rows=rows):
+                    args = self.case(rows)
+                    packed = pack_deform_tail_weights_v3(args[5])
+                    actual = deform_mlp_tensor_tail_v3(
+                        *args[:5], packed, args[6])
+                    self.assert_outputs(actual, self.tensor_tail_reference(args))
+
+    def test_tensor_tail_v3_out_and_one_kernel(self):
+        with torch.no_grad():
+            args = self.case(33)
+            packed = pack_deform_tail_weights_v3(args[5])
+            self.assertEqual(packed.shape, (112, 128))
+            self.assertEqual(packed.dtype, torch.float16)
+            outputs = [
+                torch.empty((33, width), device="cuda") for width in WIDTHS
+            ]
+            returned = deform_mlp_tensor_tail_out_v3(
+                *args[:5], packed, args[6], outputs)
+            self.assert_outputs(returned, self.tensor_tail_reference(args))
+            for value, output in zip(returned, outputs):
+                self.assertEqual(value.data_ptr(), output.data_ptr())
+            torch.cuda.synchronize()
+
+            with torch.profiler.profile(
+                activities=[
+                    torch.profiler.ProfilerActivity.CPU,
+                    torch.profiler.ProfilerActivity.CUDA,
+                ]
+            ) as prof:
+                deform_mlp_tensor_tail_out_v3(
+                    *args[:5], packed, args[6], outputs)
+                torch.cuda.synchronize()
+            kernels = [
+                event.name for event in prof.events()
+                if event.device_type == torch.autograd.DeviceType.CUDA
+            ]
+            self.assertEqual(len(kernels), 1, kernels)
+            self.assertIn("tacker_deform_mlp_tensor_tail_v3", kernels[0])
+
+    def test_tensor_tail_v4_padded_layout_preserves_v3(self):
+        with torch.no_grad():
+            for rows in (0, 1, 15, 16, 17, 33, 129):
+                with self.subTest(rows=rows):
+                    args = self.case(rows)
+                    packed = pack_deform_tail_weights_v3(args[5])
+                    expected = self.tensor_tail_reference(args)
+                    actual = deform_mlp_tensor_tail_v4(
+                        *args[:5], packed, args[6])
+                    self.assert_outputs(actual, expected)
+                    v3 = deform_mlp_tensor_tail_v3(
+                        *args[:5], packed, args[6])
+                    for padded, unpadded in zip(actual, v3):
+                        torch.testing.assert_close(
+                            padded, unpadded, rtol=0, atol=0)
+
+            args = self.case(33)
+            packed = pack_deform_tail_weights_v3(args[5])
+            outputs = [
+                torch.empty((33, width), device="cuda") for width in WIDTHS
+            ]
+            returned = deform_mlp_tensor_tail_out_v4(
+                *args[:5], packed, args[6], outputs)
+            self.assert_outputs(returned, self.tensor_tail_reference(args))
+            for value, output in zip(returned, outputs):
+                self.assertEqual(value.data_ptr(), output.data_ptr())
 
     def test_sliced_v2_partial_tiles_and_reduction(self):
         with torch.no_grad():

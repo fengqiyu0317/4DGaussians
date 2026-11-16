@@ -1,0 +1,203 @@
+{
+  "date": "2026-10-27",
+  "objective": "v11 candidate-aware extra-MLP assignment in gsplat mixed versus current grid stride and independent calls",
+  "host": "jetson",
+  "exclusive_gpu_required": true,
+  "gpu_frequency_hz": 1300500000,
+  "workload": {
+    "scene": "flame_steak",
+    "iteration": 14000,
+    "gaussians": 111525,
+    "resolution": [
+      1352,
+      1014
+    ],
+    "views": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49
+    ]
+  },
+  "qualification": {
+    "kind": "full_mlp_overlap_graph",
+    "selected_variant": "full_mlp_overlap_graph_pb0",
+    "sha256": "a13d87f6c4a22a24b20f83cb3c66a009e759b739b498c9ff55f8c35c9b82d23a",
+    "role": "parent workload and prefix, not automatic qualification of the new leaf"
+  },
+  "graph": {
+    "slots": 2,
+    "native_hexplane": true,
+    "lowreg_sampling": false,
+    "fused_reduction": false,
+    "raster_prepass": false
+  },
+  "mlp": "unchanged device-v7 from legacy v11/v13; cached FP16 packed tail, FP32 accumulators and outputs",
+  "arms": {
+    "independent": {
+      "module": "tensor_v7",
+      "fusion": false
+    },
+    "current_3486": {
+      "module": "tensor_v7",
+      "physical_ctas": 3486,
+      "mapping": "grid_stride"
+    },
+    "grid_5440": {
+      "module": "tensor_v7",
+      "physical_ctas": 5440,
+      "mapping": "grid_stride"
+    },
+    "ca_off_5440": {
+      "module": "tensor_v7_ca",
+      "physical_ctas": 5440,
+      "candidate_aware": false
+    },
+    "ca_on_5440": {
+      "module": "tensor_v7_ca",
+      "physical_ctas": 5440,
+      "candidate_aware": true
+    }
+  },
+  "primary_comparisons": [
+    [
+      "ca_on_5440",
+      "current_3486"
+    ],
+    [
+      "ca_on_5440",
+      "independent"
+    ]
+  ],
+  "controls": [
+    [
+      "ca_on_5440",
+      "ca_off_5440"
+    ],
+    [
+      "ca_off_5440",
+      "grid_5440"
+    ],
+    [
+      "grid_5440",
+      "current_3486"
+    ]
+  ],
+  "mapping_assertions": {
+    "raster_tiles": 5440,
+    "deform_tiles": 6971,
+    "extra_tiles": 1531,
+    "one_extra_per_group": true,
+    "tie": "first maximum",
+    "coverage": "all tiles exactly once",
+    "instrumentation": "off during all timings"
+  },
+  "leaf": {
+    "pairs": [
+      [
+        0,
+        1
+      ],
+      [
+        24,
+        25
+      ],
+      [
+        48,
+        49
+      ]
+    ],
+    "rounds": 6,
+    "warmup": 5,
+    "replays_per_round": 20,
+    "order": "forward/reverse alternating",
+    "aggregate": "mean of three per-case round medians",
+    "scope": "inputs ready; excludes prefix, prepare, allocation, JIT"
+  },
+  "end_to_end": {
+    "frames": 50,
+    "trials": 10,
+    "warmup": 10,
+    "order": "forward/reverse alternating",
+    "aggregate": "median",
+    "scope": "normal Python inference including prefill/drain/context/prefix/MLP/activation/prepare/RGBD/sync; excludes loading/JIT/warmup/metrics/I/O"
+  },
+  "quality": {
+    "frames": 50,
+    "reference": "same-MLP independent pipeline; native gsplat/PyTorch secondary reference",
+    "metrics": [
+      "PSNR",
+      "SSIM",
+      "LPIPS-VGG-0.1"
+    ],
+    "pixel_differences": [
+      "mean_absolute",
+      "global_max_absolute"
+    ],
+    "require_bitwise_rgb_depth_vs_independent": true
+  },
+  "audit": [
+    "before/during GPU process and frequency",
+    "source/checkpoint hashes before/after",
+    "compiled node/resources",
+    "actual Graph replay counts",
+    "actual candidate branch and assignment audit"
+  ],
+  "implementation_selection": {
+    "rule": "choose the direct port from three same-protocol leaf formulations, then run all five arms in a fresh final batch; do not select arms or trials by final FPS",
+    "selected": "direct base/extra calls",
+    "selected_cuda_source_sha256": "22d3ef61e163dbb4fabe3018ae1bd5b023eeb2612a59fb786f92839d0ce9119d",
+    "attempts_leaf_ms": {
+      "direct": 11.17001558939616,
+      "outer_loop": 11.273621368408202,
+      "single_stride": 11.218096923828124
+    },
+    "formal_policy": "initial formal has foreign-process audit evidence; intermediate formal runs excluded; only fresh final formal used for headline comparisons"
+  }
+}

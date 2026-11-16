@@ -8,4 +8,36 @@ tensorboard_3d
 screenshots
 data/
 data
-submodules/
+
+# Generated artifacts and local experiment data (vendored source is tracked).
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+*.so
+*.o
+*.a
+*.egg-info/
+dist/
+.cache/
+.venv/
+venv/
+outputs/
+nsight_reports/
+benchmarks/results/
+tacker_profiles/baselines/
+tacker_ext/profile_results/
+*.nsys-rep
+*.ncu-rep
+*.sqlite
+*.pth
+*.pt
+.env
+.env.*
+.agents/
+.codex/
+.aws/
+
+# Only the header-only GLM dependency and its license are vendored.
+submodules/depth-diff-gaussian-rasterization/third_party/glm/*
+!submodules/depth-diff-gaussian-rasterization/third_party/glm/glm/
+!submodules/depth-diff-gaussian-rasterization/third_party/glm/copying.txt

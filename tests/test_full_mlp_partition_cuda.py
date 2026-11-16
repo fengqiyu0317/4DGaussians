@@ -74,6 +74,22 @@ if nn is not None:
             return self.features
 
 
+    class CapturableGrid(nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.forward_calls = 0
+            self.feat_dim = 32
+
+        def forward(self, points, timestamp):
+            self.forward_calls += 1
+            if timestamp.shape != (points.shape[0], 1):
+                raise ValueError("timestamp shape changed")
+            return torch.cat((points, timestamp), dim=1).repeat(1, 8)
+
+        def forward_cuda_graph(self, points, timestamp):
+            return self.forward(points, timestamp)
+
+
 def _make_head(output_width):
     return nn.Sequential(
         nn.ReLU(),
@@ -178,6 +194,50 @@ def _make_empty_raster_context():
         colors_precomp=None,
         cov3D_precomp=None,
         screenspace_points=torch.empty((0, 3), **float_options),
+    )
+    return context, state
+
+
+def _make_visible_raster_context():
+    float_options = {"device": "cuda", "dtype": torch.float32}
+    settings = GaussianRasterizationSettings(
+        image_height=32,
+        image_width=32,
+        tanfovx=1.0,
+        tanfovy=1.0,
+        bg=torch.tensor([0.1, 0.2, 0.3], **float_options),
+        scale_modifier=1.0,
+        viewmatrix=torch.eye(4, **float_options),
+        projmatrix=torch.eye(4, **float_options),
+        sh_degree=0,
+        campos=torch.zeros(3, **float_options),
+        prefiltered=False,
+        debug=False,
+    )
+    means = torch.tensor(
+        [
+            [-0.25, -0.20, 2.0],
+            [0.20, -0.15, 2.2],
+            [-0.10, 0.25, 1.8],
+            [0.30, 0.20, 2.4],
+        ],
+        **float_options,
+    )
+    state = GaussianRenderState(
+        means3D=means,
+        scales=torch.full((4, 3), 0.08, **float_options),
+        rotations=torch.tensor(
+            [[1.0, 0.0, 0.0, 0.0]] * 4, **float_options
+        ),
+        opacities=torch.full((4, 1), 0.8, **float_options),
+        shs=torch.zeros((4, 16, 3), **float_options),
+    )
+    context = types.SimpleNamespace(
+        rasterizer=GaussianRasterizer(raster_settings=settings),
+        means2D=torch.empty((4, 3), **float_options),
+        colors_precomp=None,
+        cov3D_precomp=None,
+        screenspace_points=torch.empty((4, 3), **float_options),
     )
     return context, state
 
@@ -325,6 +385,151 @@ class FullMlpPartitionCudaTest(unittest.TestCase):
             head = getattr(network, tacker_pipeline.HEAD_MODULES[head_name])
             self.assertEqual(head[1].forward_calls, 0)
             self.assertEqual(head[3].forward_calls, 0)
+
+    def test_prepared_overlap_matches_legacy_v5_and_solo_raster(self):
+        rows = 33
+        pc, network, raw = _make_model(rows)
+        deform_context = _make_deform_context(raw)
+        raster_context, raster_state = _make_visible_raster_context()
+        variant = tacker_pipeline.FusionVariant(
+            variant_id="cuda_full_mlp_overlap",
+            selected_heads=tacker_pipeline.HEAD_ORDER,
+            worker_groups=1,
+            persistent_blocks=0,
+            abi_version=5,
+            cuda_symbol="tacker_mix_render_deform_mlp_v5",
+            physical_cta_threads=384,
+            backend=tacker_pipeline.FULL_MLP_BACKEND,
+            family=tacker_pipeline.FULL_MLP_ABI_FAMILY,
+        )
+        legacy = tacker_pipeline.FullMlpPartition(variant)
+        overlap = tacker_pipeline.FullMlpOverlapPartition(variant)
+
+        with torch.no_grad():
+            cached = legacy.cache_parameters(pc)
+            legacy_task = legacy.prepare(
+                deform_context,
+                pc,
+                torch.cuda.current_stream(),
+                cached,
+                None,
+            )
+            overlap_task = overlap.prepare(
+                deform_context,
+                pc,
+                torch.cuda.current_stream(),
+                cached,
+                None,
+            )
+            legacy_mixed = legacy.launch_mixed(
+                raster_context, raster_state, legacy_task
+            )
+            prepared = overlap.prepare_raster(raster_context, raster_state)
+            split_mixed = overlap.launch_prepared_mixed(
+                raster_context, prepared, overlap_task
+            )
+
+            baseline_raster = raster_context.rasterizer(
+                means3D=raster_state.means3D,
+                means2D=raster_context.means2D,
+                opacities=raster_state.opacities,
+                shs=raster_state.shs,
+                scales=raster_state.scales,
+                rotations=raster_state.rotations,
+            )
+            prepared_solo = overlap.prepare_raster(
+                raster_context, raster_state
+            )
+            split_solo = overlap.launch_prepared_solo(
+                raster_context, prepared_solo
+            )
+            torch.cuda.synchronize()
+
+        for actual, expected in zip(split_mixed[:3], legacy_mixed[:3]):
+            torch.testing.assert_close(actual, expected, atol=0.0, rtol=0.0)
+        for actual, expected in zip(split_mixed[3], legacy_mixed[3]):
+            torch.testing.assert_close(actual, expected, atol=5e-4, rtol=2e-3)
+        for actual, expected in zip(split_solo, baseline_raster):
+            torch.testing.assert_close(actual, expected, atol=0.0, rtol=0.0)
+        self.assertGreater(int(split_mixed[1].max().item()), 0)
+        self.assertEqual(network.feature_out[0].forward_calls, 0)
+
+    def test_hexplane_cuda_graph_replays_new_slot_inputs(self):
+        if not callable(getattr(torch.cuda, "CUDAGraph", None)) or not callable(
+            getattr(torch.cuda, "graph", None)
+        ):
+            self.skipTest("PyTorch CUDA Graph support required")
+
+        rows = 33
+        pc, network, raw = _make_model(rows)
+        network.grid = CapturableGrid().cuda()
+        first_context = _make_deform_context(raw)
+        variant = tacker_pipeline.FusionVariant(
+            variant_id="cuda_full_mlp_overlap_graph",
+            selected_heads=tacker_pipeline.HEAD_ORDER,
+            worker_groups=1,
+            persistent_blocks=0,
+            abi_version=5,
+            cuda_symbol="tacker_mix_render_deform_mlp_v5",
+            physical_cta_threads=384,
+            backend=tacker_pipeline.FULL_MLP_BACKEND,
+            family=tacker_pipeline.FULL_MLP_ABI_FAMILY,
+        )
+        partition = tacker_pipeline.FullMlpOverlapGraphPartition(variant)
+        cached = partition.cache_parameters(pc)
+        stream = torch.cuda.Stream()
+
+        with torch.no_grad():
+            prefix_graph = partition.create_prefix_graph(
+                first_context, pc, stream
+            )
+            first_ready = torch.cuda.Event(blocking=False)
+            first_task = partition.prepare_graph(
+                first_context,
+                pc,
+                stream,
+                cached,
+                prefix_graph,
+                first_ready,
+            )
+            first_ready.synchronize()
+            first_features = first_task.deform_features.clone()
+            first_pointer = first_task.deform_features.data_ptr()
+
+            second_raw = types.SimpleNamespace(
+                means3D=raw.means3D + 0.25,
+                scales=raw.scales,
+                rotations=raw.rotations,
+                opacity=raw.opacity,
+                shs=raw.shs,
+                timestamp=raw.timestamp - 0.125,
+            )
+            second_context = _make_deform_context(second_raw)
+            second_ready = torch.cuda.Event(blocking=False)
+            second_task = partition.prepare_graph(
+                second_context,
+                pc,
+                stream,
+                cached,
+                prefix_graph,
+                second_ready,
+            )
+            second_ready.synchronize()
+            second_features = second_task.deform_features.clone()
+
+            expected_first = torch.cat(
+                (raw.means3D, raw.timestamp), dim=1
+            ).repeat(1, 8)
+            expected_second = torch.cat(
+                (second_raw.means3D, second_raw.timestamp), dim=1
+            ).repeat(1, 8)
+
+        torch.testing.assert_close(first_features, expected_first)
+        torch.testing.assert_close(second_features, expected_second)
+        self.assertEqual(second_task.deform_features.data_ptr(), first_pointer)
+        # Three warmups plus one Python capture invocation.  Replays do not
+        # re-enter the Python module.
+        self.assertEqual(network.grid.forward_calls, 4)
 
 
 if __name__ == "__main__":

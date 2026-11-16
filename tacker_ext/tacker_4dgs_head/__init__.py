@@ -30,6 +30,11 @@ from .validation import (
 __all__ = [
     "deform_mlp_delta_v1",
     "deform_mlp_delta_out_v1",
+    "deform_mlp_tensor_tail_v3",
+    "deform_mlp_tensor_tail_out_v3",
+    "deform_mlp_tensor_tail_v4",
+    "deform_mlp_tensor_tail_out_v4",
+    "pack_deform_tail_weights_v3",
     "deform_mlp_sliced_v2",
     "deform_mlp_sliced_out_v2",
     "HEAD_FEATURES",
@@ -192,6 +197,98 @@ def deform_mlp_delta_out_v1(
     return tuple(_extension().deform_mlp_delta_out_v1(
         features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
         tail_weights, tail_biases, outputs, persistent_blocks,
+    ))
+
+
+def pack_deform_tail_weights_v3(tail_weights):
+    """Pad FP32 ``[59,128]`` tail rows and quantize them to FP16 ``[112,128]``.
+
+    Call this once when model parameters are cached, outside the timed render
+    path.  Each head starts at a 16-row boundary; padding rows remain zero.
+    """
+
+    import torch
+
+    if not isinstance(tail_weights, torch.Tensor):
+        raise TypeError("tail_weights must be a torch.Tensor")
+    if tuple(tail_weights.shape) != (59, 128):
+        raise ValueError("tail_weights must have shape [59,128]")
+    if tail_weights.dtype != torch.float32:
+        raise TypeError("tail_weights must have dtype float32")
+    if not tail_weights.is_cuda:
+        raise ValueError("tail_weights must be a CUDA tensor")
+    if not tail_weights.is_contiguous():
+        raise ValueError("tail_weights must be contiguous")
+    packed = torch.zeros(
+        (112, 128), device=tail_weights.device, dtype=torch.float16)
+    source_offsets = (0, 3, 6, 10, 11, 59)
+    packed_offsets = (0, 16, 32, 48, 64)
+    for head, destination in enumerate(packed_offsets):
+        lo, hi = source_offsets[head : head + 2]
+        packed[destination : destination + hi - lo].copy_(
+            tail_weights[lo:hi])
+    return packed
+
+
+def deform_mlp_tensor_tail_v3(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    packed_tail_weights, tail_biases, persistent_blocks=0,
+):
+    """Run the experimental one-kernel FP16 Tensor-Core-tail MLP.
+
+    ``packed_tail_weights`` must be the cached result of
+    :func:`pack_deform_tail_weights_v3`; packing is intentionally excluded from
+    kernel timing.  Compared with v1, head hidden activations and tail weights
+    gain one explicit FP16 precision boundary.
+    """
+
+    _validate_persistent_blocks(persistent_blocks)
+    return tuple(_extension().deform_mlp_tensor_tail_v3(
+        features, backbone_weight_kh, backbone_bias, first_weights,
+        first_biases, packed_tail_weights, tail_biases, persistent_blocks,
+    ))
+
+
+def deform_mlp_tensor_tail_out_v3(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    packed_tail_weights, tail_biases, outputs, persistent_blocks=0,
+):
+    """Write Tensor-Core-tail deltas into five caller-owned FP32 tensors."""
+
+    _validate_persistent_blocks(persistent_blocks)
+    outputs = _tensor_sequence("outputs", outputs)
+    return tuple(_extension().deform_mlp_tensor_tail_out_v3(
+        features, backbone_weight_kh, backbone_bias, first_weights,
+        first_biases, packed_tail_weights, tail_biases, outputs,
+        persistent_blocks,
+    ))
+
+
+def deform_mlp_tensor_tail_v4(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    packed_tail_weights, tail_biases, persistent_blocks=0,
+):
+    """Run v3 with a 136-half padded shared-memory tail-input stride."""
+
+    _validate_persistent_blocks(persistent_blocks)
+    return tuple(_extension().deform_mlp_tensor_tail_v4(
+        features, backbone_weight_kh, backbone_bias, first_weights,
+        first_biases, packed_tail_weights, tail_biases, persistent_blocks,
+    ))
+
+
+def deform_mlp_tensor_tail_out_v4(
+    features, backbone_weight_kh, backbone_bias, first_weights, first_biases,
+    packed_tail_weights, tail_biases, outputs, persistent_blocks=0,
+):
+    """Write padded Tensor-Core-tail deltas into caller-owned FP32 tensors."""
+
+    _validate_persistent_blocks(persistent_blocks)
+    outputs = _tensor_sequence("outputs", outputs)
+    return tuple(_extension().deform_mlp_tensor_tail_out_v4(
+        features, backbone_weight_kh, backbone_bias, first_weights,
+        first_biases, packed_tail_weights, tail_biases, outputs,
+        persistent_blocks,
     ))
 
 

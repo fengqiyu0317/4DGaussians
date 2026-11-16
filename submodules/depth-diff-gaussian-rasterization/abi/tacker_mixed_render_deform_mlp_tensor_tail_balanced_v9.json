@@ -1,0 +1,85 @@
+{
+  "abi_version": 9,
+  "backend_family": "full_deform_mlp_tensor_tail_balanced_v9",
+  "status": "experimental",
+  "name": "4dgs_exact_raster_render_plus_balanced_padded_tensor_tail_deform_mlp",
+  "rasterizer_upstream_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+  "cuda_arch": "sm_86_or_sm_87",
+  "pointer_size_bytes": 8,
+  "preserved_abis": [
+    "abi/tacker_mixed_render_head_v1.json",
+    "abi/tacker_mixed_render_heads_v2.json",
+    "abi/tacker_mixed_render_packed_heads_v3.json",
+    "abi/tacker_mixed_render_whole_heads_v4.json",
+    "abi/tacker_mixed_render_deform_mlp_v5.json",
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_v6.json",
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_low_register_v7.json",
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_four_cta_v8.json"
+  ],
+  "tacker_ext_dependency": {
+    "header": "deform_mlp_device.cuh",
+    "standalone_reference_symbol": "tacker_deform_mlp_tensor_tail_padded_v4",
+    "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v6"
+  },
+  "global_kernel_symbol": "tacker_mix_render_deform_mlp_tensor_tail_balanced_v9",
+  "physical_launch": {
+    "threads": 384,
+    "launch_bounds_min_blocks_per_sm": 4,
+    "persistent_blocks_zero_policy": "one physical CTA per Raster tile when Raster is nonempty",
+    "empty_raster_blocks_zero_policy": "one physical CTA per Deform tile",
+    "positive_persistent_blocks_policy": "ABI-v8 grid stride fallback",
+    "dynamic_shared_memory_bytes": 0,
+    "deform_static_shared_scratch_bytes": 14592
+  },
+  "work_mapping": {
+    "raster_tiles_per_default_cta": 1,
+    "deform_tiles_per_default_cta": "one or two",
+    "extra_deform_distribution": "uniform deterministic quotient mapping",
+    "second_tile_concurrency": "sequential on the same four Deform warps",
+    "raster_waits_for_second_tile": false
+  },
+  "subgroups": {
+    "raster": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render<NUM_CHANNELS>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256
+    },
+    "deform_mlp": {
+      "thread_range": [256, 383],
+      "threads": 128,
+      "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v6",
+      "named_barrier_id": 2,
+      "named_barrier_participants": 128,
+      "cta_wide_barriers": false,
+      "compaction_values_per_thread": 2,
+      "compaction_groups": 8,
+      "descriptor_access": "volatile_shared_phase_local",
+      "tensor_tail_matmul_epilogue_split": true,
+      "tensor_tail_instruction": "mma.sync.aligned.m16n8k16.row.col.f32.f16.f16.f32"
+    }
+  },
+  "tensor_contract": {
+    "features": {"dtype": "float32", "shape": ["N", 32]},
+    "first_weights": {"dtype": "float16", "shape": [5, 128, 128]},
+    "packed_tail_weights": {
+      "dtype": "float16",
+      "shape": [112, 128],
+      "head_row_offsets": [0, 16, 32, 48, 64]
+    },
+    "outputs": {
+      "dtype": "float32",
+      "order": ["position", "scale", "rotation", "opacity", "sh"],
+      "widths": [3, 3, 4, 1, 48],
+      "semantics": "delta"
+    },
+    "empty_rows": "valid_noop",
+    "tail_rows": "zero-padded 16-row tile"
+  },
+  "python_binding": "render_prepared_gaussians_with_deform_mlp_tensor_tail_balanced_overlap",
+  "python_method": "GaussianRasterizer.render_prepared_with_deform_mlp_tensor_tail_balanced_overlap",
+  "capability_query": "tacker_capabilities",
+  "resource_query": "tacker_resource_requirements",
+  "build_resource_capture": "nvcc -Xptxas=-v"
+}

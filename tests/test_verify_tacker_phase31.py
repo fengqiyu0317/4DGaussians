@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -106,6 +107,22 @@ class CompletedRunFixture(object):
         self.inputs = self.root / "inputs"
         self.run.mkdir()
         self.inputs.mkdir()
+        # Model the renderer checkout inside the temporary fixture, including
+        # a synthetic extension marker. CPU tests must not discover or write
+        # a compiled binary in the real working tree.
+        self.runtime = self.root / "runtime"
+        for relative in (
+            "profile_render.py", "gaussian_renderer/__init__.py",
+            "gaussian_renderer/tacker_pipeline.py",
+            "scripts/summarize_nsight_stats.py", "scripts/profile_nsight.sh",
+            "submodules/depth-diff-gaussian-rasterization/diff_gaussian_rasterization/__init__.py",
+        ):
+            target = self.runtime / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(ROOT / relative, target)
+        binary_marker = (self.runtime / "submodules/depth-diff-gaussian-rasterization"
+                         / "diff_gaussian_rasterization/_C.cpu_fixture.so")
+        binary_marker.write_bytes(b"CPU fixture only; not a loadable CUDA extension\n")
         self.stages = []
         self._build_identity()
         self._build_matrices_and_screening()
@@ -161,10 +178,10 @@ class CompletedRunFixture(object):
         )
         python = Path(sys.executable).resolve()
         seed = self.facts(self.seed_file)
-        profile_render = ROOT / "profile_render.py"
-        pipeline = ROOT / "gaussian_renderer" / "tacker_pipeline.py"
+        profile_render = self.runtime / "profile_render.py"
+        pipeline = self.runtime / "gaussian_renderer" / "tacker_pipeline.py"
         raster_binding = (
-            ROOT
+            self.runtime
             / "submodules"
             / "depth-diff-gaussian-rasterization"
             / "diff_gaussian_rasterization"
@@ -188,7 +205,7 @@ class CompletedRunFixture(object):
                 "autotune": self.facts(VERIFY.AUTOTUNE_PATH),
                 "benchmark": self.facts(VERIFY.BENCHMARK_PATH),
                 "top3": self.facts(VERIFY.TOP3_PATH),
-                "nsight": self.facts(ROOT / "scripts" / "profile_nsight.sh"),
+                "nsight": self.facts(self.runtime / "scripts" / "profile_nsight.sh"),
             },
             "runtime_sources": {
                 "profile_render": self.facts(profile_render),
@@ -867,9 +884,9 @@ class CompletedRunFixture(object):
             "current_tacker",
             BENCHMARK.DEFAULT_PROMOTION_MIN_RATIO,
             BENCHMARK.DEFAULT_EQUIVALENCE_FRACTION,
-            ROOT / "profile_render.py",
+            self.runtime / "profile_render.py",
             sys.executable,
-            ROOT,
+            self.runtime,
             configs=self.config,
             profile_args=[],
             selection_inputs=selection_inputs,
@@ -902,7 +919,7 @@ class CompletedRunFixture(object):
                 schedule_item,
                 candidate,
                 formal_run_root,
-                ROOT / "profile_render.py",
+                self.runtime / "profile_render.py",
                 Path(sys.executable).resolve(),
                 contract,
                 str(self.config.resolve()),
@@ -1025,7 +1042,7 @@ class CompletedRunFixture(object):
                 "session_dir": str(formal_run_root),
                 "driver_sha256": VERIFY.sha256_file(VERIFY.BENCHMARK_PATH),
                 "profile_render_sha256": VERIFY.sha256_file(
-                    ROOT / "profile_render.py"
+                    self.runtime / "profile_render.py"
                 ),
                 "checkpoint_path": str(checkpoint_path),
                 "report_path": str((self.run / "formal-fps.json").resolve()),
@@ -1125,7 +1142,7 @@ class CompletedRunFixture(object):
             formal_path,
             VERIFY.sha256_file(formal_path),
             selected,
-            ROOT / "scripts" / "profile_nsight.sh",
+            self.runtime / "scripts" / "profile_nsight.sh",
             self.model,
             self.config,
             self.source,
@@ -1145,7 +1162,7 @@ class CompletedRunFixture(object):
             record = TOP3._make_profile_record(
                 candidate,
                 output_root,
-                ROOT / "scripts" / "profile_nsight.sh",
+                self.runtime / "scripts" / "profile_nsight.sh",
                 self.model,
                 self.config,
                 self.source,
@@ -1374,6 +1391,9 @@ class VerifyPhase31Tests(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory()
         self.fixture = CompletedRunFixture(self.temporary.name)
+        patcher = mock.patch.object(VERIFY, "PROJECT_ROOT", self.fixture.runtime)
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def tearDown(self):
         self.temporary.cleanup()

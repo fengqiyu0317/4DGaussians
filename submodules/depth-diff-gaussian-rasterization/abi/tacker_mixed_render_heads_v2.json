@@ -1,0 +1,159 @@
+{
+  "abi_version": 2,
+  "name": "4dgs_exact_raster_render_plus_multi_first_linear",
+  "rasterizer_upstream_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+  "cuda_arch": "sm_86",
+  "pointer_size_bytes": 8,
+  "legacy_abi": {
+    "manifest": "abi/tacker_mixed_render_head_v1.json",
+    "global_kernel_symbol": "tacker_mix_render_head_v1",
+    "python_binding": "rasterize_gaussians_with_head",
+    "python_method": "GaussianRasterizer.forward_with_head",
+    "preserved": true
+  },
+  "tacker_ext_dependency": {
+    "manifest": "tacker_ext/abi/head_linear_v2.json",
+    "manifest_sha256": "9d6a1558acd6b642b975bcabe22abcbe3fd7242e4c9e0d635636ef4d2eb5da7f",
+    "abi_version": 2,
+    "header": "head_linear_v2_device.cuh",
+    "device_adapter": "tacker_4dgs::head_linear_multi_gptb_device",
+    "task_type": "tacker_4dgs::HeadLinearTaskV2"
+  },
+  "global_kernel_symbol": "tacker_mix_render_heads_v2",
+  "global_kernel_argument_order": [
+    "ranges",
+    "point_list",
+    "width",
+    "height",
+    "points_xy_image",
+    "features",
+    "depths",
+    "conic_opacity",
+    "final_T",
+    "n_contrib",
+    "background",
+    "out_color",
+    "out_depth",
+    "raster_grid_x",
+    "raster_grid_y",
+    "head_task_0",
+    "head_task_1",
+    "head_task_2",
+    "head_task_3",
+    "head_task_4",
+    "head_task_count",
+    "worker_groups",
+    "max_head_logical_blocks",
+    "physical_blocks"
+  ],
+  "head_task_argument": {
+    "cpp_type": "CudaRasterizer::MixedHeadTaskV2",
+    "binary_compatible_with": "tacker_4dgs::HeadLinearTaskV2",
+    "fields_in_order": [
+      "const void* input",
+      "const void* weight",
+      "const float* bias",
+      "float* output",
+      "int32 rows"
+    ],
+    "compile_time_size_alignment_and_offset_checks": true
+  },
+  "physical_launch": {
+    "threads": "256 + worker_groups * 128",
+    "thread_counts_by_worker_groups": {
+      "1": 384,
+      "2": 512,
+      "3": 640,
+      "4": 768,
+      "5": 896
+    },
+    "persistent_blocks_zero_policy": "cached active-device multiProcessorCount",
+    "persistent_blocks_range": "[0, INT32_MAX]",
+    "physical_blocks_clamp": "[1, max(raster_logical_blocks, max_head_logical_blocks)]",
+    "persistent_step": "physical_blocks",
+    "dynamic_shared_memory_bytes": 0
+  },
+  "limits": {
+    "task_count": [1, 5],
+    "worker_groups": "[1, task_count]",
+    "worker_group_threads": 128,
+    "max_mixed_threads": 896,
+    "pointer_alignment_bytes": 32,
+    "row_count_max": 2147483647
+  },
+  "subgroups": {
+    "raster": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render<NUM_CHANNELS>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256
+    },
+    "head_workers": {
+      "thread_range": "[256, 256 + worker_groups * 128 - 1]",
+      "threads_per_group": 128,
+      "device_adapter": "tacker_4dgs::head_linear_multi_gptb_device",
+      "task_assignment": "group g owns tasks g, g + worker_groups, ...",
+      "descriptor_named_barrier_id": 2,
+      "descriptor_barrier_participants": "worker_groups * 128",
+      "adapter_named_barrier_ids": [],
+      "cta_wide_barriers": false
+    }
+  },
+  "tensor_contract": {
+    "input_dtype": "float16",
+    "weight_dtype": "float16",
+    "bias_dtype": "float32",
+    "accumulation_dtype": "float32",
+    "output_dtype": "float32",
+    "features": 128,
+    "input_shape_per_task": ["N_i", 128],
+    "weight_shape_per_task": [128, 128],
+    "bias_shape_per_task": [128],
+    "output_shape_per_task": ["N_i", 128],
+    "read_only_operand_aliasing_across_tasks": true,
+    "output_aliasing": false,
+    "empty_rows": "valid_noop",
+    "non_multiple_of_16_rows": "valid_tail"
+  },
+  "candidate_coverage": {
+    "C0": "legacy ABI v1 remains available with arbitrary persistent_blocks",
+    "C1_head_names": ["pos", "scales", "rotations", "opacity", "shs"],
+    "C1": "any one named first-linear head uses task_count=1, worker_groups=1",
+    "C2": "any first-linear subset of size 2 through 5 is representable",
+    "required_dual_head_variant": {
+      "task_count": 2,
+      "supported_worker_groups": [1, 2]
+    }
+  },
+  "ordering": {
+    "opaque_before_mixed_leaf": [
+      "preprocess",
+      "inclusive_scan",
+      "duplicate_with_keys",
+      "radix_sort",
+      "identify_tile_ranges"
+    ],
+    "executions_per_selected_head_per_call": 1,
+    "output_order": "same as input task order",
+    "zero_gaussians": "empty raster grid; non-empty head tasks still run once",
+    "all_zero_head_rows": "raster subgroup still runs when raster grid is non-empty",
+    "all_work_empty": "no physical kernel launch"
+  },
+  "failure_contract": {
+    "invalid_task_count": "throw before launch",
+    "invalid_worker_groups": "throw before launch",
+    "dtype_shape_device_contiguity_alignment": "throw before launch",
+    "int32_overflow": "throw before launch",
+    "unsupported_thread_or_occupancy_resources": "throw before launch",
+    "launch_configuration_error": "cudaPeekAtLastError and throw without stream synchronization"
+  },
+  "python_binding": "rasterize_gaussians_with_heads",
+  "python_method": "GaussianRasterizer.forward_with_heads",
+  "capability_query": "tacker_capabilities",
+  "resource_query": {
+    "raw": "tacker_resource_requirements",
+    "runtime_normalized": "tacker_variant_resources"
+  },
+  "build_resource_capture": "nvcc -Xptxas=-v"
+}

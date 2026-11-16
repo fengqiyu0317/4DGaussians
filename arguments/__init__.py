@@ -12,6 +12,7 @@
 from argparse import ArgumentParser, Namespace
 import sys
 import os
+from gsplat_mixed_ext import LATEST_KERNEL_VARIANT
 
 class GroupParams:
     pass
@@ -70,6 +71,10 @@ class PipelineParams(ParamGroup):
         self.convert_SHs_python = False
         self.compute_cov3D_python = False
         self.debug = False
+        self.raster_backend = "diff_gaussian"
+        self.gsplat_packed = False
+        self.gsplat_mixed_kernel = LATEST_KERNEL_VARIANT
+        self.gsplat_mixed_blocks = 0
         super().__init__(parser, "Pipeline Parameters")
 class ModelHiddenParams(ParamGroup):
     def __init__(self, parser):

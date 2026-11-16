@@ -108,6 +108,9 @@ def _record_context_stream(context, stream):
         for value in settings:
             if isinstance(value, torch.Tensor) and value.is_cuda:
                 value.record_stream(stream)
+    record_stream = getattr(rasterizer, "record_stream", None)
+    if callable(record_stream):
+        record_stream(stream)
 
 
 def prepare_render_context(
@@ -160,7 +163,19 @@ def prepare_render_context(
         timestamp = torch.tensor(timestamp_value).to(means3D.device).repeat(
             means3D.shape[0], 1
         )
-        rasterizer = GaussianRasterizer(raster_settings=raster_settings)
+        backend = getattr(pipe, "raster_backend", "diff_gaussian")
+        if backend == "diff_gaussian":
+            rasterizer = GaussianRasterizer(raster_settings=raster_settings)
+        elif backend == "gsplat":
+            if cam_type == "PanopticSports":
+                raise ValueError("gsplat currently requires a standard FoV camera")
+            from .gsplat_backend import GsplatRasterizer
+
+            rasterizer = GsplatRasterizer(
+                raster_settings, packed=bool(getattr(pipe, "gsplat_packed", False))
+            )
+        else:
+            raise ValueError("unknown raster_backend: {}".format(backend))
         opacity = pc._opacity
         shs = pc.get_features
 

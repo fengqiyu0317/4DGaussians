@@ -258,9 +258,9 @@ def _python_config_bases(path, raw):
 
 
 def _locate_extension_package_files(
-    package_name, fallback_directory, wrapper_required=True
+    package_name, fallback_directory, wrapper_required=True, binary_stem="_C"
 ):
-    """Locate one package wrapper and its import-compatible ``_C`` safely.
+    """Locate one package wrapper and its import-compatible extension safely.
 
     ``find_spec(package_name)`` does not execute a top-level package.  Looking
     up ``package_name + '._C'`` would execute the parent and is intentionally
@@ -290,14 +290,14 @@ def _locate_extension_package_files(
         wrapper = directory / "__init__.py"
         compatible = []
         for suffix in importlib.machinery.EXTENSION_SUFFIXES:
-            candidate = directory / ("_C" + suffix)
+            candidate = directory / (binary_stem + suffix)
             if candidate.is_file():
                 compatible.append(candidate.absolute())
         compatible = list(dict.fromkeys(compatible))
         if not compatible:
             compatible = sorted(
                 path.absolute()
-                for path in directory.glob("_C*.so")
+                for path in directory.glob(binary_stem + "*.so")
                 if path.is_file()
             )
         inspected.append(str(directory))
@@ -319,8 +319,8 @@ def _locate_extension_package_files(
                 bool(wrapper.is_file()),
             )
     raise ProvenanceError(
-        "cannot pre-locate {} wrapper/_C extension in {}".format(
-            package_name, ", ".join(inspected)
+        "cannot pre-locate {} wrapper/{} extension in {}".format(
+            package_name, binary_stem, ", ".join(inspected)
         )
     )
 
@@ -357,7 +357,7 @@ def _locate_binary_packages(root, rasterizer_paths=None):
             wrapper_required=False,
         )
     )
-    return {
+    packages = {
         "rasterizer": {
             "package": "diff_gaussian_rasterization",
             "wrapper": Path(rasterizer_paths[0]).absolute(),
@@ -383,6 +383,21 @@ def _locate_binary_packages(root, rasterizer_paths=None):
             "binary_role": "simple_knn.binary",
         },
     }
+    if (os.environ.get("TACKER_HEXPLANE_LOWREG") == "1"
+            or os.environ.get("TACKER_HEXPLANE_FUSED_REDUCTION") == "1"
+            or os.environ.get("TACKER_EXPERIMENTAL_RASTER_HEXPLANE") in ("fused", "separate", "batched", "block_fused")):
+        _wrapper, binary, _exists = _locate_extension_package_files(
+            "tacker_4dgs_head", root / "tacker_ext" / "tacker_4dgs_head",
+            wrapper_required=True, binary_stem="_hexplane",
+        )
+        packages["hexplane"] = {
+            "package": "tacker_4dgs_head",
+            "binary_module": "tacker_4dgs_head._hexplane",
+            "binary_only": True,
+            "binary": binary,
+            "binary_role": "hexplane.binary",
+        }
+    return packages
 
 
 def _source_role(module_name, is_package):
@@ -553,6 +568,12 @@ def _capture_pre_import_snapshot(
         capture_presealed(bootstrap_record, bootstrap_raw)
     for role, path in source_paths.items():
         capture(path, role)
+    if production_capture and os.environ.get("TACKER_EXPERIMENTAL_GREEN_CONTEXTS") == "1":
+        green_library = Path(os.environ.get("TACKER_GREEN_CONTEXTS_LIBRARY", ""))
+        if not green_library.is_absolute():
+            raise ProvenanceError("Green Contexts experiment requires an absolute library path")
+        capture(green_library, "green_contexts.binary")
+        capture(root / "tacker_ext" / "csrc" / "green_contexts.cpp", "native_source.green_contexts")
     namespace_roles = {}
     if production_capture and "utils" not in python_modules:
         role = "source.namespace.utils"
@@ -567,6 +588,15 @@ def _capture_pre_import_snapshot(
 
     binary_packages = {}
     for component, description in sorted(binary_package_paths.items()):
+        if description.get("binary_only"):
+            capture(description["binary"], description["binary_role"], required=True)
+            binary_packages[component] = {
+                "package": description["package"],
+                "binary_only": True,
+                "binary_module": description["binary_module"],
+                "binary_role": description["binary_role"],
+            }
+            continue
         wrapper_record, wrapper_raw = capture(
             description["wrapper"],
             description["wrapper_role"],
@@ -682,7 +712,7 @@ def _capture_pre_import_snapshot(
     artifact_roles_by_package = {
         description["package"]: description["wrapper_role"]
         for description in binary_packages.values()
-        if description["wrapper_exists"]
+        if not description.get("binary_only") and description["wrapper_exists"]
     }
     python_module_records = {}
     for module_name, description in sorted(python_modules.items()):
@@ -710,6 +740,8 @@ def _capture_pre_import_snapshot(
             "synthetic": True,
         }
     for description in binary_packages.values():
+        if description.get("binary_only"):
+            continue
         package_name = description["package"]
         if not description["wrapper_exists"]:
             wrapper_record = _record_for_role(
@@ -894,9 +926,11 @@ def _activate_runtime_imports(pre_import, internal):
     module_records = internal.get("python_modules", {})
     binary_packages = internal.get("binary_packages", {})
     required_binary_components = {"rasterizer", "head", "simple_knn"}
-    if set(binary_packages) != required_binary_components:
+    if set(binary_packages) not in (
+        required_binary_components, required_binary_components | {"hexplane"},
+    ):
         raise ProvenanceError(
-            "runtime snapshot must contain exactly Raster, head, and simple_knn binaries"
+            "runtime snapshot must contain Raster, head, simple_knn, and only the optional HexPlane binary"
         )
     sources = {}
     for module_name, description in module_records.items():
@@ -925,7 +959,7 @@ def _activate_runtime_imports(pre_import, internal):
             raise ProvenanceError(
                 "sealed {} binary bytes are missing".format(component)
             )
-        module_name = description["package"] + "._C"
+        module_name = description.get("binary_module", description["package"] + "._C")
         binary_paths[module_name] = _write_private_binary_snapshot(
             raw, Path(record["path"]).name, component=component
         )
@@ -951,6 +985,10 @@ def _activate_runtime_imports(pre_import, internal):
         renderer_module = importlib.import_module("gaussian_renderer")
         scene_module = importlib.import_module("scene")
         simple_backend = importlib.import_module("simple_knn._C")
+        hexplane_backend = (
+            importlib.import_module("tacker_4dgs_head._hexplane")
+            if "hexplane" in binary_packages else None
+        )
         general_utils_module = importlib.import_module("utils.general_utils")
         profiling_utils_module = importlib.import_module(
             "utils.profiling_utils"
@@ -971,6 +1009,8 @@ def _activate_runtime_imports(pre_import, internal):
         "tacker_4dgs_head._C": head_backend,
         "simple_knn._C": simple_backend,
     }
+    if hexplane_backend is not None:
+        loaded_binary_modules["tacker_4dgs_head._hexplane"] = hexplane_backend
     binary_bindings = []
     for module_name, loaded_module in sorted(loaded_binary_modules.items()):
         component, origin_record, origin_raw = binary_records[module_name]
@@ -1505,6 +1545,17 @@ def _collect_repository_metadata(repo_root, errors):
         if source_commit:
             metadata["commit"] = source_commit
             metadata["commit_source"] = "environment"
+        source_dirty = os.environ.get("FOURDGS_SOURCE_DIRTY")
+        if source_dirty is not None:
+            normalized_dirty = source_dirty.strip().lower()
+            if normalized_dirty in ("1", "true", "yes"):
+                metadata["dirty"] = True
+            elif normalized_dirty in ("0", "false", "no"):
+                metadata["dirty"] = False
+            else:
+                errors.append(
+                    "git dirty state: FOURDGS_SOURCE_DIRTY must be a boolean"
+                )
         metadata["submodules"] = _environment_submodule_commits()
         return metadata
 
@@ -1761,6 +1812,10 @@ def _collect_reproducibility_metadata(
             "simple_knn._C": role_hashes.get("simple_knn.binary"),
             "configs": role_hashes.get("config.explicit[0]"),
         }
+        if "hexplane.binary" in role_hashes:
+            source_files["tacker_4dgs_head._hexplane"] = role_hashes["hexplane.binary"]
+        if "green_contexts.binary" in role_hashes:
+            source_files["green_contexts.binary"] = role_hashes["green_contexts.binary"]
     repository["source_files"] = source_files
 
     tacker_profile_sha256 = tacker_profile_sha256_snapshot
@@ -2450,6 +2505,7 @@ def main(
             "execution_mode": args.execution_mode,
             "actual_execution_mode": actual_execution_mode,
             "pipeline_execution_counts": pipeline_execution_counts,
+            "green_contexts": getattr(pipeline_renderer, "green_contexts_metadata", {"enabled": False}),
             "two_stream_fallback_reason": two_stream_fallback_reason,
             "tacker_fallback_reason": tacker_fallback_reason,
             "qualification_mode_requested": bool(args.qualification_mode),
@@ -2613,6 +2669,9 @@ def main(
                     two_stream_fallback_reason
                 )
             )
+        close_renderer = getattr(pipeline_renderer, "close", None)
+        if callable(close_renderer):
+            close_renderer()
 
 
 def _preparse_snapshot_args(argv):

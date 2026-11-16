@@ -1,0 +1,2 @@
+# Optional inference backend; keep the existing PyTorch/CUDA environment.
+gsplat==1.5.3

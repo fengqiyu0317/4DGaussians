@@ -374,6 +374,50 @@ class ProfileRenderModeContractTest(unittest.TestCase):
                 profiler._verify_pre_import_snapshot(snapshot)["verified"]
             )
 
+    def test_optional_hexplane_binary_is_sealed_and_tampering_is_rejected(self):
+        profiler = _load_profile_render_helpers()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            head = root / "tacker_ext" / "tacker_4dgs_head"
+            simple = root / "submodules" / "simple-knn" / "simple_knn"
+            raster = root / "raster"
+            for package in (head, simple, raster):
+                package.mkdir(parents=True)
+                (package / "__init__.py").write_text("value = 1\n", encoding="utf-8")
+                (package / "_C.test.so").write_bytes(b"native fixture")
+            hex_binary = head / "_hexplane.test.so"
+            hex_binary.write_bytes(b"hexplane fixture")
+            with mock.patch.object(profiler.importlib.util, "find_spec", return_value=None):
+                with mock.patch.dict(os.environ, {
+                    "TACKER_HEXPLANE_LOWREG": "0",
+                    "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": "0",
+                }, clear=True):
+                    baseline = profiler._locate_binary_packages(
+                        root, (raster / "__init__.py", raster / "_C.test.so"))
+                self.assertNotIn("hexplane", baseline)
+                for mode, lowreg in (("fused", "0"), ("separate", "0"),
+                                     ("batched", "0"), ("block_fused", "0"), ("0", "1")):
+                    with mock.patch.dict(os.environ, {
+                        "TACKER_HEXPLANE_LOWREG": lowreg,
+                        "TACKER_EXPERIMENTAL_RASTER_HEXPLANE": mode,
+                    }, clear=True):
+                        packages = profiler._locate_binary_packages(
+                            root, (raster / "__init__.py", raster / "_C.test.so"))
+                    self.assertEqual(packages["hexplane"]["binary"], hex_binary)
+                    self.assertEqual(packages["hexplane"]["binary_module"], "tacker_4dgs_head._hexplane")
+            args = profiler.Namespace(configs=None, model_path=None,
+                                      qualification_profile=None, tacker_profile=None)
+            snapshot, internal = profiler._capture_pre_import_snapshot(
+                args, source_paths={}, binary_package_paths=packages)
+            roles = [record["role"] for record in snapshot["files"]]
+            self.assertEqual(roles.count("head.wrapper"), 1)
+            self.assertEqual(roles.count("hexplane.binary"), 1)
+            self.assertIn("hexplane", internal["binary_packages"])
+            self.assertTrue(profiler._verify_pre_import_snapshot(snapshot)["verified"])
+            hex_binary.write_bytes(b"changed fixture")
+            with self.assertRaisesRegex(profiler.ProvenanceError, "changed"):
+                profiler._verify_pre_import_snapshot(snapshot)
+
     def test_first_party_source_enumeration_covers_transitive_packages(self):
         profiler = _load_profile_render_helpers()
         modules = {}
@@ -746,6 +790,7 @@ class ProfileRenderModeContractTest(unittest.TestCase):
                 os.environ,
                 {
                     "FOURDGS_SOURCE_COMMIT": "a" * 40,
+                    "FOURDGS_SOURCE_DIRTY": "true",
                     "FOURDGS_RASTERIZER_COMMIT": "b" * 40,
                 },
                 clear=True,
@@ -756,6 +801,7 @@ class ProfileRenderModeContractTest(unittest.TestCase):
                 )
         self.assertEqual(metadata["commit"], "a" * 40)
         self.assertEqual(metadata["commit_source"], "environment")
+        self.assertIs(metadata["dirty"], True)
         self.assertIn("no .git metadata", metadata["git_error"])
         self.assertTrue(errors)
         submodules = {item["path"]: item for item in metadata["submodules"]}
@@ -793,7 +839,7 @@ class ProfileRenderModeContractTest(unittest.TestCase):
 
     def test_normal_render_cli_is_also_fail_closed_and_serial_by_default(self):
         render_source = (ROOT / "render.py").read_text(encoding="utf-8")
-        self.assertIn('choices=("serial", "two_stream", "tacker")', render_source)
+        self.assertIn('choices=("serial", "two_stream", "tacker", "gsplat_mixed", "gsplat_matched_graph")', render_source)
         self.assertIn('default="serial"', render_source)
         self.assertIn("tacker mode requires --tacker-profile", render_source)
         self.assertIn("renderer.render_sequence(views)", render_source)

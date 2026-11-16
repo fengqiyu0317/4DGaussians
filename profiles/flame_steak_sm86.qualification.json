@@ -1,0 +1,294 @@
+{
+  "candidates": [
+    {
+      "correctness": {
+        "valid": false
+      },
+      "diagnostics": null,
+      "execution_mode": "serial",
+      "performance": null,
+      "variant_id": "serial"
+    },
+    {
+      "correctness": {
+        "valid": false
+      },
+      "diagnostics": null,
+      "execution_mode": "two_stream",
+      "performance": null,
+      "variant_id": "two_stream"
+    },
+    {
+      "abi_manifest_sha256": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426",
+      "backend_subgroups": [
+        {
+          "name": "pos_deform_l1",
+          "named_barrier_ids": [],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "capability_requirements": {
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86"
+      },
+      "correctness": {
+        "valid": false
+      },
+      "cuda_symbol": "tacker_mix_render_head_v1",
+      "diagnostics": null,
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.pos_deform[1].linear_128x128"
+      ],
+      "pair_key": "raster.render_leaf+deformation.pos_deform[1].linear_128x128",
+      "parallel_nodes": [
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "performance": null,
+      "persistent_blocks": 7000,
+      "physical_cta_threads": 384,
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta"
+      ],
+      "resources": null,
+      "suffix_nodes": [
+        "deformation.pos_deform[2]",
+        "deformation.pos_deform[3]",
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "accumulation_dtype": "float32",
+        "bias_dtype": "float32",
+        "input_dtype": "float16",
+        "output_dtype": "float32",
+        "weight_dtype": "float16"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "legacy_pos_l1"
+    },
+    {
+      "abi_family": "full_deform_mlp_v5",
+      "abi_manifest": "abi/tacker_mixed_render_deform_mlp_v5.json",
+      "abi_manifest_sha256": "0472fca3de2ff8c6c37a70220a3e751918603203b0367bf321fb67f35c09c531",
+      "backend_named_barriers": [
+        {
+          "id": 2,
+          "participants": 128,
+          "purpose": "full_deform_mlp"
+        }
+      ],
+      "backend_shared_scratch_bytes": 14592,
+      "backend_subgroups": [
+        {
+          "name": "full_deform_mlp",
+          "named_barrier_ids": [
+            2
+          ],
+          "thread_range_inclusive": [
+            256,
+            383
+          ],
+          "threads": 128
+        }
+      ],
+      "capability_requirements": {
+        "backend_family": "full_deform_mlp_v5",
+        "compute_capability": [
+          8,
+          6
+        ],
+        "cuda_arch": "sm_86",
+        "deform_mlp_named_barrier_id": 2,
+        "deform_mlp_threads": 128,
+        "direct_grid_default": true,
+        "mixed_render_deform_mlp_abi": 5,
+        "prepared_raster_deform_mlp_overlap": true
+      },
+      "correctness": {
+        "valid": false
+      },
+      "cuda_symbol": "tacker_mix_render_deform_mlp_v5",
+      "deform_mlp_abi_manifest_sha256": "1c8112a30ce8c5075689d3bd5ed03b8aaadbdcdf29f86cf92ee0a725af3b4900",
+      "diagnostics": null,
+      "execution_mode": "tacker",
+      "fused_nodes": [
+        "raster.render_leaf",
+        "deformation.feature_out[0].linear_32x128",
+        "deformation.pos_deform",
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "parallel_nodes": [
+        "raster.prepare",
+        "deformation.hexplane_prefix"
+      ],
+      "partition": {
+        "backend": "full_deform_mlp",
+        "kind": "full_mlp_overlap_graph",
+        "selected_heads": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "worker_groups": 1
+      },
+      "performance": null,
+      "persistent_blocks": 0,
+      "persistent_blocks_zero_policy": "direct_logical_grid",
+      "physical_cta_threads": 384,
+      "prefix_submission": {
+        "backend": "torch.cuda.CUDAGraph",
+        "capture_version": 1,
+        "output_dtype": "float32",
+        "output_width": 32,
+        "slot_count": 2,
+        "static_input_copies": [
+          "xyz",
+          "timestamp"
+        ]
+      },
+      "raster_named_barrier_id": 1,
+      "raster_thread_range_inclusive": [
+        0,
+        255
+      ],
+      "raster_threads": 256,
+      "required_outputs": [
+        "raster.color",
+        "raster.depth",
+        "raster.radii",
+        "deformation.pos_delta",
+        "deformation.scales_delta",
+        "deformation.rotations_delta",
+        "deformation.opacity_delta",
+        "deformation.shs_delta"
+      ],
+      "resources": {
+        "active_blocks_per_sm": 4,
+        "block_threads": 384,
+        "max_threads_per_block": 384,
+        "occupancy": 1.0,
+        "registers_per_thread": 40,
+        "static_shared_memory_bytes": 21888
+      },
+      "skipped_python_nodes": [
+        "deformation.feature_out[0].linear_32x128",
+        "deformation.pos_deform",
+        "deformation.scales_deform",
+        "deformation.rotations_deform",
+        "deformation.opacity_deform",
+        "deformation.shs_deform"
+      ],
+      "stream_lifetimes": [
+        "deform_features:deform_prefix->mixed_done",
+        "full_mlp_parameters:cache_ready->mixed_done",
+        "deform_deltas:mixed_done->residual_ready",
+        "render_state:residual_ready->raster_done",
+        "prepared_raster_state:raster_prepare->raster_done",
+        "hexplane_graph_state:slot_capture->raster_done"
+      ],
+      "suffix_nodes": [
+        "deformation.apply_residuals"
+      ],
+      "tensor_contract": {
+        "backbone_weight_dtype": "float32",
+        "backbone_weight_layout": "input_output",
+        "feature_dtype": "float32",
+        "feature_width": 32,
+        "first_bias_dtype": "float32",
+        "first_weight_dtype": "float16",
+        "head_order": [
+          "pos",
+          "scales",
+          "rotations",
+          "opacity",
+          "shs"
+        ],
+        "output_dtype": "float32",
+        "output_widths": [
+          3,
+          3,
+          4,
+          1,
+          48
+        ],
+        "tail_bias_dtype": "float32",
+        "tail_weight_dtype": "float32"
+      },
+      "tile_shape": [
+        16,
+        16
+      ],
+      "variant_id": "full_mlp_overlap_graph_pb0"
+    }
+  ],
+  "correctness_thresholds": {
+    "lpips_increase_max": 0.0001,
+    "psnr_drop_db_max": 0.05,
+    "ssim_drop_max": 0.0001
+  },
+  "deployment": {
+    "enabled": false,
+    "valid": false
+  },
+  "manifest": {
+    "compute_capability": [
+      8,
+      6
+    ],
+    "cuda_arch": "sm_86",
+    "gaussian_count": 111525,
+    "gpu_name": "NVIDIA RTX A6000",
+    "iteration": 14000,
+    "persistent_blocks": 0,
+    "rasterizer_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+    "resolution": [
+      1352,
+      1014
+    ],
+    "workload": "flame_steak",
+    "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+  },
+  "manifest_sha256": "2312f295f15d79cb693baccb1c7b00eac36683fc3010023c41712b93912f17d1",
+  "note": "Disabled schema-v2 qualification template. Tuning writes a separate hashed winner profile and never enables this file in place.",
+  "profile_sha256": "3083c5bfc5bee5288a31fc3cf5ca61eb31958faf023d6a201d9812cb5ffe9273",
+  "provenance": {
+    "input_sha256": {
+      "head_abi": "24570aa6e67e8b9b10fa94524fec4dc03a4eb3fdc3bf822af34c2c52ce4937ac",
+      "mixed_abi": "231c90c429321b2673b88ecd09efb40b6aedda7a23f3e061a2bcedec06d44426"
+    },
+    "template": true
+  },
+  "schema_version": 2,
+  "selected_variant_id": "full_mlp_overlap_graph_pb0",
+  "selection": null,
+  "selection_objective": "median_throughput_fps",
+  "workload_key": "flame_steak:14000:111525:1352x1014:sm_86"
+}

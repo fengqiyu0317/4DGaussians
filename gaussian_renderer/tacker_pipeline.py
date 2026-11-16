@@ -62,7 +62,44 @@ PAIR_KEY = "raster.render_leaf+deformation.pos_deform[1].linear_128x128"
 LEGACY_VARIANT_ID = "legacy_pos_l1"
 LEGACY_ABI_FAMILY = "legacy_pos_l1_v1"
 SELECTION_OBJECTIVE = "median_throughput_fps"
-WORKLOAD_KEY = "flame_steak:14000:111525:1352x1014:sm_86"
+
+
+def _deployment_target_from_environment():
+    """Return the exact CUDA deployment target for schema-v2 profiles.
+
+    The qualified A6000 target remains the default.  A separately built
+    deployment (for example Jetson AGX Orin) must opt in before importing this
+    module so an A6000 profile can never be admitted accidentally on another
+    architecture.
+    """
+
+    cuda_arch = os.environ.get("TACKER_CUDA_ARCH", "sm_86").strip().lower()
+    if (
+        len(cuda_arch) != 5
+        or not cuda_arch.startswith("sm_")
+        or not cuda_arch[3:].isdigit()
+    ):
+        raise RuntimeError("TACKER_CUDA_ARCH must use the form sm_XX")
+    compute_capability = [int(cuda_arch[3]), int(cuda_arch[4])]
+    default_gpu_name = (
+        "NVIDIA RTX A6000" if cuda_arch == "sm_86" else None
+    )
+    gpu_name = os.environ.get("TACKER_GPU_NAME", default_gpu_name or "").strip()
+    if not gpu_name:
+        raise RuntimeError(
+            "TACKER_GPU_NAME is required for non-default Tacker targets"
+        )
+    return cuda_arch, compute_capability, gpu_name
+
+
+(
+    DEPLOYMENT_CUDA_ARCH,
+    DEPLOYMENT_COMPUTE_CAPABILITY,
+    DEPLOYMENT_GPU_NAME,
+) = _deployment_target_from_environment()
+WORKLOAD_KEY = "flame_steak:14000:111525:1352x1014:{}".format(
+    DEPLOYMENT_CUDA_ARCH
+)
 EQUIVALENCE_FRACTION = 0.005
 PROMOTION_MIN_FPS_RATIO = 1.01
 PROMOTION_MIN_BOOTSTRAP_LOWER_EXCLUSIVE = 1.0
@@ -89,6 +126,8 @@ FIRST_LINEAR_PARTITION_KIND = "first_linear_heads"
 PACKED_FIRST_LINEAR_PARTITION_KIND = "packed_first_linear_heads"
 WHOLE_HEAD_PARTITION_KIND = "whole_heads"
 FULL_MLP_PARTITION_KIND = "full_mlp"
+FULL_MLP_OVERLAP_PARTITION_KIND = "full_mlp_overlap"
+FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND = "full_mlp_overlap_graph"
 FIRST_LINEAR_ABI_FAMILY = "first_linear_heads_v2"
 PACKED_FIRST_LINEAR_ABI_FAMILY = "packed_first_linear_v3"
 WHOLE_HEAD_ABI_FAMILY = "whole_heads_v4"
@@ -251,6 +290,73 @@ def _require_exact(mapping, key, expected, section):
         )
 
 
+def _workload_contract(workload_key):
+    """Decode one canonical schema-v2 workload identity.
+
+    Schema-v2 profiles are sealed to an exact scene/checkpoint/shape, but the
+    validator must not hard-code one scene.  Runtime admission separately
+    compares these decoded manifest fields with the loaded model and views.
+    """
+
+    if not isinstance(workload_key, str):
+        raise TackerProfileError("profile.workload_key must be a string")
+    parts = workload_key.split(":")
+    if len(parts) != 5 or parts[4] != DEPLOYMENT_CUDA_ARCH:
+        raise TackerProfileError(
+            "profile.workload_key must use "
+            "scene:iteration:gaussian_count:WIDTHxHEIGHT:{}".format(
+                DEPLOYMENT_CUDA_ARCH
+            )
+        )
+    workload = parts[0]
+    if (
+        not workload
+        or workload != workload.strip().replace("-", "_").lower()
+        or any(
+            character not in "abcdefghijklmnopqrstuvwxyz0123456789_"
+            for character in workload
+        )
+    ):
+        raise TackerProfileError(
+            "profile.workload_key scene must be canonical lowercase snake_case"
+        )
+    try:
+        iteration = int(parts[1])
+        gaussian_count = int(parts[2])
+        resolution_parts = parts[3].split("x")
+        if len(resolution_parts) != 2:
+            raise ValueError
+        width, height = (int(value) for value in resolution_parts)
+    except (TypeError, ValueError):
+        raise TackerProfileError(
+            "profile.workload_key contains invalid integer fields"
+        )
+    if any(
+        value <= 0 for value in (iteration, gaussian_count, width, height)
+    ):
+        raise TackerProfileError(
+            "profile.workload_key integer fields must be positive"
+        )
+    canonical = "{}:{}:{}:{}x{}:{}".format(
+        workload,
+        iteration,
+        gaussian_count,
+        width,
+        height,
+        DEPLOYMENT_CUDA_ARCH,
+    )
+    if workload_key != canonical:
+        raise TackerProfileError(
+            "profile.workload_key must use canonical integer formatting"
+        )
+    return {
+        "workload": workload,
+        "iteration": iteration,
+        "gaussian_count": gaussian_count,
+        "resolution": [width, height],
+    }
+
+
 def _validate_legacy_tacker_profile(profile):
     """Validate the read-only schema-v1 profile contract."""
 
@@ -367,16 +473,17 @@ def _require_sha256(value, label):
 def _validate_v2_manifest(manifest, workload_key):
     if not isinstance(manifest, dict):
         raise TackerProfileError("profile.manifest must be an object")
+    workload = _workload_contract(workload_key)
     expected = {
         "workload_key": workload_key,
         "rasterizer_commit": RASTERIZER_COMMIT,
-        "cuda_arch": "sm_86",
-        "compute_capability": [8, 6],
-        "gpu_name": "NVIDIA RTX A6000",
-        "workload": "flame_steak",
-        "iteration": 14000,
-        "gaussian_count": 111525,
-        "resolution": [1352, 1014],
+        "cuda_arch": DEPLOYMENT_CUDA_ARCH,
+        "compute_capability": DEPLOYMENT_COMPUTE_CAPABILITY,
+        "gpu_name": DEPLOYMENT_GPU_NAME,
+        "workload": workload["workload"],
+        "iteration": workload["iteration"],
+        "gaussian_count": workload["gaussian_count"],
+        "resolution": workload["resolution"],
     }
     for key, value in expected.items():
         _require_exact(manifest, key, value, "manifest")
@@ -541,8 +648,8 @@ def _validate_pos_l1_v2_candidate(candidate):
         raise TackerProfileError(
             "{}.capability_requirements must be an object".format(section)
         )
-    _require_exact(capability, "cuda_arch", "sm_86", "{}.capability_requirements".format(section))
-    _require_exact(capability, "compute_capability", [8, 6], "{}.capability_requirements".format(section))
+    _require_exact(capability, "cuda_arch", DEPLOYMENT_CUDA_ARCH, "{}.capability_requirements".format(section))
+    _require_exact(capability, "compute_capability", DEPLOYMENT_COMPUTE_CAPABILITY, "{}.capability_requirements".format(section))
     _require_exact(candidate, "tile_shape", [16, 16], section)
     _validate_candidate_resources(candidate, section)
 
@@ -657,8 +764,8 @@ def _validate_first_linear_v2_candidate(candidate):
             "{}.capability_requirements must be an object".format(section)
         )
     capability_section = "{}.capability_requirements".format(section)
-    _require_exact(capability, "cuda_arch", "sm_86", capability_section)
-    _require_exact(capability, "compute_capability", [8, 6], capability_section)
+    _require_exact(capability, "cuda_arch", DEPLOYMENT_CUDA_ARCH, capability_section)
+    _require_exact(capability, "compute_capability", DEPLOYMENT_COMPUTE_CAPABILITY, capability_section)
     _require_exact(
         capability, "mixed_render_heads_abi", MIXED_MULTI_ABI_VERSION, capability_section
     )
@@ -761,8 +868,8 @@ def first_linear_candidate_contract(
         "tile_shape": [16, 16],
         "resources": deepcopy(resources),
         "capability_requirements": {
-            "cuda_arch": "sm_86",
-            "compute_capability": [8, 6],
+            "cuda_arch": DEPLOYMENT_CUDA_ARCH,
+            "compute_capability": DEPLOYMENT_COMPUTE_CAPABILITY,
             "mixed_render_heads_abi": MIXED_MULTI_ABI_VERSION,
         },
         "correctness": {"valid": False},
@@ -880,8 +987,8 @@ def packed_first_linear_candidate_contract(
         "tile_shape": [16, 16],
         "resources": deepcopy(resources),
         "capability_requirements": {
-            "cuda_arch": "sm_86",
-            "compute_capability": [8, 6],
+            "cuda_arch": DEPLOYMENT_CUDA_ARCH,
+            "compute_capability": DEPLOYMENT_COMPUTE_CAPABILITY,
             "mixed_render_packed_heads_abi": PACKED_MIXED_ABI_VERSION,
             "backend_family": PACKED_FIRST_LINEAR_ABI_FAMILY,
         },
@@ -982,8 +1089,8 @@ def whole_head_candidate_contract(
         "tile_shape": [16, 16],
         "resources": deepcopy(resources),
         "capability_requirements": {
-            "cuda_arch": "sm_86",
-            "compute_capability": [8, 6],
+            "cuda_arch": DEPLOYMENT_CUDA_ARCH,
+            "compute_capability": DEPLOYMENT_COMPUTE_CAPABILITY,
             "mixed_render_whole_heads_abi": WHOLE_HEAD_MIXED_ABI_VERSION,
             "backend_family": WHOLE_HEAD_ABI_FAMILY,
             "shared_scratch_bytes_per_worker_group": 512,
@@ -1087,8 +1194,8 @@ def full_mlp_candidate_contract(
         "tile_shape": [16, 16],
         "resources": deepcopy(resources),
         "capability_requirements": {
-            "cuda_arch": "sm_86",
-            "compute_capability": [8, 6],
+            "cuda_arch": DEPLOYMENT_CUDA_ARCH,
+            "compute_capability": DEPLOYMENT_COMPUTE_CAPABILITY,
             "mixed_render_deform_mlp_abi": FULL_MLP_MIXED_ABI_VERSION,
             "backend_family": FULL_MLP_ABI_FAMILY,
             "deform_mlp_threads": 128,
@@ -1099,6 +1206,71 @@ def full_mlp_candidate_contract(
         "performance": None,
         "diagnostics": None,
     }
+
+
+def full_mlp_overlap_candidate_contract(
+    variant_id,
+    selected_heads=HEAD_ORDER,
+    worker_groups=1,
+    persistent_blocks=0,
+    resources=None,
+    backend=FULL_MLP_BACKEND,
+):
+    """Build the opt-in split-prefix schedule for the unchanged ABI-v5 leaf."""
+
+    candidate = full_mlp_candidate_contract(
+        variant_id,
+        selected_heads=selected_heads,
+        worker_groups=worker_groups,
+        persistent_blocks=persistent_blocks,
+        resources=resources,
+        backend=backend,
+    )
+    candidate["partition"]["kind"] = FULL_MLP_OVERLAP_PARTITION_KIND
+    candidate["parallel_nodes"] = [
+        "raster.prepare",
+        "deformation.hexplane_prefix",
+    ]
+    candidate["stream_lifetimes"].append(
+        "prepared_raster_state:raster_prepare->raster_done"
+    )
+    candidate["capability_requirements"][
+        "prepared_raster_deform_mlp_overlap"
+    ] = True
+    return candidate
+
+
+def full_mlp_overlap_graph_candidate_contract(
+    variant_id,
+    selected_heads=HEAD_ORDER,
+    worker_groups=1,
+    persistent_blocks=0,
+    resources=None,
+    backend=FULL_MLP_BACKEND,
+):
+    """Build the opt-in two-slot CUDA-Graph HexPlane prefix schedule."""
+
+    candidate = full_mlp_overlap_candidate_contract(
+        variant_id,
+        selected_heads=selected_heads,
+        worker_groups=worker_groups,
+        persistent_blocks=persistent_blocks,
+        resources=resources,
+        backend=backend,
+    )
+    candidate["partition"]["kind"] = FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND
+    candidate["prefix_submission"] = {
+        "backend": "torch.cuda.CUDAGraph",
+        "capture_version": 1,
+        "slot_count": 2,
+        "static_input_copies": ["xyz", "timestamp"],
+        "output_dtype": "float32",
+        "output_width": 32,
+    }
+    candidate["stream_lifetimes"].append(
+        "hexplane_graph_state:slot_capture->raster_done"
+    )
+    return candidate
 
 
 _CANDIDATE_MEASUREMENT_KEYS = ("correctness", "performance", "diagnostics")
@@ -1198,6 +1370,72 @@ def _validate_full_mlp_v2_candidate(candidate):
     )
 
 
+def _validate_full_mlp_overlap_v2_candidate(candidate):
+    section = "candidate {}".format(candidate.get("variant_id", "<unknown>"))
+    partition = candidate.get("partition")
+    if not isinstance(partition, dict):
+        raise TackerProfileError("{}.partition must be an object".format(section))
+    _require_exact(
+        partition,
+        "kind",
+        FULL_MLP_OVERLAP_PARTITION_KIND,
+        "{}.partition".format(section),
+    )
+    selected_heads = _canonical_head_names(
+        partition.get("selected_heads"), "{}.partition".format(section)
+    )
+    try:
+        expected = full_mlp_overlap_candidate_contract(
+            candidate["variant_id"],
+            selected_heads,
+            worker_groups=partition.get("worker_groups"),
+            persistent_blocks=candidate.get("persistent_blocks"),
+            resources=candidate.get("resources"),
+            backend=partition.get("backend"),
+        )
+    except ValueError as error:
+        raise TackerProfileError("{}: {}".format(section, error))
+    _validate_deterministic_candidate_contract(candidate, expected, section)
+    _validate_candidate_resources(
+        candidate,
+        section,
+        require_measured=bool(candidate.get("correctness", {}).get("valid")),
+    )
+
+
+def _validate_full_mlp_overlap_graph_v2_candidate(candidate):
+    section = "candidate {}".format(candidate.get("variant_id", "<unknown>"))
+    partition = candidate.get("partition")
+    if not isinstance(partition, dict):
+        raise TackerProfileError("{}.partition must be an object".format(section))
+    _require_exact(
+        partition,
+        "kind",
+        FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND,
+        "{}.partition".format(section),
+    )
+    selected_heads = _canonical_head_names(
+        partition.get("selected_heads"), "{}.partition".format(section)
+    )
+    try:
+        expected = full_mlp_overlap_graph_candidate_contract(
+            candidate["variant_id"],
+            selected_heads,
+            worker_groups=partition.get("worker_groups"),
+            persistent_blocks=candidate.get("persistent_blocks"),
+            resources=candidate.get("resources"),
+            backend=partition.get("backend"),
+        )
+    except ValueError as error:
+        raise TackerProfileError("{}: {}".format(section, error))
+    _validate_deterministic_candidate_contract(candidate, expected, section)
+    _validate_candidate_resources(
+        candidate,
+        section,
+        require_measured=bool(candidate.get("correctness", {}).get("valid")),
+    )
+
+
 PARTITION_KIND_REGISTRY.update(
     {
         FIRST_LINEAR_PARTITION_KIND: {
@@ -1226,6 +1464,20 @@ PARTITION_KIND_REGISTRY.update(
             "backend": FULL_MLP_BACKEND,
             "abi_version": FULL_MLP_MIXED_ABI_VERSION,
             "validator": _validate_full_mlp_v2_candidate,
+            "partition_class": None,
+        },
+        FULL_MLP_OVERLAP_PARTITION_KIND: {
+            "abi_family": FULL_MLP_ABI_FAMILY,
+            "backend": FULL_MLP_BACKEND,
+            "abi_version": FULL_MLP_MIXED_ABI_VERSION,
+            "validator": _validate_full_mlp_overlap_v2_candidate,
+            "partition_class": None,
+        },
+        FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND: {
+            "abi_family": FULL_MLP_ABI_FAMILY,
+            "backend": FULL_MLP_BACKEND,
+            "abi_version": FULL_MLP_MIXED_ABI_VERSION,
+            "validator": _validate_full_mlp_overlap_graph_v2_candidate,
             "partition_class": None,
         },
     }
@@ -1961,7 +2213,7 @@ def _validate_v2_selection(selection, candidates, selected_variant_id):
 
 def _validate_v2_tacker_profile(profile):
     _require_exact(profile, "schema_version", PROFILE_SCHEMA_VERSION, "profile")
-    _require_exact(profile, "workload_key", WORKLOAD_KEY, "profile")
+    _workload_contract(profile.get("workload_key"))
     _require_exact(
         profile, "selection_objective", SELECTION_OBJECTIVE, "profile"
     )
@@ -2505,6 +2757,12 @@ def _rasterizer_capability_contract_reason(
 
     if variant.backend == FULL_MLP_BACKEND:
         capability = selected_candidate["capability_requirements"]
+        partition_kind = selected_candidate["partition"]["kind"]
+        overlap_schedule = partition_kind in (
+            FULL_MLP_OVERLAP_PARTITION_KIND,
+            FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND,
+        )
+        graph_schedule = partition_kind == FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND
         expected = {
             "resource_query": "tacker_resource_requirements",
             "resource_query_family_aware": True,
@@ -2532,6 +2790,8 @@ def _rasterizer_capability_contract_reason(
             ],
             "supported_mixed_abis": [1, 2, 3, 4, 5],
         }
+        if overlap_schedule:
+            expected["prepared_raster_deform_mlp_overlap"] = True
         for key, value in expected.items():
             if not _capability_matches(
                 _capability_value(capabilities, key, None), value
@@ -2546,7 +2806,23 @@ def _rasterizer_capability_contract_reason(
             capability["deform_mlp_named_barrier_id"]
         ]:
             return "sealed full MLP worker barrier contract changed"
-        if not callable(
+        if overlap_schedule:
+            required_methods = (
+                "prepare_for_deform_mlp_overlap",
+                "render_prepared_with_deform_mlp_overlap",
+                "render_prepared_overlap",
+            )
+            for method_name in required_methods:
+                if not callable(getattr(GaussianRasterizer, method_name, None)):
+                    return "GaussianRasterizer.{} is unavailable".format(
+                        method_name
+                    )
+            if graph_schedule:
+                if not callable(getattr(torch.cuda, "CUDAGraph", None)):
+                    return "torch.cuda.CUDAGraph is unavailable"
+                if not callable(getattr(torch.cuda, "graph", None)):
+                    return "torch.cuda.graph is unavailable"
+        elif not callable(
             getattr(GaussianRasterizer, "forward_with_deform_mlp", None)
         ):
             return "GaussianRasterizer.forward_with_deform_mlp is unavailable"
@@ -2853,6 +3129,14 @@ def tacker_support_reason(
         structure_reason = _full_mlp_structure_reason(network)
         if structure_reason is not None:
             return structure_reason
+        partition_kind = selected_candidate["partition"]["kind"]
+        if (
+            partition_kind == FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND
+            and not callable(
+                getattr(getattr(network, "grid", None), "forward_cuda_graph", None)
+            )
+        ):
+            return "HexPlane grid has no capture-safe CUDA Graph entry point"
 
     xyz_shape = tuple(getattr(getattr(pc, "get_xyz", None), "shape", ()))
     expected_count = manifest["gaussian_count"]
@@ -2889,14 +3173,19 @@ def tacker_support_reason(
         compute_capability = tuple(torch.cuda.get_device_capability(device))
     except Exception as error:
         return "cannot query GPU compute capability: {}".format(error)
-    if compute_capability != (8, 6):
-        return "the first Tacker path requires GPU capability 8.6"
+    expected_compute_capability = tuple(manifest["compute_capability"])
+    if compute_capability != expected_compute_capability:
+        return "the Tacker path requires GPU capability {}.{}".format(
+            *expected_compute_capability
+        )
     try:
         gpu_name = " ".join(str(torch.cuda.get_device_name(device)).split())
     except Exception as error:
         return "cannot query GPU name: {}".format(error)
     if gpu_name != manifest["gpu_name"]:
-        return "GPU name does not match the admitted NVIDIA RTX A6000 profile"
+        return "GPU name does not match the admitted {} profile".format(
+            manifest["gpu_name"]
+        )
 
     return None
 
@@ -3074,6 +3363,101 @@ class FusionTask:
                     ", ".join(duplicate)
                 )
             )
+
+
+class _HexPlaneCudaGraphSlot:
+    """One slot-owned, fixed-shape CUDA Graph for the HexPlane prefix."""
+
+    _WARMUP_STEPS = 3
+
+    def __init__(self, network, xyz, timestamp, stream):
+        self._network = network
+        self._stream = stream
+        graph_query = getattr(network.grid, "forward_cuda_graph", None)
+        self._graph_query = graph_query if callable(graph_query) else network.grid
+        self._device = getattr(xyz, "device", None)
+        self._xyz_shape = tuple(xyz.shape)
+        self._timestamp_shape = tuple(timestamp.shape)
+        if len(self._xyz_shape) != 2 or self._xyz_shape[1] != 3:
+            raise ValueError("HexPlane CUDA Graph xyz must have shape [N, 3]")
+        if self._timestamp_shape != (self._xyz_shape[0], 1):
+            raise ValueError(
+                "HexPlane CUDA Graph timestamp must have shape [N, 1]"
+            )
+        if self._xyz_shape[0] <= 0:
+            raise ValueError("HexPlane CUDA Graph requires at least one row")
+        if getattr(xyz, "dtype", None) != torch.float32:
+            raise TypeError("HexPlane CUDA Graph xyz must be FP32")
+        if getattr(timestamp, "dtype", None) != torch.float32:
+            raise TypeError("HexPlane CUDA Graph timestamp must be FP32")
+
+        self.xyz = torch.empty_like(xyz)
+        self.timestamp = torch.empty_like(timestamp)
+        with torch.cuda.stream(stream):
+            self.xyz.copy_(xyz, non_blocking=True)
+            self.timestamp.copy_(timestamp, non_blocking=True)
+        # Capture is one-time setup.  The renderer creates both slot graphs
+        # during untimed warmup, and a device-wide boundary prevents unrelated
+        # work from invalidating CUDA's global capture preconditions.
+        torch.cuda.synchronize(self._device)
+        with torch.cuda.stream(stream):
+            for _ in range(self._WARMUP_STEPS):
+                self._graph_query(self.xyz, self.timestamp)
+        stream.synchronize()
+
+        self.graph = torch.cuda.CUDAGraph()
+        # Data-loader/background threads may query CUDA while the main render
+        # thread captures.  Only this thread submits prefix work, so the
+        # thread-local mode is the strictest usable policy for this pipeline.
+        with torch.cuda.graph(
+            self.graph,
+            stream=stream,
+            capture_error_mode="thread_local",
+        ):
+            self.output = (
+                self._graph_query(self.xyz, self.timestamp)
+                .to(dtype=torch.float32)
+                .contiguous()
+            )
+        stream.synchronize()
+        output_shape = tuple(self.output.shape)
+        if output_shape != (self._xyz_shape[0], 32):
+            raise ValueError(
+                "HexPlane CUDA Graph output must have shape [N, 32]"
+            )
+        if getattr(self.output, "dtype", None) != torch.float32:
+            raise TypeError("HexPlane CUDA Graph output must be FP32")
+
+    def enqueue(self, xyz, timestamp, stream):
+        if tuple(xyz.shape) != self._xyz_shape:
+            raise ValueError("HexPlane CUDA Graph xyz shape changed")
+        if tuple(timestamp.shape) != self._timestamp_shape:
+            raise ValueError("HexPlane CUDA Graph timestamp shape changed")
+        if getattr(xyz, "dtype", None) != torch.float32:
+            raise TypeError("HexPlane CUDA Graph xyz dtype changed")
+        if getattr(timestamp, "dtype", None) != torch.float32:
+            raise TypeError("HexPlane CUDA Graph timestamp dtype changed")
+        if getattr(xyz, "device", None) != self._device:
+            raise ValueError("HexPlane CUDA Graph xyz device changed")
+        if getattr(timestamp, "device", None) != self._device:
+            raise ValueError("HexPlane CUDA Graph timestamp device changed")
+        current = torch.cuda.current_stream(self._device)
+        current_identity = (
+            getattr(current, "device", None),
+            getattr(current, "cuda_stream", id(current)),
+        )
+        capture_identity = (
+            getattr(stream, "device", None),
+            getattr(stream, "cuda_stream", id(stream)),
+        )
+        if current_identity != capture_identity:
+            raise RuntimeError(
+                "HexPlane CUDA Graph replay must run on its deform stream"
+            )
+        self.xyz.copy_(xyz, non_blocking=True)
+        self.timestamp.copy_(timestamp, non_blocking=True)
+        self.graph.replay()
+        return self.output
 
 
 # Source compatibility for callers that imported the Phase-1 task name.
@@ -3455,22 +3839,16 @@ def prepare_whole_head_task(
     return task
 
 
-def prepare_full_mlp_task(
+def _full_mlp_task_from_prefix(
     context,
-    pc,
-    deform_stream,
     variant,
     cached_parameters,
-    prefix_ready=None,
+    prefix_ready,
+    deform_features,
+    mask,
 ):
-    """Produce only HexPlane features; ABI v5 owns backbone and all heads."""
+    """Bind one eager or captured HexPlane result to the unchanged ABI-v5 leaf."""
 
-    if variant.selected_heads != HEAD_ORDER or variant.worker_groups != 1:
-        raise ValueError("full MLP task requires all five heads and one worker group")
-    if prefix_ready is None:
-        prefix_ready = torch.cuda.Event(blocking=False)
-    if len(cached_parameters) != 6:
-        raise ValueError("cached full MLP parameter tuple must contain six tensors")
     (
         backbone_weight,
         backbone_bias,
@@ -3480,32 +3858,13 @@ def prepare_full_mlp_task(
         tail_biases,
     ) = cached_parameters
 
-    network = pc._deformation.deformation_net
-    if bool(getattr(network.args, "static_mlp", False)):
-        raise RuntimeError("full MLP partition does not support static_mlp masks")
-    with torch.cuda.stream(deform_stream):
-        point_emb = context.means3D
-        scales_emb = context.scales
-        rotations_emb = context.rotations
-        deform_features = network.grid(
-            point_emb[:, :3], context.timestamp[:, :1]
-        ).to(dtype=torch.float32).contiguous()
-        # Raster only consumes the feature tensor.  Record its dependency edge
-        # before mask work so an optional empty-voxel branch can overlap the
-        # physical mixed launch on the other stream.
-        prefix_ready.record(deform_stream)
-
-        if bool(getattr(network.args, "empty_voxel", False)):
-            mask = network.empty_voxel(point_emb[:, :3])
-        else:
-            mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
-
+    point_emb = context.means3D
     task = FusionTask(
         context=context,
         variant=variant,
         point_emb=point_emb,
-        scales_emb=scales_emb,
-        rotations_emb=rotations_emb,
+        scales_emb=context.scales,
+        rotations_emb=context.rotations,
         opacity_emb=context.opacity,
         shs_emb=context.shs,
         hidden=None,
@@ -3531,6 +3890,91 @@ def prepare_full_mlp_task(
     )
     task.assert_selected_nodes_not_executed_by_python()
     return task
+
+
+def _validate_full_mlp_prefix_inputs(variant, cached_parameters, network):
+    if variant.selected_heads != HEAD_ORDER or variant.worker_groups != 1:
+        raise ValueError("full MLP task requires all five heads and one worker group")
+    if len(cached_parameters) != 6:
+        raise ValueError("cached full MLP parameter tuple must contain six tensors")
+    if bool(getattr(network.args, "static_mlp", False)):
+        raise RuntimeError("full MLP partition does not support static_mlp masks")
+
+
+def prepare_full_mlp_task(
+    context,
+    pc,
+    deform_stream,
+    variant,
+    cached_parameters,
+    prefix_ready=None,
+):
+    """Produce only HexPlane features; ABI v5 owns backbone and all heads."""
+
+    if prefix_ready is None:
+        prefix_ready = torch.cuda.Event(blocking=False)
+
+    network = pc._deformation.deformation_net
+    _validate_full_mlp_prefix_inputs(variant, cached_parameters, network)
+    with torch.cuda.stream(deform_stream):
+        point_emb = context.means3D
+        deform_features = network.grid(
+            point_emb[:, :3], context.timestamp[:, :1]
+        ).to(dtype=torch.float32).contiguous()
+        # Raster only consumes the feature tensor.  Record its dependency edge
+        # before mask work so an optional empty-voxel branch can overlap the
+        # physical mixed launch on the other stream.
+        prefix_ready.record(deform_stream)
+
+        if bool(getattr(network.args, "empty_voxel", False)):
+            mask = network.empty_voxel(point_emb[:, :3])
+        else:
+            mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
+
+    return _full_mlp_task_from_prefix(
+        context,
+        variant,
+        cached_parameters,
+        prefix_ready,
+        deform_features,
+        mask,
+    )
+
+
+def prepare_full_mlp_graph_task(
+    context,
+    pc,
+    deform_stream,
+    variant,
+    cached_parameters,
+    prefix_graph,
+    prefix_ready=None,
+):
+    """Replay one slot-owned HexPlane CUDA Graph and bind its static output."""
+
+    if prefix_ready is None:
+        prefix_ready = torch.cuda.Event(blocking=False)
+    network = pc._deformation.deformation_net
+    _validate_full_mlp_prefix_inputs(variant, cached_parameters, network)
+    with torch.cuda.stream(deform_stream):
+        point_emb = context.means3D
+        deform_features = prefix_graph.enqueue(
+            point_emb[:, :3], context.timestamp[:, :1], deform_stream
+        )
+        if not bool(getattr(prefix_graph, "deferred_sampling", False)):
+            prefix_ready.record(deform_stream)
+        if bool(getattr(network.args, "empty_voxel", False)):
+            mask = network.empty_voxel(point_emb[:, :3])
+        else:
+            mask = torch.ones_like(context.opacity[:, 0]).unsqueeze(-1)
+    return _full_mlp_task_from_prefix(
+        context,
+        variant,
+        cached_parameters,
+        prefix_ready,
+        deform_features,
+        mask,
+    )
 
 
 def prepare_pos_head_task(
@@ -3910,6 +4354,691 @@ def _forward_with_deform_mlp(context, state, task, persistent_blocks):
     )
 
 
+def _prepare_raster_for_deform_mlp_overlap(context, state, handoff=None):
+    """Queue every Raster stage except the final render leaf."""
+
+    method = getattr(
+        context.rasterizer, "prepare_for_deform_mlp_overlap", None
+    )
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.prepare_for_deform_mlp_overlap is unavailable"
+        )
+    return method(
+        means3D=state.means3D,
+        means2D=context.means2D,
+        opacities=state.opacities,
+        shs=state.shs,
+        colors_precomp=context.colors_precomp,
+        scales=state.scales,
+        rotations=state.rotations,
+        cov3D_precomp=context.cov3D_precomp,
+        **({"handoff": handoff} if handoff is not None else {}),
+    )
+
+
+_V8_SUBGROUP_DIAGNOSTIC_SEQUENCE = 0
+_BALANCED_SUBGROUP_DIAGNOSTIC_SEQUENCE = 0
+_V12_SPLIT_DIAGNOSTIC_SEQUENCE = 0
+_MIXED_PIPELINE_SUFFIX_DIAGNOSTIC_SEQUENCE = 0
+
+
+def _mixed_pipeline_profile_path():
+    """Return the opt-in v11/v12 stage-timeline destination."""
+
+    return os.environ.get(
+        "TACKER_PROFILE_MIXED_PIPELINE_JSONL"
+    ) or os.environ.get("TACKER_PROFILE_MIXED_V12_SPLIT_JSONL")
+
+
+def _mixed_pipeline_profile_schedule():
+    """Return the opt-in Graph timeline schedule used for diagnostics."""
+
+    schedule = os.environ.get(
+        "TACKER_PROFILE_MIXED_PIPELINE_SCHEDULE", "both"
+    )
+    if schedule not in ("both", "deform_then_raster"):
+        raise RuntimeError(
+            "TACKER_PROFILE_MIXED_PIPELINE_SCHEDULE must be both or "
+            "deform_then_raster"
+        )
+    if schedule != "both" and not _mixed_pipeline_profile_path():
+        raise RuntimeError(
+            "TACKER_PROFILE_MIXED_PIPELINE_SCHEDULE requires a mixed "
+            "pipeline JSONL profiler"
+        )
+    return schedule
+
+
+def _v8_subgroup_duration_stats(values):
+    """Return deterministic integer-cycle statistics for one diagnostic role."""
+
+    ordered = sorted(int(value) for value in values if int(value) >= 0)
+    if not ordered:
+        return {"count": 0}
+
+    def percentile(numerator, denominator=100):
+        index = (len(ordered) - 1) * numerator // denominator
+        return ordered[index]
+
+    return {
+        "count": len(ordered),
+        "min": ordered[0],
+        "p25": percentile(25),
+        "median": percentile(50),
+        "p75": percentile(75),
+        "p90": percentile(90),
+        "p95": percentile(95),
+        "p99": percentile(99),
+        "max": ordered[-1],
+        "mean": sum(ordered) / len(ordered),
+    }
+
+
+def _record_v8_subgroup_diagnostic(
+    path,
+    mode,
+    timing_cycles,
+    prepared_raster,
+    deform_rows,
+    raster_settings,
+    kernel_elapsed_ms,
+):
+    """Append one real-scene ABI-v8 subgroup and CUDA-event timing record."""
+
+    global _V8_SUBGROUP_DIAGNOSTIC_SEQUENCE
+    timing = timing_cycles.detach().cpu()
+    if timing.ndim != 2 or timing.shape[1] != 4:
+        raise RuntimeError("ABI-v8 diagnostic timing must have shape [N,4]")
+    physical_blocks = int(timing.shape[0])
+    has_raster = int(prepared_raster.radii.numel()) != 0
+    raster_blocks = 0
+    if has_raster:
+        raster_blocks = (
+            (int(raster_settings.image_width) + 15) // 16
+        ) * ((int(raster_settings.image_height) + 15) // 16)
+    deform_blocks = (int(deform_rows) + 15) // 16
+    raster_active = min(raster_blocks, physical_blocks)
+    deform_active = min(deform_blocks, physical_blocks)
+    both_active = min(raster_active, deform_active)
+
+    raster_duration = [
+        int(timing[index, 1]) - int(timing[index, 0])
+        for index in range(raster_active)
+        if int(timing[index, 0]) != 0
+    ]
+    deform_duration = [
+        int(timing[index, 3]) - int(timing[index, 2])
+        for index in range(deform_active)
+        if int(timing[index, 2]) != 0
+    ]
+    overlap_duration = []
+    overlap_fraction_of_shorter = []
+    for index in range(both_active):
+        raster_start = int(timing[index, 0])
+        raster_end = int(timing[index, 1])
+        deform_start = int(timing[index, 2])
+        deform_end = int(timing[index, 3])
+        if not raster_start or not deform_start:
+            continue
+        overlap = max(
+            0,
+            min(raster_end, deform_end) - max(raster_start, deform_start),
+        )
+        shorter = min(
+            raster_end - raster_start,
+            deform_end - deform_start,
+        )
+        overlap_duration.append(overlap)
+        if shorter > 0:
+            overlap_fraction_of_shorter.append(overlap / shorter)
+
+    record = {
+        "kind": "mixed_v8_subgroup_clock64",
+        "sequence": _V8_SUBGROUP_DIAGNOSTIC_SEQUENCE,
+        "mode": mode,
+        "kernel_elapsed_ms": float(kernel_elapsed_ms),
+        "physical_blocks": physical_blocks,
+        "raster_logical_blocks": raster_blocks,
+        "deform_logical_blocks": deform_blocks,
+        "raster_duration_cycles": _v8_subgroup_duration_stats(
+            raster_duration
+        ),
+        "deform_duration_cycles": _v8_subgroup_duration_stats(
+            deform_duration
+        ),
+        "overlap_window_cycles": _v8_subgroup_duration_stats(
+            overlap_duration
+        ),
+        "overlap_fraction_of_shorter": {
+            "count": len(overlap_fraction_of_shorter),
+            "mean": (
+                sum(overlap_fraction_of_shorter)
+                / len(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+            "min": (
+                min(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+            "max": (
+                max(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+        },
+    }
+    _V8_SUBGROUP_DIAGNOSTIC_SEQUENCE += 1
+    target = Path(path).expanduser().resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, sort_keys=True) + "\n")
+
+
+def _record_balanced_subgroup_diagnostic(
+    path,
+    abi_name,
+    mode,
+    timing_cycles,
+    prepared_raster,
+    deform_rows,
+    raster_settings,
+    kernel_elapsed_ms,
+):
+    """Append one ABI-v10/v11 same-envelope balanced subgroup record."""
+
+    global _BALANCED_SUBGROUP_DIAGNOSTIC_SEQUENCE
+    timing = timing_cycles.detach().cpu()
+    if timing.ndim != 2 or timing.shape[1] != 4:
+        raise RuntimeError(
+            f"{abi_name} diagnostic timing must have shape [N,4]"
+        )
+    physical_blocks = int(timing.shape[0])
+    has_raster = int(prepared_raster.radii.numel()) != 0
+    raster_blocks = 0
+    if has_raster:
+        raster_blocks = (
+            (int(raster_settings.image_width) + 15) // 16
+        ) * ((int(raster_settings.image_height) + 15) // 16)
+    deform_blocks = (int(deform_rows) + 15) // 16
+    raster_active = physical_blocks if raster_blocks else 0
+    deform_active = physical_blocks if deform_blocks else 0
+    both_active = min(raster_active, deform_active)
+
+    raster_duration = [
+        int(timing[index, 1]) - int(timing[index, 0])
+        for index in range(raster_active)
+        if int(timing[index, 0]) != 0
+    ]
+    deform_duration = [
+        int(timing[index, 3]) - int(timing[index, 2])
+        for index in range(deform_active)
+        if int(timing[index, 2]) != 0
+    ]
+    deform_one_tile_duration = []
+    deform_two_tile_duration = []
+    extra_tiles = max(0, deform_blocks - raster_blocks)
+    for index in range(deform_active):
+        deform_start = int(timing[index, 2])
+        if deform_start == 0:
+            continue
+        duration = int(timing[index, 3]) - deform_start
+        has_second_tile = (
+            raster_blocks > 0
+            and extra_tiles > 0
+            and ((index + 1) * extra_tiles // raster_blocks)
+            != (index * extra_tiles // raster_blocks)
+        )
+        if has_second_tile:
+            deform_two_tile_duration.append(duration)
+        else:
+            deform_one_tile_duration.append(duration)
+    overlap_duration = []
+    overlap_fraction_of_shorter = []
+    for index in range(both_active):
+        raster_start = int(timing[index, 0])
+        raster_end = int(timing[index, 1])
+        deform_start = int(timing[index, 2])
+        deform_end = int(timing[index, 3])
+        if not raster_start or not deform_start:
+            continue
+        overlap = max(
+            0,
+            min(raster_end, deform_end) - max(raster_start, deform_start),
+        )
+        shorter = min(
+            raster_end - raster_start,
+            deform_end - deform_start,
+        )
+        overlap_duration.append(overlap)
+        if shorter > 0:
+            overlap_fraction_of_shorter.append(overlap / shorter)
+
+    record = {
+        "kind": "mixed_balanced_subgroup_clock64",
+        "abi": abi_name,
+        "sequence": _BALANCED_SUBGROUP_DIAGNOSTIC_SEQUENCE,
+        "mode": mode,
+        "kernel_elapsed_ms": float(kernel_elapsed_ms),
+        "physical_blocks": physical_blocks,
+        "raster_logical_blocks": raster_blocks,
+        "deform_logical_blocks": deform_blocks,
+        "deform_second_tile_ctas": max(0, deform_blocks - raster_blocks),
+        "raster_duration_cycles": _v8_subgroup_duration_stats(
+            raster_duration
+        ),
+        "deform_duration_cycles": _v8_subgroup_duration_stats(
+            deform_duration
+        ),
+        "deform_one_tile_duration_cycles": _v8_subgroup_duration_stats(
+            deform_one_tile_duration
+        ),
+        "deform_two_tile_duration_cycles": _v8_subgroup_duration_stats(
+            deform_two_tile_duration
+        ),
+        "overlap_window_cycles": _v8_subgroup_duration_stats(
+            overlap_duration
+        ),
+        "overlap_fraction_of_shorter": {
+            "count": len(overlap_fraction_of_shorter),
+            "mean": (
+                sum(overlap_fraction_of_shorter)
+                / len(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+            "min": (
+                min(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+            "max": (
+                max(overlap_fraction_of_shorter)
+                if overlap_fraction_of_shorter
+                else None
+            ),
+        },
+    }
+    _BALANCED_SUBGROUP_DIAGNOSTIC_SEQUENCE += 1
+    target = Path(path).expanduser().resolve()
+    target.parent.mkdir(parents=True, exist_ok=True)
+    with target.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, sort_keys=True) + "\n")
+
+
+def _split_raster_v12_enabled():
+    return (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V12") == "1"
+    )
+
+
+def _split_raster_v12_tile(context, prepared_raster, deform_rows):
+    """Resolve the ABI-v12 cut without embedding one resolution in CUDA."""
+    if int(prepared_raster.radii.numel()) == 0:
+        return 0
+    settings = context.rasterizer.raster_settings
+    raster_blocks = (
+        (int(settings.image_width) + 15) // 16
+    ) * ((int(settings.image_height) + 15) // 16)
+    # With no tuning override, leave one mixed Raster CTA for each pair of
+    # logical Deform tiles.  Any Raster CTAs outside that 1:2 tail execute in
+    # the prepass.  Keep the explicit knobs for controlled experiments.
+    explicit_tile = os.environ.get("TACKER_MIXED_V12_SPLIT_TILE")
+    explicit_fraction = os.environ.get("TACKER_MIXED_V12_SPLIT_FRACTION")
+    if explicit_tile is not None:
+        try:
+            split_tile = int(explicit_tile)
+        except ValueError as error:
+            raise RuntimeError(
+                "TACKER_MIXED_V12_SPLIT_TILE must be an integer"
+            ) from error
+    elif explicit_fraction is not None:
+        try:
+            fraction = float(explicit_fraction)
+        except ValueError as error:
+            raise RuntimeError(
+                "TACKER_MIXED_V12_SPLIT_FRACTION must be a float"
+            ) from error
+        if not math.isfinite(fraction) or not 0.0 < fraction < 1.0:
+            raise RuntimeError(
+                "TACKER_MIXED_V12_SPLIT_FRACTION must be finite and in (0, 1)"
+            )
+        split_tile = int(round(raster_blocks * fraction))
+    else:
+        deform_rows = int(deform_rows)
+        if deform_rows <= 0:
+            raise RuntimeError(
+                "ABI-v12 1:2 split requires a positive Deform row count"
+            )
+        deform_tiles = (deform_rows + 15) // 16
+        mixed_raster_blocks = (deform_tiles + 1) // 2
+        split_tile = raster_blocks - mixed_raster_blocks
+    if not 0 < split_tile < raster_blocks:
+        raise RuntimeError(
+            "ABI-v12 split tile must be strictly inside the Raster grid; "
+            "got {} for {} tiles".format(split_tile, raster_blocks)
+        )
+    return split_tile
+
+
+def _forward_prepared_raster_fast_prefix(
+    context, prepared_raster, split_tile
+):
+    method = getattr(
+        context.rasterizer, "render_prepared_raster_fast_range", None
+    )
+    if not callable(method):
+        raise RuntimeError(
+            "experimental split Raster ABI-v12 prefix method is unavailable"
+        )
+    method(prepared_raster, 0, split_tile)
+
+
+def _forward_prepared_with_deform_mlp(
+    context, prepared_raster, task, persistent_blocks, raster_start=None
+):
+    """Launch the existing ABI-v5 leaf after both prefixes are ready."""
+
+    tensor_tail_v12 = _split_raster_v12_enabled()
+    tensor_tail_v11 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V11") == "1"
+    )
+    tensor_tail_v10 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V10") == "1"
+    )
+    tensor_tail_v9 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V9") == "1"
+    )
+    tensor_tail_v8 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V8") == "1"
+    )
+    tensor_tail_v7 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V7") == "1"
+    )
+    tensor_tail_v6 = (
+        os.environ.get("TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V6") == "1"
+    )
+    if (
+        tensor_tail_v12
+        or tensor_tail_v11
+        or tensor_tail_v10
+        or tensor_tail_v9
+        or tensor_tail_v8
+        or tensor_tail_v7
+        or tensor_tail_v6
+    ):
+        if tensor_tail_v12:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "split_raster_overlap"
+            )
+            abi_name = "ABI-v12"
+        elif tensor_tail_v11:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "raster_fast_overlap"
+            )
+            abi_name = "ABI-v11"
+        elif tensor_tail_v10:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "raster_optimized_overlap"
+            )
+            abi_name = "ABI-v10"
+        elif tensor_tail_v9:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "balanced_overlap"
+            )
+            abi_name = "ABI-v9"
+        elif tensor_tail_v8:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "four_cta_overlap"
+            )
+            abi_name = "ABI-v8"
+        elif tensor_tail_v7:
+            method_name = (
+                "render_prepared_with_deform_mlp_tensor_tail_"
+                "low_register_overlap"
+            )
+            abi_name = "ABI-v7"
+        else:
+            method_name = "render_prepared_with_deform_mlp_tensor_tail_overlap"
+            abi_name = "ABI-v6"
+        method = getattr(
+            context.rasterizer,
+            method_name,
+            None,
+        )
+        if not callable(method):
+            raise RuntimeError(
+                f"experimental mixed Tensor-tail {abi_name} method is unavailable"
+            )
+        from tacker_4dgs_head import pack_deform_tail_weights_v3
+
+        packed_tail_weights = pack_deform_tail_weights_v3(
+            task.full_tail_weights
+        )
+        arguments = dict(
+            prepared=prepared_raster,
+            deform_features=task.deform_features,
+            backbone_weight=task.backbone_weight,
+            backbone_bias=task.backbone_bias,
+            first_weights=task.full_first_weights,
+            first_biases=task.full_first_biases,
+            packed_tail_weights=packed_tail_weights,
+            tail_biases=task.full_tail_biases,
+            persistent_blocks=persistent_blocks,
+        )
+        if tensor_tail_v12:
+            if raster_start is None:
+                raise RuntimeError(
+                    "ABI-v12 mixed remainder requires a Raster split tile"
+                )
+            arguments["raster_start"] = raster_start
+        diagnostic_mode = os.environ.get(
+            "TACKER_PROFILE_MIXED_V8_SUBGROUP_MODE"
+        )
+        diagnostic_path = os.environ.get(
+            "TACKER_PROFILE_MIXED_V8_SUBGROUP_JSONL"
+        )
+        if diagnostic_mode is not None or diagnostic_path is not None:
+            if (
+                not tensor_tail_v8
+                or tensor_tail_v9
+                or tensor_tail_v10
+                or tensor_tail_v11
+            ):
+                raise RuntimeError(
+                    "ABI-v8 subgroup diagnostics require "
+                    "TACKER_EXPERIMENTAL_MIXED_TENSOR_TAIL_V8=1"
+                )
+            if diagnostic_mode not in (
+                "both",
+                "raster_only",
+                "deform_only",
+            ):
+                raise RuntimeError(
+                    "TACKER_PROFILE_MIXED_V8_SUBGROUP_MODE must be both, "
+                    "raster_only, or deform_only"
+                )
+            if not diagnostic_path:
+                raise RuntimeError(
+                    "TACKER_PROFILE_MIXED_V8_SUBGROUP_JSONL is required "
+                    "when subgroup diagnostics are enabled"
+                )
+            diagnostic_method = getattr(
+                context.rasterizer,
+                "profile_prepared_deform_mlp_tensor_tail_four_cta_overlap",
+                None,
+            )
+            if not callable(diagnostic_method):
+                raise RuntimeError(
+                    "ABI-v8 subgroup diagnostic method is unavailable"
+                )
+            diagnostic_start = torch.cuda.Event(enable_timing=True)
+            diagnostic_end = torch.cuda.Event(enable_timing=True)
+            diagnostic_start.record()
+            diagnostic_result = diagnostic_method(
+                **arguments,
+                mode=diagnostic_mode,
+            )
+            diagnostic_end.record()
+            diagnostic_end.synchronize()
+            diagnostic_elapsed_ms = diagnostic_start.elapsed_time(
+                diagnostic_end
+            )
+            _record_v8_subgroup_diagnostic(
+                diagnostic_path,
+                diagnostic_mode,
+                diagnostic_result[-1],
+                prepared_raster,
+                task.deform_features.shape[0],
+                context.rasterizer.raster_settings,
+                diagnostic_elapsed_ms,
+            )
+        balanced_diagnostic_mode = os.environ.get(
+            "TACKER_PROFILE_MIXED_BALANCED_SUBGROUP_MODE"
+        )
+        balanced_diagnostic_path = os.environ.get(
+            "TACKER_PROFILE_MIXED_BALANCED_SUBGROUP_JSONL"
+        )
+        if (
+            balanced_diagnostic_mode is not None
+            or balanced_diagnostic_path is not None
+        ):
+            if not (tensor_tail_v10 or tensor_tail_v11):
+                raise RuntimeError(
+                    "balanced subgroup diagnostics require ABI-v10 or ABI-v11"
+                )
+            if balanced_diagnostic_mode not in (
+                "both",
+                "raster_only",
+                "deform_only",
+            ):
+                raise RuntimeError(
+                    "TACKER_PROFILE_MIXED_BALANCED_SUBGROUP_MODE must be "
+                    "both, raster_only, or deform_only"
+                )
+            if not balanced_diagnostic_path:
+                raise RuntimeError(
+                    "TACKER_PROFILE_MIXED_BALANCED_SUBGROUP_JSONL is required "
+                    "when balanced subgroup diagnostics are enabled"
+                )
+            balanced_diagnostic_method = getattr(
+                context.rasterizer,
+                "profile_prepared_deform_mlp_tensor_tail_raster_overlap",
+                None,
+            )
+            if not callable(balanced_diagnostic_method):
+                raise RuntimeError(
+                    "ABI-v10/v11 subgroup diagnostic method is unavailable"
+                )
+            balanced_abi_version = 11 if tensor_tail_v11 else 10
+            balanced_abi_name = f"ABI-v{balanced_abi_version}"
+            diagnostic_start = torch.cuda.Event(enable_timing=True)
+            diagnostic_end = torch.cuda.Event(enable_timing=True)
+            diagnostic_start.record()
+            diagnostic_result = balanced_diagnostic_method(
+                **arguments,
+                abi_version=balanced_abi_version,
+                mode=balanced_diagnostic_mode,
+            )
+            diagnostic_end.record()
+            diagnostic_end.synchronize()
+            diagnostic_elapsed_ms = diagnostic_start.elapsed_time(
+                diagnostic_end
+            )
+            _record_balanced_subgroup_diagnostic(
+                balanced_diagnostic_path,
+                balanced_abi_name,
+                balanced_diagnostic_mode,
+                diagnostic_result[-1],
+                prepared_raster,
+                task.deform_features.shape[0],
+                context.rasterizer.raster_settings,
+                diagnostic_elapsed_ms,
+            )
+        # Always execute the qualified production path after a diagnostic solo
+        # launch, so disabled subgroup outputs can never escape into rendering.
+        leaf_timing_path = os.environ.get("TACKER_PROFILE_MIXED_LEAF_JSONL")
+        if leaf_timing_path:
+            leaf_start = torch.cuda.Event(enable_timing=True)
+            leaf_end = torch.cuda.Event(enable_timing=True)
+            leaf_start.record()
+            result = method(**arguments)
+            leaf_end.record()
+            leaf_end.synchronize()
+            target = Path(leaf_timing_path).expanduser().resolve()
+            target.parent.mkdir(parents=True, exist_ok=True)
+            record = {
+                "kind": "mixed_production_leaf_cuda_event",
+                "abi": abi_name,
+                "kernel_elapsed_ms": leaf_start.elapsed_time(leaf_end),
+                "raster_logical_blocks": (
+                    (int(context.rasterizer.raster_settings.image_width) + 15)
+                    // 16
+                )
+                * (
+                    (int(context.rasterizer.raster_settings.image_height) + 15)
+                    // 16
+                ),
+                "deform_logical_blocks": (
+                    int(task.deform_features.shape[0]) + 15
+                )
+                // 16,
+            }
+            with target.open("a", encoding="utf-8") as handle:
+                handle.write(json.dumps(record, sort_keys=True) + "\n")
+            return result
+        return method(**arguments)
+
+    method = getattr(
+        context.rasterizer, "render_prepared_with_deform_mlp_overlap", None
+    )
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.render_prepared_with_deform_mlp_overlap "
+            "is unavailable"
+        )
+    return method(
+        prepared=prepared_raster,
+        deform_features=task.deform_features,
+        backbone_weight=task.backbone_weight,
+        backbone_bias=task.backbone_bias,
+        first_weights=task.full_first_weights,
+        first_biases=task.full_first_biases,
+        tail_weights=task.full_tail_weights,
+        tail_biases=task.full_tail_biases,
+        persistent_blocks=persistent_blocks,
+    )
+
+
+def _forward_prepared_raster(context, prepared_raster):
+    """Drain one prepared Raster state without a deformation task."""
+
+    method = getattr(context.rasterizer, "render_prepared_overlap", None)
+    if not callable(method):
+        raise RuntimeError(
+            "GaussianRasterizer.render_prepared_overlap is unavailable"
+        )
+    return method(prepared_raster)
+
+
+def _result_from_prepared_raster(context, raster_outputs):
+    image, radii, depth = raster_outputs
+    return RenderResult(
+        render=image,
+        viewspace_points=context.screenspace_points,
+        visibility_filter=radii > 0,
+        radii=radii,
+        depth=depth,
+    )
+
+
 def _result_from_mixed(context, mixed_outputs):
     image, radii, depth, head_output = mixed_outputs
     result = RenderResult(
@@ -4125,6 +5254,90 @@ class FullMlpPartition(FusionPartition):
         return finish_full_mlp_task(task, pc, head_outputs)
 
 
+class FullMlpOverlapPartition(FullMlpPartition):
+    """ABI-v5 with Raster prepare overlapped against the HexPlane prefix."""
+
+    overlaps_raster_prepare = True
+
+    def prepare_raster(self, context, state, handoff=None):
+        return _prepare_raster_for_deform_mlp_overlap(context, state, handoff)
+
+    def split_raster_tile(self, context, prepared_raster, task):
+        if not _split_raster_v12_enabled():
+            return None
+        return _split_raster_v12_tile(
+            context,
+            prepared_raster,
+            task.deform_features.shape[0],
+        )
+
+    def launch_prepared_raster_prefix(
+        self, context, prepared_raster, split_tile
+    ):
+        return _forward_prepared_raster_fast_prefix(
+            context, prepared_raster, split_tile
+        )
+
+    def launch_prepared_mixed(
+        self, context, prepared_raster, task, raster_start=None
+    ):
+        return _forward_prepared_with_deform_mlp(
+            context,
+            prepared_raster,
+            task,
+            self.variant.persistent_blocks,
+            raster_start=raster_start,
+        )
+
+    def launch_prepared_solo(self, context, prepared_raster):
+        return _forward_prepared_raster(context, prepared_raster)
+
+    def result_from_prepared_solo(self, context, raster_outputs):
+        return _result_from_prepared_raster(context, raster_outputs)
+
+
+class FullMlpOverlapGraphPartition(FullMlpOverlapPartition):
+    """Split Raster prefix plus slot-owned CUDA-Graph HexPlane submission."""
+
+    uses_hexplane_cuda_graph = True
+
+    def create_prefix_graph(self, context, pc, deform_stream):
+        network = pc._deformation.deformation_net
+        mode, tasks_per_cta = _raster_hexplane_experiment()
+        if mode is not None:
+            from .raster_hexplane_graph import RasterHexPlaneGraphSlot
+            return RasterHexPlaneGraphSlot(
+                network, context.means3D[:, :3], context.timestamp[:, :1],
+                deform_stream, mode=mode, tasks_per_cta=tasks_per_cta,
+                mixed_planes=_raster_hexplane_mixed_planes(),
+            )
+        return _HexPlaneCudaGraphSlot(
+            network,
+            context.means3D[:, :3],
+            context.timestamp[:, :1],
+            deform_stream,
+        )
+
+    def prepare_graph(
+        self,
+        context,
+        pc,
+        deform_stream,
+        cached,
+        prefix_graph,
+        prefix_ready,
+    ):
+        return prepare_full_mlp_graph_task(
+            context,
+            pc,
+            deform_stream,
+            self.variant,
+            cached,
+            prefix_graph,
+            prefix_ready=prefix_ready,
+        )
+
+
 PARTITION_KIND_REGISTRY[FIRST_LINEAR_PARTITION_KIND][
     "partition_class"
 ] = FusionPartition
@@ -4137,6 +5350,12 @@ PARTITION_KIND_REGISTRY[WHOLE_HEAD_PARTITION_KIND][
 PARTITION_KIND_REGISTRY[FULL_MLP_PARTITION_KIND][
     "partition_class"
 ] = FullMlpPartition
+PARTITION_KIND_REGISTRY[FULL_MLP_OVERLAP_PARTITION_KIND][
+    "partition_class"
+] = FullMlpOverlapPartition
+PARTITION_KIND_REGISTRY[FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND][
+    "partition_class"
+] = FullMlpOverlapGraphPartition
 
 
 def resolve_fusion_partition(candidate):
@@ -4165,7 +5384,46 @@ class _TackerSlot:
     state: object = None
     task: object = None
     mixed_outputs: object = None
+    prepared_raster: object = None
+    hexplane_graph: object = None
+    split_profile_prefix_start: object = None
+    split_profile_prefix_end: object = None
+    split_profile_raster_prepare_start: object = None
+    split_profile_raster_prepare_end: object = None
     has_raster_done: bool = False
+    green_prefix_done: object = None
+    green_prepare_done: object = None
+    green_duplicate_done: object = None
+
+
+def _raster_hexplane_experiment():
+    mode = os.environ.get("TACKER_EXPERIMENTAL_RASTER_HEXPLANE", "0")
+    if mode in ("", "0"):
+        return None, 17
+    if mode not in ("fused", "separate", "batched", "block_fused"):
+        raise ValueError("TACKER_EXPERIMENTAL_RASTER_HEXPLANE must be 0, fused, separate, batched, or block_fused")
+    block_mode = mode in ("batched", "block_fused")
+    raw = os.environ.get("TACKER_RASTER_HEXPLANE_TASKS_PER_CTA", "1" if block_mode else "17")
+    try:
+        tasks_per_cta = int(raw)
+    except ValueError as error:
+        raise ValueError("TACKER_RASTER_HEXPLANE_TASKS_PER_CTA must be an integer") from error
+    if not 1 <= tasks_per_cta <= 2**31 - 1:
+        raise ValueError("TACKER_RASTER_HEXPLANE_TASKS_PER_CTA must be in [1, INT_MAX]")
+    if block_mode and (tasks_per_cta != 1 or _raster_hexplane_mixed_planes() != 12):
+        raise ValueError("B/C require TASKS_PER_CTA=1 and MIXED_PLANES=12")
+    return mode, tasks_per_cta
+
+
+def _raster_hexplane_mixed_planes():
+    raw = os.environ.get("TACKER_RASTER_HEXPLANE_MIXED_PLANES", "12")
+    try:
+        count = int(raw)
+    except ValueError as error:
+        raise ValueError("TACKER_RASTER_HEXPLANE_MIXED_PLANES must be an integer") from error
+    if not 1 <= count <= 12:
+        raise ValueError("TACKER_RASTER_HEXPLANE_MIXED_PLANES must be in [1,12]")
+    return count
 
 
 class TackerRenderer:
@@ -4191,6 +5449,8 @@ class TackerRenderer:
         iteration=None,
         qualification_mode=False,
     ):
+        if getattr(pipe, "raster_backend", "diff_gaussian") != "diff_gaussian":
+            raise ValueError("Tacker mixed kernels require raster_backend=diff_gaussian")
         self.pc = pc
         self.pipe = pipe
         self.bg_color = bg_color
@@ -4201,6 +5461,18 @@ class TackerRenderer:
         self.iteration = iteration
         self.qualification_mode = qualification_mode
         self.device = getattr(pc.get_xyz, "device", None)
+
+        self._green_config = None
+        self._green_contexts = None
+        self._green_metadata = {"enabled": False}
+        self._green_prepare_handoff = False
+        if os.environ.get("TACKER_EXPERIMENTAL_GREEN_PREPARE_HANDOFF", "0") != "0":
+            from gaussian_renderer.green_contexts import handoff_enabled
+            self._green_prepare_handoff = handoff_enabled()
+        self._closed = False
+        if os.environ.get("TACKER_EXPERIMENTAL_GREEN_CONTEXTS", "0") != "0":
+            from gaussian_renderer.green_contexts import experiment_config
+            self._green_config = experiment_config()
 
         self._profile_error = None
         self.profile = None
@@ -4301,6 +5573,8 @@ class TackerRenderer:
 
         self.raster_stream = None
         self.deform_stream = None
+        self.raster_prefix_stream = None
+        self.deform_prefix_stream = None
         self.slots = None
         self._active = False
         self._last_fallback_reason = None
@@ -4308,6 +5582,7 @@ class TackerRenderer:
         self._last_qualification_mode = False
         self._last_caller_stream = None
         self._last_execution_counts = None
+        self._split_profile_anchor = None
         self._fallback_renderer = TwoStreamRenderer(
             pc,
             pipe,
@@ -4358,6 +5633,18 @@ class TackerRenderer:
 
         return deepcopy(self._last_execution_counts)
 
+    @property
+    def green_contexts_metadata(self):
+        return deepcopy(self._green_metadata)
+
+    def _private_streams(self):
+        seen = set()
+        for stream in (self.raster_stream, self.deform_stream,
+                       self.raster_prefix_stream, self.deform_prefix_stream):
+            if stream is not None and id(stream) not in seen:
+                seen.add(id(stream))
+                yield stream
+
     def _assert_execution_counts(self):
         counts = self._last_execution_counts
         if counts is None or not self._last_used_tacker:
@@ -4368,6 +5655,9 @@ class TackerRenderer:
             "full_deformation": 1,
             "prefix": mixed_count,
             "mixed_launches": mixed_count,
+            "raster_prepasses": (
+                mixed_count if _split_raster_v12_enabled() else 0
+            ),
             "suffix": mixed_count,
             "solo_raster": 1,
             "outputs": frame_count,
@@ -4379,6 +5669,18 @@ class TackerRenderer:
                     "Tacker sequence execution count {} changed: {} != {}"
                     .format(name, counts.get(name), value)
                 )
+        if "raster_hexplane_fused_launches" in counts:
+            mode, _ = _raster_hexplane_experiment()
+            expected_fused = mixed_count if mode in ("fused", "block_fused") else 0
+            if counts["raster_hexplane_fused_launches"] != expected_fused:
+                raise RuntimeError("Raster/HexPlane mixed prefix execution count changed")
+            if counts["raster_hexplane_sampling_graph_replays"] != mixed_count - expected_fused:
+                raise RuntimeError("Raster/HexPlane standalone sampling execution count changed")
+            expected_early = mixed_count if _raster_hexplane_mixed_planes() < 12 else 0
+            if counts.get("raster_hexplane_early_sampling_graph_replays", 0) != expected_early:
+                raise RuntimeError("Raster/HexPlane early sampling execution count changed")
+        if getattr(self, "_green_prepare_handoff", False) and counts.get("raster_prepare_handoffs", 0) != mixed_count:
+            raise RuntimeError("Raster prepare handoff execution count changed")
 
     @property
     def fallback_backend_reason(self):
@@ -4401,22 +5703,73 @@ class TackerRenderer:
         return "two_stream"
 
     def _ensure_cuda_resources(self):
+        if self._closed:
+            raise RuntimeError("TackerRenderer has been closed")
         if self.raster_stream is not None:
             return
+        mode, _ = _raster_hexplane_experiment()
+        if self._green_config is not None:
+            if (not self.qualification_mode
+                    or not isinstance(self.partition, FullMlpOverlapGraphPartition)
+                    or not _split_raster_v12_enabled()):
+                raise RuntimeError("Green Contexts experiment requires qualification mode, full_mlp_overlap_graph, and ABI-v12")
+            if mode is not None or _mixed_pipeline_profile_schedule() != "both":
+                raise RuntimeError("Green Contexts experiment requires original sampling and the both schedule")
+        if mode is not None:
+            if (not self.qualification_mode
+                    or not isinstance(self.partition, FullMlpOverlapGraphPartition)
+                    or not _split_raster_v12_enabled()):
+                raise RuntimeError(
+                    "Raster/HexPlane experiment requires qualification mode, "
+                    "full_mlp_overlap_graph, and ABI-v12"
+                )
+            if _mixed_pipeline_profile_schedule() != "both":
+                raise RuntimeError("Raster/HexPlane experiment does not support isolated-side profiling")
+        split_profile_enabled = bool(_mixed_pipeline_profile_path())
         self.raster_stream = torch.cuda.Stream(device=self.device)
         self.deform_stream = torch.cuda.Stream(device=self.device)
+        self.raster_prefix_stream = self.raster_stream
+        self.deform_prefix_stream = self.deform_stream
+        if self._green_config is not None:
+            from gaussian_renderer.green_contexts import get_green_context_pair
+            try:
+                self._green_contexts = get_green_context_pair(self.device, **self._green_config)
+            except Exception:
+                self.raster_stream = self.deform_stream = None
+                self.raster_prefix_stream = self.deform_prefix_stream = None
+                raise
+            self.raster_prefix_stream = self._green_contexts.raster_stream
+            self.deform_prefix_stream = self._green_contexts.deform_stream
+            self._green_metadata = deepcopy(self._green_contexts.metadata)
+            self._green_metadata.update(prepare_handoff_enabled=self._green_prepare_handoff,
+                raster_prepare_suffix_sms=16 if self._green_prepare_handoff else 16 - self._green_config["deform_sms"],
+                prepare_handoff_boundary="after_duplicateWithKeys" if self._green_prepare_handoff else None)
         self.slots = [
             _TackerSlot(
-                ready=torch.cuda.Event(blocking=False),
-                prefix_ready=torch.cuda.Event(blocking=False),
+                ready=torch.cuda.Event(
+                    blocking=False,
+                    **({"enable_timing": True} if split_profile_enabled else {})
+                ),
+                prefix_ready=torch.cuda.Event(
+                    blocking=False,
+                    **({"enable_timing": True} if split_profile_enabled else {})
+                ),
                 mixed_done=torch.cuda.Event(blocking=False),
                 raster_done=torch.cuda.Event(blocking=False),
             )
             for _ in range(2)
         ]
+        if self._green_contexts is not None:
+            for slot in self.slots:
+                slot.green_prefix_done = torch.cuda.Event(blocking=False)
+                slot.green_prepare_done = torch.cuda.Event(blocking=False)
+                if self._green_prepare_handoff:
+                    slot.green_duplicate_done = torch.cuda.Event(blocking=False)
+                    # Materialize the lazy CUDA event once, outside timed work.
+                    slot.green_duplicate_done.record(self.raster_prefix_stream)
         if self._cache_ready is not None:
-            self.raster_stream.wait_event(self._cache_ready)
-            self.deform_stream.wait_event(self._cache_ready)
+            for stream in self._private_streams():
+                stream.wait_event(self._cache_ready)
 
     def prepare(self):
         """Finish one-time parameter/resource setup before timed rendering."""
@@ -4466,9 +5819,22 @@ class TackerRenderer:
             cam_type=self.cam_type,
         )
 
-    def _wait_slot_reuse(self, slot):
+    def _wait_slot_reuse(self, slot, stream=None):
         if slot.has_raster_done:
-            self.deform_stream.wait_event(slot.raster_done)
+            (stream or self.deform_stream).wait_event(slot.raster_done)
+
+    def _isolate_profile_deform_side(self, slot):
+        if _mixed_pipeline_profile_schedule() != "deform_then_raster":
+            return
+        event = slot.split_profile_prefix_end
+        if event is None:
+            raise RuntimeError(
+                "deform_then_raster profiling requires a timed Deform event"
+            )
+        # This is an opt-in measurement boundary only.  It preserves the
+        # Graph replay and its output, but prevents Raster prepare/prepass from
+        # contending with the measured Deform prepare interval.
+        event.synchronize()
 
     def _enqueue_full_deformation(self, view, slot):
         with torch.cuda.stream(self.deform_stream):
@@ -4477,29 +5843,81 @@ class TackerRenderer:
             slot.state = deform_for_render(slot.context, self.pc, stage=self.stage)
             slot.task = None
             slot.mixed_outputs = None
+            slot.prepared_raster = None
             _record_context_stream(slot.context, self.deform_stream)
             slot.state.record_stream(self.deform_stream)
             slot.ready.record(self.deform_stream)
 
     def _enqueue_prefix(self, view, slot):
-        with torch.cuda.stream(self.deform_stream):
-            self._wait_slot_reuse(slot)
+        stream = self.deform_prefix_stream
+        with torch.cuda.stream(stream):
+            self._wait_slot_reuse(slot, stream)
+            if _mixed_pipeline_profile_path():
+                slot.split_profile_prefix_start = torch.cuda.Event(
+                    enable_timing=True
+                )
+                slot.split_profile_prefix_end = torch.cuda.Event(
+                    enable_timing=True
+                )
+                slot.split_profile_prefix_start.record(stream)
+            else:
+                slot.split_profile_prefix_start = None
+                slot.split_profile_prefix_end = None
             slot.context = self._prepare_context(view)
             slot.state = None
             slot.mixed_outputs = None
-            slot.task = self.partition.prepare(
-                slot.context,
-                self.pc,
-                self.deform_stream,
-                self.cached_head_parameters,
-                slot.prefix_ready,
-            )
-            _record_context_stream(slot.context, self.deform_stream)
-            slot.task.record_stream(self.deform_stream)
+            slot.prepared_raster = None
+            if bool(
+                getattr(
+                    self.partition,
+                    "uses_hexplane_cuda_graph",
+                    False,
+                )
+            ):
+                if slot.hexplane_graph is None:
+                    slot.hexplane_graph = self.partition.create_prefix_graph(
+                        slot.context,
+                        self.pc,
+                        stream,
+                    )
+                slot.task = self.partition.prepare_graph(
+                    slot.context,
+                    self.pc,
+                    stream,
+                    self.cached_head_parameters,
+                    slot.hexplane_graph,
+                    slot.prefix_ready,
+                )
+            else:
+                slot.task = self.partition.prepare(
+                    slot.context,
+                    self.pc,
+                    stream,
+                    self.cached_head_parameters,
+                    slot.prefix_ready,
+                )
+            _record_context_stream(slot.context, stream)
+            slot.task.record_stream(stream)
+            if (slot.split_profile_prefix_end is not None
+                    and not bool(getattr(slot.hexplane_graph, "deferred_sampling", False))):
+                slot.split_profile_prefix_end.record(stream)
+            if slot.green_prefix_done is not None:
+                # prefix_ready precedes mask work. The suffix changes stream,
+                # so it also needs this all-prefix-work completion edge.
+                slot.green_prefix_done.record(stream)
 
     def _enqueue_suffix(self, slot):
+        global _MIXED_PIPELINE_SUFFIX_DIAGNOSTIC_SEQUENCE
         with torch.cuda.stream(self.deform_stream):
             self.deform_stream.wait_event(slot.mixed_done)
+            if slot.green_prefix_done is not None:
+                self.deform_stream.wait_event(slot.green_prefix_done)
+                slot.task.record_stream(self.deform_stream)
+            profile_path = _mixed_pipeline_profile_path()
+            if profile_path:
+                suffix_start = torch.cuda.Event(enable_timing=True)
+                suffix_end = torch.cuda.Event(enable_timing=True)
+                suffix_start.record(self.deform_stream)
             _record_stream_tree(slot.mixed_outputs, self.deform_stream)
             slot.state = self.partition.finish(
                 slot.task,
@@ -4507,7 +5925,23 @@ class TackerRenderer:
                 slot.mixed_outputs,
             )
             slot.state.record_stream(self.deform_stream)
+            if profile_path:
+                suffix_end.record(self.deform_stream)
             slot.ready.record(self.deform_stream)
+            if profile_path:
+                suffix_end.synchronize()
+                target = Path(profile_path).expanduser().resolve()
+                target.parent.mkdir(parents=True, exist_ok=True)
+                record = {
+                    "kind": "mixed_pipeline_suffix_cuda_event",
+                    "sequence": _MIXED_PIPELINE_SUFFIX_DIAGNOSTIC_SEQUENCE,
+                    "deform_suffix_elapsed_ms": suffix_start.elapsed_time(
+                        suffix_end
+                    ),
+                }
+                _MIXED_PIPELINE_SUFFIX_DIAGNOSTIC_SEQUENCE += 1
+                with target.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(record, sort_keys=True) + "\n")
 
     def _enqueue_mixed(self, current_slot, next_slot):
         with torch.cuda.stream(self.raster_stream):
@@ -4541,6 +5975,315 @@ class TackerRenderer:
             current_slot.has_raster_done = True
         return result
 
+    def _enqueue_raster_prepare(self, slot, next_slot=None):
+        stream = self.raster_prefix_stream
+        handoff = getattr(self, "_green_prepare_handoff", False) and next_slot is not None
+        completion_stream = self.raster_stream if handoff else stream
+        with torch.cuda.stream(stream):
+            stream.wait_event(slot.ready)
+            if _mixed_pipeline_profile_path():
+                slot.split_profile_raster_prepare_start = torch.cuda.Event(
+                    enable_timing=True
+                )
+                slot.split_profile_raster_prepare_end = torch.cuda.Event(
+                    enable_timing=True
+                )
+                slot.split_profile_raster_prepare_start.record(
+                    stream
+                )
+            else:
+                slot.split_profile_raster_prepare_start = None
+                slot.split_profile_raster_prepare_end = None
+            slot.state.record_stream(stream)
+            _record_context_stream(slot.context, stream)
+            kwargs = {}
+            if handoff:
+                # The native call records duplicate_done after duplicateWithKeys,
+                # joins both producers, then submits sort/ranges on the ordinary stream.
+                kwargs["handoff"] = (int(self.raster_stream.cuda_stream),
+                    int(next_slot.green_prefix_done.cuda_event),
+                    int(slot.green_duplicate_done.cuda_event))
+                slot.state.record_stream(completion_stream)
+                _record_context_stream(slot.context, completion_stream)
+            slot.prepared_raster = self.partition.prepare_raster(slot.context, slot.state, **kwargs)
+            _record_stream_tree(slot.prepared_raster, stream)
+            if handoff:
+                _record_stream_tree(slot.prepared_raster, completion_stream)
+                self._last_execution_counts["raster_prepare_handoffs"] = self._last_execution_counts.get("raster_prepare_handoffs", 0) + 1
+            if slot.split_profile_raster_prepare_end is not None:
+                slot.split_profile_raster_prepare_end.record(completion_stream)
+            if slot.green_prepare_done is not None:
+                slot.green_prepare_done.record(completion_stream)
+
+    def _enqueue_prepared_mixed(self, current_slot, next_slot):
+        global _V12_SPLIT_DIAGNOSTIC_SEQUENCE
+        with torch.cuda.stream(self.raster_stream):
+            if self._green_contexts is not None:
+                # Prepare uses the 12-SM Green stream; prepass and mixed tail
+                # use the ordinary, full-device stream. Join only prepare,
+                # not Deform: its prefix may continue alongside prepass.
+                self.raster_stream.wait_event(current_slot.green_prepare_done)
+                current_slot.state.record_stream(self.raster_stream)
+                _record_context_stream(current_slot.context, self.raster_stream)
+            split_tile = self.partition.split_raster_tile(
+                current_slot.context,
+                current_slot.prepared_raster,
+                next_slot.task,
+            )
+            v12_split_profile_path = os.environ.get(
+                "TACKER_PROFILE_MIXED_V12_SPLIT_JSONL"
+            )
+            split_profile_path = _mixed_pipeline_profile_path()
+            if v12_split_profile_path and split_tile is None:
+                raise RuntimeError(
+                    "TACKER_PROFILE_MIXED_V12_SPLIT_JSONL requires ABI-v12"
+                )
+            if split_profile_path:
+                prepass_start = torch.cuda.Event(enable_timing=True)
+                prepass_end = torch.cuda.Event(enable_timing=True)
+                mixed_start = torch.cuda.Event(enable_timing=True)
+                mixed_end = torch.cuda.Event(enable_timing=True)
+                prepass_start.record(self.raster_stream)
+            if split_tile is not None:
+                _record_stream_tree(
+                    current_slot.prepared_raster, self.raster_stream
+                )
+                prefix_graph = next_slot.hexplane_graph
+                if bool(getattr(prefix_graph, "deferred_sampling", False)):
+                    paired_tiles = prefix_graph.complete_sampling(
+                        current_slot.context, current_slot.prepared_raster,
+                        split_tile, self.raster_stream, self.deform_stream,
+                        next_slot.prefix_ready, next_slot.split_profile_prefix_end,
+                    )
+                    if paired_tiles < split_tile:
+                        current_slot.context.rasterizer.render_prepared_raster_fast_range(
+                            current_slot.prepared_raster, paired_tiles, split_tile,
+                        )
+                    counts = self._last_execution_counts
+                    counts.setdefault("raster_hexplane_fused_launches", 0)
+                    counts.setdefault("raster_hexplane_sampling_graph_replays", 0)
+                    counts["raster_hexplane_fused_launches"] += int(prefix_graph.mode in ("fused", "block_fused"))
+                    counts["raster_hexplane_sampling_graph_replays"] += int(prefix_graph.mode in ("separate", "batched"))
+                    if getattr(prefix_graph, "early_plane_ids", ()):
+                        counts.setdefault("raster_hexplane_early_sampling_graph_replays", 0)
+                        counts["raster_hexplane_early_sampling_graph_replays"] += 1
+                else:
+                    self.partition.launch_prepared_raster_prefix(
+                        current_slot.context,
+                        current_slot.prepared_raster,
+                        split_tile,
+                    )
+                self._last_execution_counts["raster_prepasses"] += 1
+            if split_profile_path:
+                prepass_end.record(self.raster_stream)
+            self.raster_stream.wait_event(next_slot.prefix_ready)
+            if split_profile_path:
+                mixed_start.record(self.raster_stream)
+            _record_stream_tree(
+                current_slot.prepared_raster, self.raster_stream
+            )
+            next_slot.task.record_stream(self.raster_stream)
+
+            mixed = self.partition.launch_prepared_mixed(
+                current_slot.context,
+                current_slot.prepared_raster,
+                next_slot.task,
+                raster_start=split_tile,
+            )
+            if split_profile_path:
+                mixed_end.record(self.raster_stream)
+            result, head_outputs = self.partition.result_from_mixed(
+                current_slot.context, mixed
+            )
+            next_slot.mixed_outputs = head_outputs
+            next_slot.task.mixed_outputs = head_outputs
+            _record_stream_tree(head_outputs, self.raster_stream)
+            result.record_stream(self.raster_stream)
+
+            next_slot.mixed_done.record(self.raster_stream)
+            current_slot.raster_done.record(self.raster_stream)
+            current_slot.has_raster_done = True
+            if split_profile_path:
+                mixed_end.synchronize()
+                settings = current_slot.context.rasterizer.raster_settings
+                raster_blocks = (
+                    (int(settings.image_width) + 15) // 16
+                ) * ((int(settings.image_height) + 15) // 16)
+                anchor = self._split_profile_anchor
+                prefix_start = next_slot.split_profile_prefix_start
+                prefix_end = next_slot.split_profile_prefix_end
+                raster_prepare_start = (
+                    current_slot.split_profile_raster_prepare_start
+                )
+                raster_prepare_end = current_slot.split_profile_raster_prepare_end
+                if (
+                    anchor is None
+                    or prefix_start is None
+                    or prefix_end is None
+                    or raster_prepare_start is None
+                    or raster_prepare_end is None
+                ):
+                    raise RuntimeError(
+                        "ABI-v12 split profiler is missing cross-stream events"
+                    )
+                prefix_end.synchronize()
+                current_ready_ms = anchor.elapsed_time(current_slot.ready)
+                prefix_start_ms = anchor.elapsed_time(prefix_start)
+                prefix_ready_ms = anchor.elapsed_time(next_slot.prefix_ready)
+                prefix_end_ms = anchor.elapsed_time(prefix_end)
+                raster_prepare_start_ms = anchor.elapsed_time(
+                    raster_prepare_start
+                )
+                raster_prepare_end_ms = anchor.elapsed_time(raster_prepare_end)
+                prepass_start_ms = anchor.elapsed_time(prepass_start)
+                prepass_end_ms = anchor.elapsed_time(prepass_end)
+                overlap_start_ms = max(prefix_start_ms, prepass_start_ms)
+                overlap_end_ms = min(prefix_ready_ms, prepass_end_ms)
+                prefix_prepass_overlap_ms = max(
+                    0.0, overlap_end_ms - overlap_start_ms
+                )
+                prefix_dependency_ms = prefix_ready_ms - prefix_start_ms
+                deform_prepare_elapsed_ms = prefix_end_ms - prefix_start_ms
+                deform_post_ready_elapsed_ms = prefix_end_ms - prefix_ready_ms
+                raster_prepare_elapsed_ms = (
+                    raster_prepare_end_ms - raster_prepare_start_ms
+                )
+                prepare_overlap_start_ms = max(
+                    prefix_start_ms, raster_prepare_start_ms
+                )
+                prepare_overlap_end_ms = min(
+                    prefix_ready_ms, raster_prepare_end_ms
+                )
+                prefix_prepare_overlap_ms = max(
+                    0.0, prepare_overlap_end_ms - prepare_overlap_start_ms
+                )
+                full_prepare_overlap_start_ms = max(
+                    prefix_start_ms, raster_prepare_start_ms
+                )
+                full_prepare_overlap_end_ms = min(
+                    prefix_end_ms, raster_prepare_end_ms
+                )
+                raster_full_prepare_overlap_ms = max(
+                    0.0,
+                    full_prepare_overlap_end_ms
+                    - full_prepare_overlap_start_ms,
+                )
+                prepass_full_prepare_overlap_start_ms = max(
+                    prefix_start_ms, prepass_start_ms
+                )
+                prepass_full_prepare_overlap_end_ms = min(
+                    prefix_end_ms, prepass_end_ms
+                )
+                prepass_full_prepare_overlap_ms = max(
+                    0.0,
+                    prepass_full_prepare_overlap_end_ms
+                    - prepass_full_prepare_overlap_start_ms,
+                )
+                prepass_elapsed_ms = prepass_end_ms - prepass_start_ms
+                record = {
+                    "kind": "mixed_pipeline_leaf_cuda_event",
+                    "sequence": _V12_SPLIT_DIAGNOSTIC_SEQUENCE,
+                    "profile_schedule": _mixed_pipeline_profile_schedule(),
+                    "raster_logical_blocks": raster_blocks,
+                    "raster_split_tile": split_tile,
+                    "raster_prepass_executed": split_tile is not None,
+                    "raster_prefix_blocks": split_tile or 0,
+                    "raster_mixed_blocks": raster_blocks - (split_tile or 0),
+                    "deform_logical_blocks": (
+                        int(next_slot.task.deform_features.shape[0]) + 15
+                    )
+                    // 16,
+                    "deform_prefix_start_after_anchor_ms": prefix_start_ms,
+                    "deform_prefix_ready_after_anchor_ms": prefix_ready_ms,
+                    "deform_prefix_dependency_elapsed_ms": prefix_dependency_ms,
+                    "deform_prepare_end_after_anchor_ms": prefix_end_ms,
+                    "deform_prepare_elapsed_ms": deform_prepare_elapsed_ms,
+                    "deform_post_ready_elapsed_ms": deform_post_ready_elapsed_ms,
+                    "current_state_ready_after_anchor_ms": current_ready_ms,
+                    "raster_prepare_start_after_anchor_ms": (
+                        raster_prepare_start_ms
+                    ),
+                    "raster_prepare_end_after_anchor_ms": raster_prepare_end_ms,
+                    "raster_prepare_elapsed_ms": raster_prepare_elapsed_ms,
+                    "raster_prepare_start_after_current_ready_ms": (
+                        raster_prepare_start_ms - current_ready_ms
+                    ),
+                    "prepass_start_after_raster_prepare_end_ms": (
+                        prepass_start_ms - raster_prepare_end_ms
+                    ),
+                    "raster_prepare_deform_prefix_overlap_ms": (
+                        prefix_prepare_overlap_ms
+                    ),
+                    "raster_prepare_deform_prepare_overlap_ms": (
+                        raster_full_prepare_overlap_ms
+                    ),
+                    "raster_prepare_fraction_overlapped_by_deform_prefix": (
+                        prefix_prepare_overlap_ms / raster_prepare_elapsed_ms
+                        if raster_prepare_elapsed_ms > 0.0
+                        else 0.0
+                    ),
+                    "deform_prefix_fraction_overlapped_by_raster_prepare": (
+                        prefix_prepare_overlap_ms / prefix_dependency_ms
+                        if prefix_dependency_ms > 0.0
+                        else 0.0
+                    ),
+                    "prepass_start_after_anchor_ms": prepass_start_ms,
+                    "prepass_end_after_anchor_ms": prepass_end_ms,
+                    "prepass_deform_prefix_overlap_ms": (
+                        prefix_prepass_overlap_ms
+                    ),
+                    "prepass_deform_prepare_overlap_ms": (
+                        prepass_full_prepare_overlap_ms
+                    ),
+                    "prepass_fraction_overlapped_by_deform_prefix": (
+                        prefix_prepass_overlap_ms / prepass_elapsed_ms
+                        if prepass_elapsed_ms > 0.0
+                        else 0.0
+                    ),
+                    "deform_prefix_fraction_overlapped_by_prepass": (
+                        prefix_prepass_overlap_ms / prefix_dependency_ms
+                        if prefix_dependency_ms > 0.0
+                        else 0.0
+                    ),
+                    "deform_prefix_ready_before_prepass_start": (
+                        prefix_ready_ms <= prepass_start_ms
+                    ),
+                    "deform_prefix_ready_before_prepass_end": (
+                        prefix_ready_ms <= prepass_end_ms
+                    ),
+                    "prepass_elapsed_ms": prepass_elapsed_ms,
+                    "prefix_wait_after_prepass_ms": prepass_end.elapsed_time(
+                        mixed_start
+                    ),
+                    "mixed_remainder_elapsed_ms": mixed_start.elapsed_time(
+                        mixed_end
+                    ),
+                }
+                _V12_SPLIT_DIAGNOSTIC_SEQUENCE += 1
+                target = Path(split_profile_path).expanduser().resolve()
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with target.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(record, sort_keys=True) + "\n")
+        return result
+
+    def _enqueue_prepared_solo_raster(self, slot):
+        with torch.cuda.stream(self.raster_stream):
+            if slot.green_prepare_done is not None:
+                self.raster_stream.wait_event(slot.green_prepare_done)
+                slot.state.record_stream(self.raster_stream)
+                _record_context_stream(slot.context, self.raster_stream)
+            _record_stream_tree(slot.prepared_raster, self.raster_stream)
+            raster_outputs = self.partition.launch_prepared_solo(
+                slot.context, slot.prepared_raster
+            )
+            result = self.partition.result_from_prepared_solo(
+                slot.context, raster_outputs
+            )
+            result.record_stream(self.raster_stream)
+            slot.raster_done.record(self.raster_stream)
+            slot.has_raster_done = True
+        return result
+
     def _enqueue_solo_raster(self, slot):
         with torch.cuda.stream(self.raster_stream):
             self.raster_stream.wait_event(slot.ready)
@@ -4570,6 +6313,7 @@ class TackerRenderer:
                     "full_deformation": 0,
                     "prefix": 0,
                     "mixed_launches": 0,
+                    "raster_prepasses": 0,
                     "suffix": 0,
                     "solo_raster": 0,
                     "outputs": 0,
@@ -4582,6 +6326,7 @@ class TackerRenderer:
                 "full_deformation": 0,
                 "prefix": 0,
                 "mixed_launches": 0,
+                "raster_prepasses": 0,
                 "suffix": 0,
                 "solo_raster": 0,
                 "outputs": 0,
@@ -4606,8 +6351,17 @@ class TackerRenderer:
             self._ensure_cuda_resources()
             caller_stream = torch.cuda.current_stream(self.device)
             self._last_caller_stream = caller_stream
-            self.raster_stream.wait_stream(caller_stream)
-            self.deform_stream.wait_stream(caller_stream)
+            for stream in self._private_streams():
+                stream.wait_stream(caller_stream)
+            if _mixed_pipeline_profile_path():
+                self._split_profile_anchor = torch.cuda.Event(
+                    enable_timing=True
+                )
+                self._split_profile_anchor.record(caller_stream)
+                for stream in self._private_streams():
+                    stream.wait_event(self._split_profile_anchor)
+            else:
+                self._split_profile_anchor = None
 
             # D(0) is the only full deformation prefill.  Every steady-state
             # D(t+1) below is split around the physical selected head.
@@ -4634,8 +6388,23 @@ class TackerRenderer:
                     next_slot = self.slots[(frame_index + 1) % 2]
                     self._enqueue_prefix(next_view, next_slot)
                     self._last_execution_counts["prefix"] += 1
+                    self._isolate_profile_deform_side(next_slot)
                     try:
-                        result = self._enqueue_mixed(current_slot, next_slot)
+                        if bool(
+                            getattr(
+                                self.partition,
+                                "overlaps_raster_prepare",
+                                False,
+                            )
+                        ):
+                            self._enqueue_raster_prepare(current_slot, next_slot)
+                            result = self._enqueue_prepared_mixed(
+                                current_slot, next_slot
+                            )
+                        else:
+                            result = self._enqueue_mixed(
+                                current_slot, next_slot
+                            )
                         self._last_execution_counts["mixed_launches"] += 1
                         self._last_execution_counts[
                             "selected_head_evaluations_per_head"
@@ -4646,8 +6415,8 @@ class TackerRenderer:
                         # reached the caller yet.  Isolate queued private-stream
                         # work before delegating the complete sequence.
                         if self.raster_stream is not None:
-                            self.raster_stream.synchronize()
-                            self.deform_stream.synchronize()
+                            for stream in self._private_streams():
+                                stream.synchronize()
                         if frame_index != 0:
                             raise RuntimeError(
                                 "Tacker mixed launch failed after output was "
@@ -4669,7 +6438,19 @@ class TackerRenderer:
                     self._enqueue_suffix(next_slot)
                     self._last_execution_counts["suffix"] += 1
                 else:
-                    result = self._enqueue_solo_raster(current_slot)
+                    if bool(
+                        getattr(
+                            self.partition,
+                            "overlaps_raster_prepare",
+                            False,
+                        )
+                    ):
+                        self._enqueue_raster_prepare(current_slot)
+                        result = self._enqueue_prepared_solo_raster(
+                            current_slot
+                        )
+                    else:
+                        result = self._enqueue_solo_raster(current_slot)
                     self._last_execution_counts["solo_raster"] += 1
 
                 self._require_caller_stream(caller_stream)
@@ -4707,14 +6488,42 @@ class TackerRenderer:
             return
         if self._last_used_tacker:
             if self.raster_stream is not None:
-                self.raster_stream.synchronize()
-                self.deform_stream.synchronize()
+                for stream in self._private_streams():
+                    stream.synchronize()
             if self._last_caller_stream is not None:
                 self._last_caller_stream.synchronize()
             return
         synchronize_fallback = getattr(self._fallback_renderer, "synchronize", None)
         if callable(synchronize_fallback):
             synchronize_fallback()
+
+    def close(self):
+        """Release Graphs/work; keep external streams alive for the allocator."""
+        if self._green_contexts is None:
+            return
+        if self._active:
+            raise RuntimeError("Cannot close an active TackerRenderer sequence")
+        for stream in self._private_streams():
+            stream.synchronize()
+        # Graph executables are released here, but process-pooled native
+        # streams must outlive record_stream references on model tensors.
+        for slot in self.slots or ():
+            prefix = slot.hexplane_graph
+            if prefix is not None:
+                prefix.graph.reset()
+                slot.hexplane_graph = None
+        self.slots = None
+        self.raster_prefix_stream = self.deform_prefix_stream = None
+        self._green_contexts = None
+        self._closed = True
+
+    def __del__(self):
+        if getattr(self, "_green_contexts", None) is not None:
+            try:
+                self.close()
+            except Exception:
+                # Interpreter shutdown may already have dismantled CUDA.
+                pass
 
 
 def _prepend(first, iterator):
@@ -4745,10 +6554,21 @@ __all__ = [
     "WHOLE_HEAD_MIXED_ABI_MANIFEST",
     "WHOLE_HEAD_MIXED_ABI_SHA256",
     "WHOLE_HEAD_MIXED_ABI_VERSION",
+    "FULL_MLP_PARTITION_KIND",
+    "FULL_MLP_OVERLAP_PARTITION_KIND",
+    "FULL_MLP_OVERLAP_GRAPH_PARTITION_KIND",
+    "FULL_MLP_ABI_FAMILY",
+    "FULL_MLP_BACKEND",
+    "FULL_MLP_MIXED_ABI_MANIFEST",
+    "FULL_MLP_MIXED_ABI_SHA256",
+    "FULL_MLP_MIXED_ABI_VERSION",
     "PARTITION_KIND_REGISTRY",
     "FusionPartition",
     "PackedFirstLinearPartition",
     "WholeHeadPartition",
+    "FullMlpPartition",
+    "FullMlpOverlapPartition",
+    "FullMlpOverlapGraphPartition",
     "FusionTask",
     "FusionVariant",
     "HEAD_MULTI_ABI_SHA256",
@@ -4766,9 +6586,13 @@ __all__ = [
     "finish_packed_first_linear_task",
     "finish_pos_head_task",
     "finish_whole_head_task",
+    "finish_full_mlp_task",
     "first_linear_candidate_contract",
     "packed_first_linear_candidate_contract",
     "whole_head_candidate_contract",
+    "full_mlp_candidate_contract",
+    "full_mlp_overlap_candidate_contract",
+    "full_mlp_overlap_graph_candidate_contract",
     "fusion_variant_from_candidate",
     "load_tacker_profile",
     "manifest_sha256",
@@ -4777,6 +6601,8 @@ __all__ = [
     "prepare_packed_first_linear_task",
     "prepare_pos_head_task",
     "prepare_whole_head_task",
+    "prepare_full_mlp_task",
+    "prepare_full_mlp_graph_task",
     "resolve_fusion_partition",
     "tacker_profile_admission_reason",
     "tacker_support_reason",

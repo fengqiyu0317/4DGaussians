@@ -8,12 +8,18 @@
 #include "head_linear_v2.h"
 #include "deform_mlp.h"
 
+#ifndef TACKER_SM_TARGET
+#define TACKER_SM_TARGET sm_86
+#endif
+#define TACKER_STRINGIFY_IMPL(value) #value
+#define TACKER_STRINGIFY(value) TACKER_STRINGIFY_IMPL(value)
+
 namespace {
 
 pybind11::dict TackerHeadCapabilities() {
     pybind11::dict capabilities;
     capabilities["abi_version"] = 1;
-    capabilities["sm_target"] = "sm_86";
+    capabilities["sm_target"] = TACKER_STRINGIFY(TACKER_SM_TARGET);
     capabilities["head_features"] = 128;
     capabilities["block_threads"] = 128;
     capabilities["input_dtype"] = "float16";
@@ -30,7 +36,7 @@ pybind11::dict TackerHeadCapabilitiesV2() {
     pybind11::dict capabilities;
     capabilities["abi_version"] = 2;
     capabilities["manifest"] = "abi/head_linear_v2.json";
-    capabilities["sm_target"] = "sm_86";
+    capabilities["sm_target"] = TACKER_STRINGIFY(TACKER_SM_TARGET);
     capabilities["head_features"] = 128;
     capabilities["max_head_tasks"] = 5;
     capabilities["worker_group_threads"] = 128;
@@ -115,6 +121,44 @@ pybind11::dict TackerResourcesV2() {
 }  // namespace
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, module) {
+    module.def(
+        "deform_mlp_tensor_tail_v3", &deform_mlp_tensor_tail_v3_cuda,
+        "One kernel: existing prefix plus FP16 Tensor-Core tails",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"),
+        pybind11::arg("packed_tail_weights"),
+        pybind11::arg("tail_biases"),
+        pybind11::arg("persistent_blocks") = 0);
+    module.def(
+        "deform_mlp_tensor_tail_out_v3",
+        &deform_mlp_tensor_tail_out_v3_cuda,
+        "Tensor-Core-tail deformation MLP into caller-owned tensors",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"),
+        pybind11::arg("packed_tail_weights"),
+        pybind11::arg("tail_biases"), pybind11::arg("outputs"),
+        pybind11::arg("persistent_blocks") = 0);
+    module.def(
+        "deform_mlp_tensor_tail_v4", &deform_mlp_tensor_tail_v4_cuda,
+        "One kernel: v3 Tensor-Core tails with padded shared input rows",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"),
+        pybind11::arg("packed_tail_weights"),
+        pybind11::arg("tail_biases"),
+        pybind11::arg("persistent_blocks") = 0);
+    module.def(
+        "deform_mlp_tensor_tail_out_v4",
+        &deform_mlp_tensor_tail_out_v4_cuda,
+        "Padded Tensor-Core-tail MLP into caller-owned tensors",
+        pybind11::arg("features"), pybind11::arg("backbone_weight_kh"),
+        pybind11::arg("backbone_bias"), pybind11::arg("first_weights"),
+        pybind11::arg("first_biases"),
+        pybind11::arg("packed_tail_weights"),
+        pybind11::arg("tail_biases"), pybind11::arg("outputs"),
+        pybind11::arg("persistent_blocks") = 0);
     module.def(
         "deform_mlp_sliced_v2", &deform_mlp_sliced_v2_cuda,
         "Two kernels: common FP16 backbone then eight sliced head-tail blocks",

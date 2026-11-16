@@ -800,6 +800,10 @@ class AdmissionV2Tests(unittest.TestCase):
         self.assertIsNotNone(profile)
 
     def test_only_phase0_may_fallback_to_legacy_current_descriptor(self):
+        archive = (PROJECT_ROOT / "tacker_profiles" / "baselines"
+                   / "a6000_flame_steak_phase0_20260910" / "baseline-report.json")
+        if not archive.is_file():
+            self.skipTest("requires the optional archived Phase 0 experiment report")
         frozen_phase0 = _read_json(
             PROJECT_ROOT
             / "tacker_profiles"
@@ -2636,6 +2640,8 @@ class Phase31AdmissionContractTests(unittest.TestCase):
         }
 
     def test_phase31_disabled_packed_winner_becomes_enabled_v2_profile(self):
+        if not self.WINNER_PROFILE.is_file():
+            self.skipTest("requires the optional archived Phase 3.1 winner profile")
         name = self.WINNER_NAME
         fps = {
             "serial": [90.0] * 10,
@@ -2773,6 +2779,8 @@ class Phase31AdmissionContractTests(unittest.TestCase):
             )
 
     def test_phase31_descriptor_and_manifest_mutations_fail_closed(self):
+        if not self.WINNER_PROFILE.is_file():
+            self.skipTest("requires the optional archived Phase 3.1 winner profile")
         source = _read_json(self.WINNER_PROFILE)
         descriptor = copy.deepcopy(_candidate(source, self.WINNER_NAME))
         for field in ("correctness", "performance", "diagnostics"):

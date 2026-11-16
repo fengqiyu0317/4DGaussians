@@ -83,6 +83,8 @@ def percent(part, total):
 
 def kernel_category(name):
     lower = name.lower()
+    if "tacker_mix_render_deform_mlp" in lower:
+        return "tacker_mixed_render_full_mlp"
     if "tacker_mix_render_head" in lower:
         return "tacker_mixed_render_head"
     if "tacker_head_linear_solo" in lower:
@@ -95,15 +97,24 @@ def kernel_category(name):
         return "raster_preprocess"
     if "duplicatewithkeys" in lower:
         return "duplicate_with_keys"
+    if "identifytileranges" in lower:
+        return "identify_tile_ranges"
+    if "devicescan" in lower or "scan_kernel" in lower:
+        return "prefix_scan"
     if "deviceradixsort" in lower:
         return "radix_sort"
     if "grid_sampler" in lower:
         return "hexplane_grid_sample"
-    if "sgemm" in lower or "gemm" in lower:
+    if "sgemm" in lower or "gemm" in lower or "gemv" in lower:
         return "gemm"
     if "catarraybatchedcopy" in lower:
         return "concat_copy"
-    if "relu" in lower or "clamp" in lower:
+    if (
+        "relu" in lower
+        or "clamp" in lower
+        or "sigmoid" in lower
+        or "exp_kernel_cuda" in lower
+    ):
         return "activation"
     if "vectorized_elementwise" in lower or "elementwise_kernel" in lower:
         return "elementwise"
@@ -193,7 +204,11 @@ def summarize(path, metadata_path=None):
     launch = api_by_name.get("cudaLaunchKernel")
     mem_total_ns = sum(float(row["Total Time (ns)"]) for row in reports["cuda_gpu_mem_time_sum"])
 
-    main_stage_values = {name: stage_summary(name) for name in MAIN_STAGES}
+    main_stage_values = {
+        name: stage_summary(name)
+        for name in MAIN_STAGES
+        if name in nvtx and name in projected
+    }
     marked_cpu_ms = sum(stage["cpu_total_ms"] for stage in main_stage_values.values())
     marked_gpu_ms = sum(stage["gpu_projected_total_ms"] for stage in main_stage_values.values())
     deformation_values = {

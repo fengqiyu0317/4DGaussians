@@ -1,0 +1,80 @@
+{
+  "abi_version": 7,
+  "backend_family": "full_deform_mlp_tensor_tail_low_register_v7",
+  "status": "experimental",
+  "name": "4dgs_exact_raster_render_plus_low_register_padded_tensor_tail_deform_mlp",
+  "rasterizer_upstream_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+  "cuda_arch": "sm_86_or_sm_87",
+  "pointer_size_bytes": 8,
+  "preserved_abis": [
+    "abi/tacker_mixed_render_head_v1.json",
+    "abi/tacker_mixed_render_heads_v2.json",
+    "abi/tacker_mixed_render_packed_heads_v3.json",
+    "abi/tacker_mixed_render_whole_heads_v4.json",
+    "abi/tacker_mixed_render_deform_mlp_v5.json",
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_v6.json"
+  ],
+  "tacker_ext_dependency": {
+    "header": "deform_mlp_device.cuh",
+    "standalone_reference_symbol": "tacker_deform_mlp_tensor_tail_padded_v4",
+    "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v5"
+  },
+  "global_kernel_symbol": "tacker_mix_render_deform_mlp_tensor_tail_low_register_v7",
+  "physical_launch": {
+    "threads": 384,
+    "launch_bounds_min_blocks_per_sm": 3,
+    "persistent_blocks_zero_policy": "direct logical grid",
+    "physical_blocks_zero_resolution": "max(raster_logical_blocks, ceil_div(deform_rows, 16))",
+    "positive_persistent_blocks_clamp": "[1, logical_blocks]",
+    "persistent_step": "physical_blocks",
+    "dynamic_shared_memory_bytes": 0,
+    "deform_static_shared_scratch_bytes": 14592
+  },
+  "subgroups": {
+    "raster": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render<NUM_CHANNELS>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256
+    },
+    "deform_mlp": {
+      "thread_range": [256, 383],
+      "threads": 128,
+      "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v5",
+      "named_barrier_id": 2,
+      "named_barrier_participants": 128,
+      "cta_wide_barriers": false,
+      "compaction_values_per_thread": 4,
+      "compaction_groups": 4,
+      "descriptor_access": "shared_phase_local"
+    }
+  },
+  "tensor_contract": {
+    "features": {"dtype": "float32", "shape": ["N", 32]},
+    "first_weights": {"dtype": "float16", "shape": [5, 128, 128]},
+    "packed_tail_weights": {
+      "dtype": "float16",
+      "shape": [112, 128],
+      "head_row_offsets": [0, 16, 32, 48, 64]
+    },
+    "tail_activation": {
+      "dtype": "float16",
+      "logical_shape": [16, 128],
+      "shared_row_stride": 136
+    },
+    "outputs": {
+      "dtype": "float32",
+      "order": ["position", "scale", "rotation", "opacity", "sh"],
+      "widths": [3, 3, 4, 1, 48],
+      "semantics": "delta"
+    },
+    "empty_rows": "valid_noop",
+    "tail_rows": "zero-padded 16-row tile"
+  },
+  "python_binding": "render_prepared_gaussians_with_deform_mlp_tensor_tail_low_register_overlap",
+  "python_method": "GaussianRasterizer.render_prepared_with_deform_mlp_tensor_tail_low_register_overlap",
+  "capability_query": "tacker_capabilities",
+  "resource_query": "tacker_resource_requirements",
+  "build_resource_capture": "nvcc -Xptxas=-v"
+}

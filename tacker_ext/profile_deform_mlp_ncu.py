@@ -1,6 +1,8 @@
 """Correctness, timing, and Nsight Compute driver for deform_mlp_delta_v1.
 
-Run this script on the target sm_86 GPU after building the extension in place.
+Run this script on the extension's target GPU after building it in place.  The
+target defaults to ``sm_86`` and can be changed with ``TACKER_CUDA_ARCH`` (for
+example ``sm_87`` on Jetson AGX Orin).
 The ``profile`` mode intentionally launches exactly one target kernel after the
 requested warm-up launches so Nsight Compute can select it with
 ``--launch-skip WARMUP --launch-count 1``.
@@ -11,6 +13,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import statistics
 from typing import Iterable, Sequence
 
@@ -21,6 +24,17 @@ from tacker_4dgs_head import deform_mlp_delta_out_v1, deform_mlp_delta_v1
 
 WIDTHS = (3, 3, 4, 1, 48)
 OFFSETS = (0, 3, 6, 10, 11, 59)
+
+
+def expected_compute_capability() -> tuple[int, int]:
+    cuda_arch = os.environ.get("TACKER_CUDA_ARCH", "sm_86").strip().lower()
+    if (
+        len(cuda_arch) != 5
+        or not cuda_arch.startswith("sm_")
+        or not cuda_arch[3:].isdigit()
+    ):
+        raise RuntimeError("TACKER_CUDA_ARCH must use the form sm_XX")
+    return int(cuda_arch[3]), int(cuda_arch[4])
 
 
 def make_case(rows: int, device: torch.device) -> tuple[torch.Tensor, ...]:
@@ -196,8 +210,14 @@ def main() -> None:
         parser.error("eviction-mib must be positive")
     if not torch.cuda.is_available():
         raise RuntimeError("CUDA is unavailable")
-    if torch.cuda.get_device_capability(0) != (8, 6):
-        raise RuntimeError("deform_mlp_delta_v1 profiling requires sm_86")
+    expected_capability = expected_compute_capability()
+    actual_capability = torch.cuda.get_device_capability(0)
+    if actual_capability != expected_capability:
+        raise RuntimeError(
+            "deform_mlp_delta_v1 profiling requires sm_{}{}, got sm_{}{}".format(
+                *expected_capability, *actual_capability
+            )
+        )
 
     previous_tf32 = torch.backends.cuda.matmul.allow_tf32
     torch.backends.cuda.matmul.allow_tf32 = False

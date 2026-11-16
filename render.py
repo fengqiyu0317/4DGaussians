@@ -17,6 +17,7 @@ import cv2
 from tqdm import tqdm
 from os import makedirs
 from gaussian_renderer import render, TackerRenderer, TwoStreamRenderer
+from gsplat_mixed_ext import LATEST_KERNEL_VARIANT
 import torchvision
 from utils.general_utils import safe_state
 from argparse import ArgumentParser
@@ -55,6 +56,17 @@ def _create_sequence_renderer(
     workload_name,
     iteration,
 ):
+    if execution_mode in ("gsplat_mixed", "gsplat_matched_graph"):
+        if tacker_profile is None:
+            raise ValueError("gsplat mixed requires --tacker-profile pointing to a full_mlp_overlap_graph qualification")
+        from gaussian_renderer.gsplat_mixed import GsplatMixedRenderer
+        return GsplatMixedRenderer(
+            gaussians, pipeline, background, tacker_profile,
+            workload_name=workload_name, iteration=iteration,
+            fused=execution_mode == "gsplat_mixed", cam_type=cam_type,
+            kernel_variant=getattr(pipeline, "gsplat_mixed_kernel", LATEST_KERNEL_VARIANT),
+            physical_blocks=getattr(pipeline, "gsplat_mixed_blocks", 0),
+        )
     if execution_mode == "two_stream":
         return TwoStreamRenderer(
             gaussians,
@@ -300,7 +312,7 @@ if __name__ == "__main__":
         "--execution-mode",
         "--execution_mode",
         dest="execution_mode",
-        choices=("serial", "two_stream", "tacker"),
+        choices=("serial", "two_stream", "tacker", "gsplat_mixed", "gsplat_matched_graph"),
         default="serial",
     )
     parser.add_argument("--tacker-profile", type=str)

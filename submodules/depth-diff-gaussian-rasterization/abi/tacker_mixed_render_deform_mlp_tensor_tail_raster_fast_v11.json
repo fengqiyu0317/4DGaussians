@@ -1,0 +1,57 @@
+{
+  "abi_version": 11,
+  "backend_family": "full_deform_mlp_tensor_tail_raster_fast_v11",
+  "status": "experimental_approximate_raster_math",
+  "name": "4dgs_fast_raster_shared_prefetch_plus_skewed_bias_fused_tensor_tail_deform_mlp",
+  "rasterizer_upstream_commit": "e49506654e8e11ed8a62d22bcb693e943fdecacf",
+  "cuda_arch": "sm_86_or_sm_87",
+  "pointer_size_bytes": 8,
+  "preserved_abis": [
+    "abi/tacker_mixed_render_deform_mlp_tensor_tail_raster_optimized_v10.json"
+  ],
+  "global_kernel_symbol": "tacker_mix_render_deform_mlp_tensor_tail_raster_fast_v11",
+  "physical_launch": {
+    "threads": 384,
+    "launch_bounds_min_blocks_per_sm": 4,
+    "persistent_blocks_zero_policy": "one physical CTA per Raster tile when Raster is nonempty",
+    "empty_raster_blocks_zero_policy": "one physical CTA per Deform tile",
+    "positive_persistent_blocks_policy": "ABI-v10 grid stride fallback",
+    "dynamic_shared_memory_bytes": 0
+  },
+  "work_mapping": {
+    "raster_tiles_per_default_cta": 1,
+    "deform_tiles_per_default_cta": "one or two",
+    "extra_deform_distribution": "ABI-v9 uniform deterministic quotient mapping"
+  },
+  "subgroups": {
+    "raster": {
+      "thread_range": [0, 255],
+      "threads": 256,
+      "device_adapter": "CudaRasterizer::Tacker::general_ptb_render_raster_optimized<NUM_CHANNELS, true>",
+      "named_barrier_id": 1,
+      "named_barrier_participants": 256,
+      "contributor_index": "derived_from_round_and_batch_index",
+      "pre_exp_power_cutoff": -5.55,
+      "power_cutoff_guard": "opacity_lte_one",
+      "batch_payload": "xy_conic_rgb_depth",
+      "geometry_load_order": "conic_then_xy_before_first_consumer",
+      "fast_math": "__expf_and_explicit_fma"
+    },
+    "deform_mlp": {
+      "thread_range": [256, 383],
+      "threads": 128,
+      "device_adapter": "tacker_4dgs::deform_mlp_tensor_tail_gptb_device_v7",
+      "named_barrier_id": 2,
+      "named_barrier_participants": 128,
+      "cta_wide_barriers": false,
+      "static_shared_scratch_bytes": 14848,
+      "first_hidden_stride_floats": 132,
+      "first_bias_epilogue": "fused_into_relu_fp16_compaction"
+    }
+  },
+  "python_binding": "render_prepared_gaussians_with_deform_mlp_tensor_tail_raster_fast_overlap",
+  "python_method": "GaussianRasterizer.render_prepared_with_deform_mlp_tensor_tail_raster_fast_overlap",
+  "capability_query": "tacker_capabilities",
+  "resource_query": "tacker_resource_requirements",
+  "accuracy_requirement": "independent_end_to_end_PSNR_SSIM_LPIPS_gate"
+}
