@@ -18,6 +18,7 @@ from tests.test_tacker_pipeline import (
     RenderResult,
     Sequential,
     _load_module,
+    _template_profile,
 )
 
 
@@ -33,7 +34,7 @@ def _resources():
 
 
 def _full_profile(module, persistent_blocks=0, overlap=False, graph=False):
-    profile = module.load_tacker_profile()
+    profile = _template_profile(module)
     if overlap and graph:
         raise ValueError("overlap and graph test modes are mutually exclusive")
     if graph:

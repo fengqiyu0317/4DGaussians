@@ -184,12 +184,6 @@ HEAD_OUTPUT_WIDTHS = {
     "opacity": 1,
     "shs": 48,
 }
-DEFAULT_PROFILE_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "tacker_profiles"
-    / "raster_head_sm86.json"
-)
-
 _CORRECTNESS_LIMITS = {
     "psnr_drop_db_max": 0.05,
     "ssim_drop_max": 0.0001,
@@ -2431,8 +2425,13 @@ def _stable_profile_bytes(path):
 
 
 def load_tacker_profile_snapshot(profile_path=None, profile_override=None):
-    """Load one validated profile plus the exact file-byte SHA when present."""
+    """Load an explicit profile; never infer a device or use a local template."""
 
+    if profile_path is None and profile_override is None:
+        raise TackerProfileError(
+            "an explicit Tacker profile is required; pass profile_path or "
+            "profile_override for the intended device and workload"
+        )
     if profile_path is not None and profile_override is not None:
         raise TackerProfileError(
             "profile_path and profile_override are mutually exclusive"
@@ -2442,8 +2441,7 @@ def load_tacker_profile_snapshot(profile_path=None, profile_override=None):
     if profile_override is not None:
         profile = deepcopy(profile_override)
     else:
-        path = DEFAULT_PROFILE_PATH if profile_path is None else Path(profile_path)
-        raw, resolved_path = _stable_profile_bytes(path)
+        raw, resolved_path = _stable_profile_bytes(Path(profile_path))
         try:
             profile = json.loads(raw.decode("utf-8"))
         except (UnicodeError, ValueError) as error:
@@ -2455,8 +2453,9 @@ def load_tacker_profile_snapshot(profile_path=None, profile_override=None):
 
 
 def load_tacker_profile(profile_path=None, profile_override=None):
-    """Load and structurally validate one profile.
+    """Load and structurally validate an explicitly supplied profile.
 
+    Omitting both arguments raises ``TackerProfileError`` without reading files.
     ``profile_override`` is an explicit injection point for tests and for a
     caller that has just produced a measured profile.  It does not bypass the
     manifest/profile hashes or correctness qualification.
@@ -6535,7 +6534,6 @@ def _prepend(first, iterator):
 
 
 __all__ = [
-    "DEFAULT_PROFILE_PATH",
     "LEGACY_PROFILE_SCHEMA_VERSION",
     "LEGACY_VARIANT_ID",
     "LEGACY_ABI_FAMILY",

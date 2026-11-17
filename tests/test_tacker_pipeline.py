@@ -5,6 +5,7 @@ from copy import deepcopy
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -14,6 +15,7 @@ from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
+QUALIFICATION_PROFILE_PATH = ROOT / "profiles" / "flame_steak_sm86.qualification.json"
 
 
 class FakeTensor:
@@ -332,9 +334,28 @@ def _load_module(available=False, grad_enabled=False, capability=(8, 6)):
     return module
 
 
+def _template_profile(module):
+    """Build a CPU legacy-dispatch fixture from the shipped Graph configuration.
+
+    Only the in-memory copy is changed; no archived template or new runtime
+    default is needed. Its synthetic values are never deployment evidence.
+    """
+    profile = module.load_tacker_profile(QUALIFICATION_PROFILE_PATH)
+    profile["candidates"] = [
+        candidate for candidate in profile["candidates"]
+        if candidate["variant_id"] in ("serial", "two_stream", "legacy_pos_l1")
+    ]
+    profile["selected_variant_id"] = "legacy_pos_l1"
+    selected = module.selected_tacker_candidate(profile)
+    profile["manifest"]["persistent_blocks"] = selected["persistent_blocks"]
+    profile["manifest_sha256"] = module.manifest_sha256(profile["manifest"])
+    profile["note"] = "Synthetic CPU-only legacy dispatch fixture; never deploy."
+    profile["profile_sha256"] = module.profile_sha256(profile)
+    return module.validate_tacker_profile(profile)
+
+
 def _valid_profile(module):
-    with module.DEFAULT_PROFILE_PATH.open("r", encoding="utf-8") as handle:
-        profile = json.load(handle)
+    profile = _template_profile(module)
     trials = {
         "serial": [80.0] * 10,
         "two_stream": [90.0] * 10,
@@ -739,19 +760,49 @@ class ProfileContractTest(unittest.TestCase):
     def setUp(self):
         self.module = _load_module()
 
-    def test_repository_profile_is_hashed_and_fail_closed(self):
-        profile = self.module.load_tacker_profile()
-        self.assertEqual(
-            self.module.manifest_sha256(profile["manifest"]),
-            profile["manifest_sha256"],
-        )
-        self.assertEqual(
-            self.module.tacker_profile_admission_reason(profile),
-            "Tacker profile deployment is disabled",
-        )
+    def test_repository_profiles_are_explicit_hashed_and_fail_closed(self):
+        for arch, gpu in (("sm_86", "NVIDIA RTX A6000"), ("sm_87", "Orin")):
+            with self.subTest(arch=arch), mock.patch.dict(os.environ, {
+                "TACKER_CUDA_ARCH": arch, "TACKER_GPU_NAME": gpu,
+            }):
+                module = _load_module()
+                path = ROOT / "profiles" / ("flame_steak_" + arch.replace("_", "") + ".qualification.json")
+                original = path.read_bytes()
+                profile, digest, resolved = module.load_tacker_profile_snapshot(path)
+                self.assertEqual(profile["selected_variant_id"], "full_mlp_overlap_graph_pb0")
+                self.assertEqual(module.manifest_sha256(profile["manifest"]), profile["manifest_sha256"])
+                self.assertEqual(digest, hashlib.sha256(original).hexdigest())
+                self.assertEqual(resolved, path.resolve())
+                self.assertEqual(module.tacker_profile_admission_reason(profile),
+                                 "Tacker profile deployment is disabled")
+                self.assertEqual(original, path.read_bytes())
+
+    def test_omitted_profile_never_reads_an_implicit_file(self):
+        with mock.patch.object(self.module, "_stable_profile_bytes") as read:
+            for loader in (self.module.load_tacker_profile, self.module.load_tacker_profile_snapshot):
+                with self.assertRaisesRegex(self.module.TackerProfileError, "explicit Tacker profile is required"):
+                    loader()
+            read.assert_not_called()
+
+    def test_explicit_override_is_validated_and_copied_without_file_access(self):
+        source = self.module.load_tacker_profile(QUALIFICATION_PROFILE_PATH)
+        with mock.patch.object(self.module, "_stable_profile_bytes") as read:
+            profile, digest, path = self.module.load_tacker_profile_snapshot(profile_override=source)
+            self.assertEqual(profile, source)
+            self.assertIsNot(profile, source)
+            self.assertIsNone(digest)
+            self.assertIsNone(path)
+            profile["deployment"]["enabled"] = True
+            self.assertFalse(source["deployment"]["enabled"])
+            with self.assertRaisesRegex(self.module.TackerProfileError, "mutually exclusive"):
+                self.module.load_tacker_profile(QUALIFICATION_PROFILE_PATH, profile_override=source)
+            source["profile_sha256"] = "0" * 64
+            with self.assertRaisesRegex(self.module.TackerProfileError, "SHA-256"):
+                self.module.load_tacker_profile(profile_override=source)
+            read.assert_not_called()
 
     def test_profile_file_uses_one_stable_regular_file_snapshot(self):
-        source = self.module.DEFAULT_PROFILE_PATH.read_bytes()
+        source = QUALIFICATION_PROFILE_PATH.read_bytes()
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "profile.json"
             path.write_bytes(source)
@@ -1557,7 +1608,7 @@ class SupportGateContractTest(unittest.TestCase):
             compute_cov3D_python=False,
             convert_SHs_python=False,
         )
-        candidate = module.load_tacker_profile()
+        candidate = _template_profile(module)
         common = {
             "stage": "fine",
             "cam_type": "dynerf",
@@ -1851,7 +1902,7 @@ class PipelineOrderingContractTest(unittest.TestCase):
                 pipe,
                 bg_color=FakeTensor(),
                 cam_type="dynerf",
-                profile_override=module.load_tacker_profile(),
+                profile_override=_template_profile(module),
                 workload_name="flame_steak",
                 iteration=14000,
                 qualification_mode=True,
@@ -1918,6 +1969,7 @@ class PipelineOrderingContractTest(unittest.TestCase):
                 pipe,
                 bg_color=FakeTensor(),
                 cam_type="dynerf",
+                profile_override=_template_profile(module),
             )
             outputs = list(renderer.render_sequence(iter(("0", "1"))))
 
@@ -1930,6 +1982,23 @@ class PipelineOrderingContractTest(unittest.TestCase):
         self.assertEqual(renderer.actual_execution_mode, "serial")
         renderer.synchronize()
         self.assertEqual(renderer._fallback_renderer.synchronize_calls, 1)
+
+    def test_omitted_profile_delegates_without_reading_a_local_template(self):
+        module = _load_module(available=False, grad_enabled=False)
+        with mock.patch.object(module, "_stable_profile_bytes") as read, mock.patch.object(
+            module, "_cache_pos_head_parameters", return_value=(FakeTensor(), FakeTensor())
+        ):
+            renderer = module.TackerRenderer(
+                _exact_model(), types.SimpleNamespace(), bg_color=FakeTensor(), cam_type="dynerf"
+            )
+            outputs = list(renderer.render_sequence(iter(("0", "1"))))
+            read.assert_not_called()
+        self.assertEqual(outputs, [{"two_stream": "0"}, {"two_stream": "1"}])
+        self.assertIn("explicit Tacker profile is required", renderer.last_fallback_reason)
+        self.assertFalse(renderer.last_used_tacker)
+        self.assertIsNone(renderer.profile)
+        self.assertIsNone(renderer.profile_file_sha256)
+        self.assertIsNone(renderer.profile_source_path)
 
     def test_missing_profile_delegates_with_a_visible_profile_reason(self):
         module = _load_module(available=False, grad_enabled=False)

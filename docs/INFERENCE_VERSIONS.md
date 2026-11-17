@@ -88,8 +88,12 @@ MODEL/
 模型数量、图像分辨率、GPU 名称/架构或重新编译后的资源不匹配时会报错；
 不要为了启动而手改哈希、开启 deployment 或移除检查。其他场景/设备需要
 重新生成和验证其自己的 qualification；本精简版不包含实验配置生成与准入工具。
-`tacker_profiles/raster_head_sm86.json` 是共用 API 及核心测试引用的旧 disabled
-默认模板，不替代上述两份显式运行配置。
+旧的 `tacker_profiles/raster_head_sm86.json` 已取消 Git 跟踪并保留在原工作区，
+运行代码不再自动读取它。`load_tacker_profile()` 必须显式传入配置路径或
+`profile_override`；两者均缺失时会报告错误。直接使用底层 `TackerRenderer`
+而不传配置时，会按原有回退机制执行并暴露缺少配置的原因，不会启用融合。
+`scripts/render_versions.py` 仍要求 `--profile`，两版使用上述配置的命令不变。
+核心测试从发布的 Graph 配置生成内存测试数据，不依赖旧模板，也不改写配置文件。
 
 ## 运行两条路线
 

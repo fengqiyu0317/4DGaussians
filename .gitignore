@@ -125,3 +125,6 @@ submodules/depth-diff-gaussian-rasterization/third_party/glm/*
 
 # Historical sliced-MLP ABI retained locally only.
 /tacker_ext/abi/deform_mlp_sliced_v2.json
+
+# Retired default profile; retained on the original workstation only.
+/tacker_profiles/raster_head_sm86.json

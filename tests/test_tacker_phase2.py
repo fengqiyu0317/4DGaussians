@@ -18,11 +18,12 @@ from tests.test_tacker_pipeline import (
     Sequential,
     _exact_model,
     _load_module,
+    _template_profile,
 )
 
 
 def _phase2_profile(module, heads, worker_groups=1, persistent_blocks=80):
-    profile = module.load_tacker_profile()
+    profile = _template_profile(module)
     candidate = module.first_linear_candidate_contract(
         "{}_l1_w{}".format("_".join(heads), worker_groups),
         heads,
