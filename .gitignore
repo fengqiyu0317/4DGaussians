@@ -122,3 +122,6 @@ submodules/depth-diff-gaussian-rasterization/third_party/glm/*
 !/scripts/blender2colmap.py
 !/scripts/hypernerf2colmap.py
 !/scripts/llff2colmap.py
+
+# Historical sliced-MLP ABI retained locally only.
+/tacker_ext/abi/deform_mlp_sliced_v2.json
